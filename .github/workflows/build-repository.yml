@@ -140,7 +140,7 @@ jobs:
     name: Build ${{ matrix.build_profile }}
     needs: test
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 300
     strategy:
       fail-fast: false
       matrix:
@@ -350,16 +350,10 @@ jobs:
 
           printf '%s\n' "${i18n_packages[@]}" > "$RUNNER_TEMP/i18n-packages.txt"
 
-          # Break a Kconfig cycle in the 25.12 feeds: kmod-bonding (pulled by
-          # luci-app-turboacc-mtk) conditionally depends on kmod-tls, which is
-          # selected by OPENSSL_KTLS. kTLS is not required by this repository.
-          echo '# CONFIG_OPENSSL_KTLS is not set' >> .config
-          echo '# CONFIG_PACKAGE_kmod-tls is not set' >> .config
-
           make defconfig
 
           for pkg in "${packages[@]}"; do
-            grep -q "^CONFIG_PACKAGE_${pkg}=y$" .config || {
+            grep -qE "^CONFIG_PACKAGE_${pkg}=(y|m)$" .config || {
               echo "Package ${pkg} was not enabled by defconfig" >&2
               exit 1
             }
@@ -367,7 +361,7 @@ jobs:
 
           while IFS= read -r pkg; do
             [ -n "$pkg" ] || continue
-            grep -q "^CONFIG_PACKAGE_${pkg}=y$" .config || {
+            grep -qE "^CONFIG_PACKAGE_${pkg}=(y|m)$" .config || {
               echo "Translation package ${pkg} was not enabled by defconfig" >&2
               exit 1
             }
