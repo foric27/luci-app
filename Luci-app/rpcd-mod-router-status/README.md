@@ -1,56 +1,62 @@
 # rpcd-mod-router-status
 
-Version 0.1.2 adds `temperatures` to `getSystemMetrics`: sanitized records with `kind` (`cpu`, `wifi`, `disk`), `name`, `celsius`, and epoch `sampled_at`. CPU/SoC thermal zones and NVMe/drivetemp hwmon files are read on demand. BE14 readings reuse the one-minute collector's existing `iwpriv stat` call; cache entries older than 180 seconds are omitted. No new daemon, package dependency, or wireless driver call is added. Unsupported sensors remain absent; the mobile app shows a dash.
+Версия 0.1.2 добавляет `temperatures` в `getSystemMetrics`: очищенные записи с полями `kind` (`cpu`, `wifi`, `disk`), `name`, `celsius` и эпохой `sampled_at`. Термозоны CPU/SoC и файлы hwmon NVMe/drivetemp читаются по запросу. Показания BE14 используют существующий вызов `iwpriv stat` минутного сборщика; записи кэша старше 180 секунд опускаются. Новый демон, зависимость пакета или вызов беспроводного драйвера не добавляются. Неподдерживаемые датчики остаются отсутствующими; мобильное приложение показывает прочерк.
 
-Independent, read-only device telemetry for the ImmortalWrt mobile app.
-No dependency on LuCI, traffic statistics, traffic configuration or traffic caches.
+Независимая телеметрия устройства только для чтения для мобильного приложения ImmortalWrt.
+Без зависимости от LuCI, статистики трафика, конфигурации трафика или кэшей трафика.
 
-Version 0.1.3 adds optional `getNpuStatus`, backed by `mtk-tops-status` 0.1-r3 or newer. It returns bounded software metadata and explicit missing/failed coverage. No NPU driver or firmware is installed by this package, and no hardware forwarding is inferred from firmware readiness or synchronized parameters. The existing read ACL includes this method. TOPS event counts are never converted to traffic bytes.
+Версия 0.1.3 добавляет необязательный `getNpuStatus`, работающий через `mtk-tops-status` 0.1-r3 или новее. Метод возвращает ограниченные программные метаданные и явную информацию об отсутствующих или неудачных данных. Пакет не устанавливает драйвер NPU или прошивку и не делает вывод об аппаратной пересылке по готовности прошивки или синхронизированным параметрам. Существующий ACL на чтение включает этот метод. Счётчики событий TOPS никогда не переводятся в байты трафика.
 
-## Interfaces
+## Интерфейсы
 
-| Object / method | Source | Data |
+| Объект / метод | Источник | Данные |
 |---|---|---|
-| `router.status.getSystemMetrics` | `/proc/stat` | Aggregate CPU counters; usage requires two samples |
-| `router.status.getWirelessStatus` | Local `network.wireless status`, sysfs | Radio name, up state, band, channel, EHT width, AP interface, BSSID |
-| `router.status.getNpuStatus` | Optional `/usr/bin/mtk-tops-status` | Firmware/MCU readiness, bounded tunnel parameter snapshots and accounting coverage |
-| `router.status.getWirelessHistory` | Independent sampler | 24-hour byte rates and interval TX failure / RX CRC percentages |
+| `router.status.getSystemMetrics` | `/proc/stat` | Суммарные счётчики CPU; для вычисления загрузки нужно два замера |
+| `router.status.getWirelessStatus` | Локальный `network.wireless status`, sysfs | Имя радио, состояние up, диапазон, канал, ширина EHT, интерфейс AP, BSSID |
+| `router.status.getNpuStatus` | Необязательный `/usr/bin/mtk-tops-status` | Готовность прошивки/MCU, ограниченные снимки параметров туннелей и покрытие учёта |
+| `router.status.getWirelessHistory` | Независимый сборщик | 24-часовые скорости в байтах и проценты сбоев TX / CRC RX по интервалам |
 
-The raw netifd response may contain configured passwords. The RPC projects only
-operational fields and does not expose SSIDs or passwords. It provides no write
-methods and does not change driver settings. Vendor `iwpriv stat` is optional:
-without it, byte rates still work and failure/CRC values stay null. Airtime,
-retry counts and client signal distribution are not fabricated.
+Сырой ответ netifd может содержать настроенные пароли. RPC проецирует только
+рабочие поля и не раскрывает SSID или пароли. Он не предоставляет методов записи
+и не меняет настройки драйвера. Вендорский `iwpriv stat` необязателен: без него
+скорости в байтах всё равно работают, а значения сбоев/CRC остаются null. Airtime,
+число повторов и распределение сигнала клиентов не выдумываются.
 
-`router-status` runs independently under procd. Samples are collected once per
-minute in `/tmp/router-status`, retained for 24 hours and returned at five-minute
-resolution. Since 0.1.1, RAM storage also retains only the latest minute sample
-in each five-minute bucket; legacy files compact automatically on the next sample.
-For an aligned full day with three radios, 4,320 rows become 864, while the public
-history points and their rate/failure semantics stay the same. Sysfs counters use
-shell built-ins and history merging uses one awk pass to reduce process launches.
-This reduces stored records and repeated file reads; it is not a measured claim
-about total process RSS or CPU usage. There is no history before the first pair of samples. A reboot
-clears history; a normal service restart or package upgrade preserves it.
+`router-status` работает независимо под procd. Замеры собираются раз в минуту
+в `/tmp/router-status`, хранятся 24 часа и возвращаются с разрешением пять минут.
+Начиная с 0.1.1 хранилище в RAM также сохраняет только последний минутный замер
+в каждом пятиминутном интервале; старые файлы автоматически уплотняются при
+следующем замере. Для полного выровненного дня с тремя радио 4 320 строк
+превращаются в 864, при этом публичные точки истории и их семантика скорости/сбоев
+не меняются. Счётчики sysfs используют встроенные команды оболочки, а слияние
+истории — один проход awk, чтобы уменьшить число запусков процессов. Это снижает
+объём хранимых записей и повторных чтений файлов; это не измеренное утверждение
+об общем RSS процессов или загрузке CPU. До первой пары замеров истории нет.
+Перезагрузка очищает историю; обычный перезапуск службы или обновление пакета
+её сохраняют.
 
-## Installation / migration
+## Установка / миграция
 
-1. Install `rpcd-mod-router-status` using the package matching the router's package
-   manager (24.10 `.ipk`, 25.12 `.apk`). This is a router package, not an Android APK.
-2. Install mobile app 0.4.0 or newer and confirm `router.status` reads work.
-   Then upgrade `luci-app-traffic` to 1.1.7 to remove the previously added wireless/CPU
-   RPCs and sampler. No statistics collector or archive format changes are made.
-3. Installation starts the new sampler and restarts rpcd to register the object.
-   Existing rpcd sessions expire; reconnect the mobile app and LuCI afterward.
-4. A dedicated read-only account must include the `router-status` read ACL group
-   alongside its existing device and flow read permissions. The new group also
-   grants `system.info` for uptime, memory and session checks. Do not
-   grant write permissions. Administrator accounts retaining `*` read access
-   can use the new group after logging in again.
-5. Older app versions call the withdrawn methods
-   on `luci.traffic` and cannot read the migrated telemetry.
+1. Установите `rpcd-mod-router-status` с помощью менеджера пакетов, подходящего
+   для роутера (24.10 — `.ipk`, 25.12 — `.apk`). Это пакет для роутера, а не
+   Android APK.
+2. Установите мобильное приложение 0.4.0 или новее и убедитесь, что чтение
+   `router.status` работает. Затем обновите `luci-app-traffic` до 1.1.7, чтобы
+   удалить ранее добавленные RPC беспроводной сети/CPU и сборщик. Формат
+   статистики и архива не меняется.
+3. Установка запускает новый сборщик и перезапускает rpcd для регистрации
+   объекта. Существующие сессии rpcd истекают; после этого заново подключите
+   мобильное приложение и LuCI.
+4. Выделенная учётная запись только для чтения должна включать группу ACL
+   `router-status` на чтение вместе с существующими правами на чтение устройства
+   и потоков. Новая группа также предоставляет `system.info` для проверки
+   uptime, памяти и сессий. Не выдавайте права на запись. Учётные записи
+   администратора с правом чтения `*` могут использовать новую группу после
+   повторного входа.
+5. Старые версии приложения вызывают отозванные методы `luci.traffic` и не могут
+   читать перенесённую телеметрию.
 
-## Device verification
+## Проверка на устройстве
 
 ```sh
 ubus -v list router.status
@@ -62,12 +68,14 @@ ubus call router.status getWirelessHistory '{}'
 ubus -v list luci.traffic
 ```
 
-The BE14 fixture reports 2.4 GHz / channel 3 / EHT40, 5 GHz / channel 40 /
-EHT160, and 6 GHz / channel 37 / EHT320. Hardware must report its own current
-values, not these fixture values. After at least two samples, history should
-contain rates. CPU percentage must follow counter deltas, not load average.
-Stop `traffic` temporarily only if desired: device/Wi-Fi reads must still work;
-flow statistics naturally need the traffic service. No radio restart is needed.
+Тестовый стенд BE14 сообщает 2,4 ГГц / канал 3 / EHT40, 5 ГГц / канал 40 /
+EHT160 и 6 ГГц / канал 37 / EHT320. Оборудование должно сообщать свои текущие
+значения, а не эти значения стенда. После как минимум двух замеров история
+должна содержать скорости. Процент CPU должен следовать разнице счётчиков, а не
+load average. Останавливайте `traffic` временно только при желании: чтение
+устройства/Wi-Fi должно продолжать работать; статистика потоков естественно
+требует службы traffic. Перезапуск радио не нужен.
 
-Host tests verify parsing and package boundaries. Actual driver behavior,
-account ACLs and router installation still require the device checks above.
+Хостовые тесты проверяют разбор и границы пакета. Фактическое поведение
+драйвера, ACL учётных записей и установка на роутер по-прежнему требуют
+проверок на устройстве, перечисленных выше.

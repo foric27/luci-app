@@ -1,0 +1,748 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: turboacc\n"
+"PO-Revision-Date: 2026-11-04 00:00+0000\n"
+"Last-Translator: OpenCode\n"
+"Language-Team: Russian\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:200
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1167
+msgid "Boardcom_FULLCONE_NAT"
+msgstr "Boardcom_FULLCONE_NAT"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:247
+msgid "Boardcom_FULLCONE_NAT(旧实现兼容)"
+msgstr "Boardcom_FULLCONE_NAT (совместимость со старой реализацией)"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1066
+msgid "Fast Classifier 是兼容旧配置的保留选项。"
+msgstr "Fast Classifier — устаревший вариант для совместимости со старыми конфигурациями."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:279
+msgid "Fast classifier 可单独启用 IPv6 加速。"
+msgstr "Fast classifier может отдельно включать ускорение IPv6."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:279
+msgid "Fast classifier 已打开 IPv6 加速。"
+msgstr "В Fast classifier включено ускорение IPv6."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1060
+msgid "Flow Offloading 是兼容旧配置的保留选项。"
+msgstr "Flow Offloading — устаревший вариант для совместимости со старыми конфигурациями."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:837
+msgid "FullCone"
+msgstr "FullCone"
+
+msgid "Grant UCI access for luci-app-turboacc"
+msgstr "Предоставляет доступ UCI для luci-app-turboacc"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:836
+msgid "HNAT"
+msgstr "HNAT"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1211
+msgid "HNAT 绑定速率阈值（pps）"
+msgstr "Порог скорости привязки HNAT (pps)"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:204
+msgid "HNAT 部分启用"
+msgstr "HNAT включён частично"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1035
+msgid "HNAT 高级项"
+msgstr "Дополнительные параметры HNAT"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:698
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:730
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:838
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:886
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:947
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:957
+msgid "IPv6"
+msgstr "IPv6"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:773
+msgid "IPv6 与高级调优"
+msgstr "IPv6 и тонкая настройка"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:823
+msgid "IPv6 加速"
+msgstr "Ускорение IPv6"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:628
+msgid "IPv6 当前未进入 HNAT，若有纯 IPv6 场景可视需求再开启。"
+msgstr "IPv6 сейчас не проходит через HNAT; включайте при необходимости для чисто IPv6-сценариев."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:133
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:147
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:196
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:844
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1046
+msgid "MediaTek HNAT"
+msgstr "MediaTek HNAT"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1035
+msgid "MediaTek HNAT 专用设置。"
+msgstr "Специальные настройки MediaTek HNAT."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1078
+msgid "MediaTek HNAT 已可用，适合 MT7988 硬件加速。"
+msgstr "MediaTek HNAT доступен и подходит для аппаратного ускорения MT7988."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1078
+msgid "MediaTek HNAT 当前未检测到，保存后会尝试加载。"
+msgstr "MediaTek HNAT сейчас не обнаружен; после сохранения будет попытка загрузки."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:748
+msgid "MediaTek HNAT 是 mt798x 24.10 上最值得优先确认的主通路。"
+msgstr "MediaTek HNAT — основной путь, который стоит проверить первым на mt798x с 24.10."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1079
+msgid "MediaTek HNAT（PPE + WED + HNAT），绕过 CPU 直接硬件转发，推荐作为主加速引擎。"
+msgstr "MediaTek HNAT (PPE + WED + HNAT) — аппаратная пересылка в обход CPU; рекомендуется как основной движок."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1046
+msgid "MediaTek HNAT（保存后尝试）"
+msgstr "MediaTek HNAT (попробовать после сохранения)"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:694
+msgid "NAT"
+msgstr "NAT"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:942
+msgid "NAT / TCP"
+msgstr "NAT / TCP"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:729
+msgid "NAT / TCP 策略"
+msgstr "Политика NAT / TCP"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1032
+msgid "NAT 与 TCP 设置。"
+msgstr "Настройки NAT и TCP."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:616
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:861
+msgid "PPE"
+msgstr "PPE"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:732
+msgid "PPE 会话"
+msgstr "Сессии PPE"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:779
+msgid "PPE 总览"
+msgstr "Обзор PPE"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:536
+msgid "PPE 明细"
+msgstr "Детали PPE"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:962
+msgid "PPE 连接"
+msgstr "Соединения PPE"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:676
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:892
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:976
+msgid "PPE 连接数"
+msgstr "Соединения PPE"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:719
+msgid "PPE 通道"
+msgstr "Каналы PPE"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:824
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:891
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:975
+msgid "PPE 通道数"
+msgstr "Число каналов PPE"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:537
+msgid "PPE 通道的已绑定连接数。"
+msgstr "Число привязанных соединений в каналах PPE."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:835
+msgid "SFE"
+msgstr "SFE"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:175
+msgid "SFE 的轻量连接管理器，路径简单，但平台覆盖面更窄。"
+msgstr "Лёгкий менеджер соединений SFE: простой путь, но меньшая поддержка платформ."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:131
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:145
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:193
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:843
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1045
+msgid "SFE 连接管理器"
+msgstr "Менеджер соединений SFE"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1072
+msgid "SFE 连接管理器是兼容旧配置的保留选项。"
+msgstr "Менеджер соединений SFE — устаревший вариант для совместимости со старыми конфигурациями."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:702
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:860
+msgid "TCP"
+msgstr "TCP"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:729
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:822
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:885
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:944
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:956
+msgid "TCP CCA"
+msgstr "TCP CCA"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1175
+msgid "TCP 拥塞控制算法"
+msgstr "Алгоритм управления перегрузкой TCP"
+
+msgid "TurboACC"
+msgstr "TurboACC"
+
+msgid "TurboACC settings"
+msgstr "Настройки TurboACC"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:669
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:867
+msgid "TurboACC 控制台"
+msgstr "Консоль TurboACC"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1021
+msgid "TurboACC 配置面板"
+msgstr "Панель настроек TurboACC"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:198
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:845
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1166
+msgid "XT_FULLCONE_NAT"
+msgstr "XT_FULLCONE_NAT"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:245
+msgid "XT_FULLCONE_NAT(更佳的兼容性)"
+msgstr "XT_FULLCONE_NAT (лучшая совместимость)"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:177
+msgid "mt798x 的有线加速通路，支持本项目 24.10 / 25.12，可配合 PPE 观察绑定情况。"
+msgstr "Проводной ускоритель mt798x, поддерживается в 24.10 / 25.12; позволяет наблюдать привязки PPE."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:619
+msgid "。"
+msgstr "."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:257
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:560
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:686
+msgid "不可用"
+msgstr "Недоступно"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1055
+msgid "不启用额外加速，网络和 Wi-Fi 会按系统默认方式运行。"
+msgstr "Без дополнительного ускорения сеть и Wi-Fi работают по умолчанию."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1154
+msgid "为 Fast classifier 打开 IPv6"
+msgstr "Включить IPv6 для Fast classifier"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:817
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:882
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:952
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1037
+msgid "主加速引擎"
+msgstr "Основной движок ускорения"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:987
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1031
+msgid "主通路"
+msgstr "Основной путь"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:283
+msgid "主通路关闭时不会有独立 IPv6 加速。"
+msgstr "При отключённом основном пути отдельного ускорения IPv6 нет."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:202
+msgid "以太网 HNAT 未启用"
+msgstr "Ethernet HNAT не включён"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:756
+msgid "优先检查"
+msgstr "Проверить в первую очередь"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1032
+msgid "体验优化"
+msgstr "Оптимизация работы"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:769
+msgid "体验侧"
+msgstr "Со стороны опыта"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1003
+msgid "保留最常用的实时明细，避免页面信息过多又不易定位。"
+msgstr "Только самые нужные данные в реальном времени, чтобы страница не была перегружена."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1061
+msgid "保留给旧配置使用；当前固件通常优先使用 HNAT，系统不支持时会自动跳过。"
+msgstr "Оставлен для старых конфигураций; текущая прошивка обычно предпочитает HNAT и пропускает его, если он не поддерживается."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1058
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1064
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1070
+msgid "保留选项"
+msgstr "Устаревший вариант"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:821
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:884
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:955
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1162
+msgid "全锥形 NAT"
+msgstr "FullCone NAT"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:762
+msgid "全锥形 NAT 主要影响联机和端口映射体验，不代表主通路本身一定工作。"
+msgstr "FullCone NAT влияет в основном на игры и проброс портов и не означает, что основной путь работает."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1052
+msgid "关闭"
+msgstr "Выключить"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1054
+msgid "关闭转发加速"
+msgstr "Отключить ускорение пересылки"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:846
+msgid "内核 IPv6 协议栈"
+msgstr "Стек IPv6 ядра"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1022
+msgid "只保留常用配置项，更改后保存并应用即可。"
+msgstr "Только основные параметры; после изменения сохраните и примените."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:901
+msgid "只保留最常用的运行状态与实时信息。"
+msgstr "Только самые нужные данные о работе и состоянии в реальном времени."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:516
+msgid "可切换"
+msgstr "Можно переключить"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:560
+msgid "可用"
+msgstr "Доступно"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1148
+msgid "可能影响桥接 VPN。"
+msgstr "Может повлиять на VPN в режиме моста."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1206
+msgid "启用 IPv6 HNAT。"
+msgstr "Включить IPv6 HNAT."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1155
+msgid "启用 IPv6 加速。"
+msgstr "Включить ускорение IPv6."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1200
+msgid "启用 MediaTek HNAT hook_toggle；保存并应用后由 turboacc 服务写入内核开关。"
+msgstr "Включает hook_toggle MediaTek HNAT; после сохранения и применения служба turboacc записывает переключатель в ядро."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1199
+msgid "启用有线 HNAT"
+msgstr "Включить проводной HNAT"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1205
+msgid "启用有线 IPv6 HNAT"
+msgstr "Включить проводной IPv6 HNAT"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1147
+msgid "启用桥接加速"
+msgstr "Включить ускорение моста"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1139
+msgid "启用硬件流量分载"
+msgstr "Включить аппаратную разгрузку трафика"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:614
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:859
+msgid "实时"
+msgstr "Сейчас"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:765
+msgid "实时反馈"
+msgstr "Обратная связь в реальном времени"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:751
+msgid "实时引擎"
+msgstr "Текущий движок"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:511
+msgid "实时生效"
+msgstr "Действует сейчас"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:675
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:726
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:883
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:935
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:953
+msgid "实时通路"
+msgstr "Текущий путь"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:604
+msgid "实时通路与配置不一致。"
+msgstr "Текущий путь не совпадает с конфигурацией."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:592
+msgid "实时通路仍在工作，但当前配置已经设为禁用。"
+msgstr "Текущий путь ещё работает, но в конфигурации он отключён."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:733
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:813
+msgid "实时遥测"
+msgstr "Телеметрия в реальном времени"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:261
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:263
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:590
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:596
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:602
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:730
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:752
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:753
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:947
+msgid "已启用"
+msgstr "Включено"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:747
+msgid "已放行"
+msgstr "Разрешено"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:149
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:236
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:249
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:261
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:263
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:265
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:572
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:577
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:584
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:608
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:686
+msgid "已禁用"
+msgstr "Отключено"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:825
+msgid "已绑定会话"
+msgstr "Привязанные сессии"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:625
+msgid "已选 MediaTek HNAT，但“启用有线 HNAT”当前未打开。"
+msgstr "Выбран MediaTek HNAT, но «Включить проводной HNAT» сейчас выключено."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:724
+msgid "已选择"
+msgstr "Выбрано"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:619
+msgid "已选择 "
+msgstr "Выбрано "
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:610
+msgid "已配置，但当前未看到活动通路。"
+msgstr "Настроено, но активный путь сейчас не обнаружен."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:732
+msgid "引擎储备"
+msgstr "Доступные движки"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:634
+msgid "当前 PPE 总容量："
+msgstr "Текущая ёмкость PPE: "
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:748
+msgid "当前主通路决定了大部分路由/NAT 转发行为。"
+msgstr "Текущий основной путь определяет большую часть пересылки маршрутизации/NAT."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:281
+msgid "当前仅加速 IPv4，会保留 IPv6 走常规栈。"
+msgstr "Сейчас ускоряется только IPv4; IPv6 идёт через обычный стек."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:571
+msgid "当前内核返回的主加速通路。"
+msgstr "Основной путь ускорения, который сообщает ядро."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:829
+msgid "当前判断"
+msgstr "Текущая оценка"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:720
+msgid "当前可切换主引擎数量"
+msgstr "Число доступных основных движков"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1067
+msgid "当前固件未提供 Fast Classifier 模块；保存后若无法加载，会自动跳过，不影响网络。"
+msgstr "В текущей прошивке нет модуля Fast Classifier; если он не загрузится, он будет пропущен без влияния на сеть."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1073
+msgid "当前固件未提供 SFE 连接管理器模块；保存后若无法加载，会自动跳过，不影响网络。"
+msgstr "В текущей прошивке нет модуля SFE; если он не загрузится, он будет пропущен без влияния на сеть."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1079
+msgid "当前尚未检测到 HNAT 模块；保存配置后会尝试加载，失败时不影响基础网络。"
+msgstr "Модуль HNAT пока не обнаружен; после сохранения будет попытка загрузки, при неудаче базовая сеть не пострадает."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:275
+msgid "当前平台未开放 IPv6 加速能力。"
+msgstr "На этой платформе ускорение IPv6 недоступно."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:285
+msgid "当前引擎没有单独的 IPv6 开关。"
+msgstr "У текущего движка нет отдельного переключателя IPv6."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:179
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:586
+msgid "当前未启用主加速引擎。"
+msgstr "Основной движок ускорения сейчас не включён."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:506
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:676
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:982
+msgid "当前配置"
+msgstr "Текущая конфигурация"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:579
+msgid "当前页面没有检测到活动的数据通路。"
+msgstr "На странице не обнаружен активный путь данных."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1076
+msgid "待加载"
+msgstr "Ожидает загрузки"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:747
+msgid "待放行"
+msgstr "Ожидает разрешения"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:129
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:143
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:191
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:834
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:842
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1043
+msgid "快速分类器"
+msgstr "Быстрый классификатор"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:926
+msgid "总状态"
+msgstr "Общее состояние"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:797
+msgid "把“当前配置”和“实时生效”并排摆出来，避免只看配置误判真实状态。"
+msgstr "«Текущая конфигурация» и «Действует сейчас» показаны рядом, чтобы не судить о состоянии только по настройкам."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:996
+msgid "把当前配置、实时通路和关键策略拆开看，排查与确认都会更直接。"
+msgstr "Раздельный просмотр конфигурации, текущего пути и ключевых политик упрощает диагностику."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:756
+msgid "按需切换"
+msgstr "Переключать по необходимости"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1076
+msgid "推荐"
+msgstr "Рекомендуется"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:905
+msgid "提示"
+msgstr "Подсказка"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:820
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:954
+msgid "无"
+msgstr "Нет"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1135
+msgid "无效的主加速引擎"
+msgstr "Недопустимый основной движок ускорения"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:766
+msgid "更适合游戏主机与 P2P 场景"
+msgstr "Лучше подходит для игровых консолей и P2P"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:753
+msgid "有线 HNAT"
+msgstr "Проводной HNAT"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:969
+msgid "有线 HNAT 已启用"
+msgstr "Проводной HNAT включён"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:969
+msgid "有线 HNAT 未启用"
+msgstr "Проводной HNAT не включён"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:281
+msgid "有线 IPv6 会话可进入 HNAT 通路。"
+msgstr "Проводные сессии IPv6 могут проходить через HNAT."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:746
+msgid "有线数据通路"
+msgstr "Проводной путь данных"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:724
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:752
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:753
+msgid "未启用"
+msgstr "Не включено"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:238
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:571
+msgid "未检测到活动加速通路。"
+msgstr "Активный путь ускорения не обнаружен."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:752
+msgid "桥接加速"
+msgstr "Ускорение моста"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:631
+msgid "桥接加速已打开，若桥接模式 VPN 出现异常，应优先回看这一项。"
+msgstr "Ускорение моста включено; при проблемах с VPN в режиме моста проверьте в первую очередь этот пункт."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:127
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:141
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:189
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:833
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:841
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1041
+msgid "流量分载"
+msgstr "Разгрузка трафика"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:760
+msgid "游戏与 NAT 行为"
+msgstr "Игры и поведение NAT"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1163
+msgid "游戏或 P2P 需要时开启。"
+msgstr "Включайте при необходимости для игр или P2P."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:923
+msgid "状态正常"
+msgstr "Состояние в норме"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1140
+msgid "硬件支持时可开启。"
+msgstr "Можно включить при поддержке оборудования."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1039
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1164
+msgid "禁用"
+msgstr "Отключить"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:719
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:778
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:893
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:977
+msgid "绑定阈值"
+msgstr "Порог привязки"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:766
+msgid "联机型业务更依赖手动映射"
+msgstr "Для сетевых игр важнее ручной проброс портов"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:831
+msgid "能力矩阵"
+msgstr "Матрица возможностей"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:267
+msgid "跟随主通路"
+msgstr "Как у основного пути"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:171
+msgid "软件路由/NAT 分载，通用性最好，但加速深度偏保守。"
+msgstr "Программная разгрузка маршрутизации/NAT: лучшая совместимость, но глубина ускорения ограничена."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:818
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:954
+msgid "运行告警"
+msgstr "Предупреждения"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:622
+msgid "运行告警："
+msgstr "Предупреждение: "
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1002
+msgid "运行明细"
+msgstr "Подробности работы"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:900
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:995
+msgid "运行状态"
+msgstr "Состояние работы"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:814
+msgid "这里读的是当前内核和 rpcd 的实际返回，不是单纯的表单配置。"
+msgstr "Здесь показаны фактические ответы ядра и rpcd, а не только настройки формы."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1176
+msgid "选择 TCP 拥塞控制算法。BBR 适合高带宽链路，CUBIC 为内核默认，Reno 兼容性最佳。"
+msgstr "Выберите алгоритм управления перегрузкой TCP. BBR подходит для широкополосных каналов, CUBIC — по умолчанию в ядре, Reno — лучшая совместимость."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1031
+msgid "选择主加速引擎。"
+msgstr "Выберите основной движок ускорения."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1038
+msgid "选择当前使用的加速方式。"
+msgstr "Выберите используемый способ ускорения."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:796
+msgid "通路候选"
+msgstr "Кандидаты пути"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:964
+msgid "通道"
+msgstr "Каналы"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:613
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:690
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:858
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:931
+msgid "配置"
+msgstr "Конфигурация"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:598
+msgid "配置与实时通路一致。"
+msgstr "Конфигурация совпадает с текущим путём."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:723
+msgid "配置档案"
+msgstr "Профиль конфигурации"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:964
+msgid "阈值"
+msgstr "Порог"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:173
+msgid "面向 SFE 的快速分类器，适合希望继续启用桥接加速的场景。"
+msgstr "Быстрый классификатор для SFE — подходит, если нужно сохранить ускорение моста."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:766
+msgid "风险提示"
+msgstr "Предупреждение о рисках"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:782
+msgid "高级项"
+msgstr "Дополнительно"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1212
+msgid "默认 30。"
+msgstr "По умолчанию 30."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:619
+msgid "，但实时内核仍显示 "
+msgstr ", но ядро всё ещё сообщает "

@@ -1,104 +1,91 @@
 # luci-app-sfp-status
 
-适用于 OpenWrt 24.10 的 LuCI 应用，用于读取一个或多个 SFP 模块的 DOM 遥测信息，并在状态 > 概览中通过原生概览页组件展示。
+LuCI-приложение для OpenWrt 24.10, которое читает телеметрию DOM одного или нескольких SFP-модулей и показывает её на странице «Статус → Обзор» с помощью штатного компонента обзора.
 
-## 主题兼容性
+## Совместимость с темами
 
-该组件和页面使用标准 LuCI 结构类，例如 cbi-section、table、tr、td 和 ifacebadge，因此能够遵循当前 LuCI 的布局模型，并在无需页面专用 CSS 覆盖的前提下良好适配 luci-theme-argon。
+Компонент и страница используют стандартные структурные классы LuCI, такие как `cbi-section`, `table`, `tr`, `td` и `ifacebadge`, поэтому следуют текущей модели компоновки LuCI и хорошо работают с `luci-theme-argon` без специальных CSS-переопределений для страницы.
 
-## 数据来源
+## Источники данных
 
-后端通过 ethtool 读取 SFP 信息：
+Бэкенд читает информацию SFP через `ethtool`:
 
-- ethtool -m &lt;ifname&gt;：读取 DOM 遥测和模块信息。
-- ethtool &lt;ifname&gt;：读取链路状态和速率信息。
+- `ethtool -m <ifname>` — телеметрия DOM и сведения о модуле.
+- `ethtool <ifname>` — состояние канала и скорость.
 
-如果未配置接口，后端会自动探测所有可读取 SFP DOM 数据的网络设备，并在概览页逐个展示。
+Если интерфейс не задан, бэкенд автоматически проверяет все сетевые устройства, с которых можно прочитать DOM SFP, и показывает их по очереди на странице обзора.
 
-应用包会把 ethtool 作为硬依赖，以确保安装完成后即可读取真实 DOM 数据。安装本地 ipk 前，请先确认设备软件源可提供与当前架构匹配的 ethtool 软件包。
+Пакет объявляет `ethtool` жёсткой зависимостью, чтобы сразу после установки можно было читать реальные данные DOM. Перед установкой локального пакета убедитесь, что репозиторий пакетов устройства содержит `ethtool` для текущей архитектуры.
 
-## 文件说明
+## Файлы
 
-- root/usr/libexec/rpcd/luci.sfp-status：rpcd 后端，提供 luci.sfp-status 的 ubus 方法。
-- htdocs/luci-static/resources/view/status/include/15_sfp.js：概览页组件。
-- root/usr/share/rpcd/acl.d/luci-app-sfp-status.json：LuCI ACL 只读权限定义。
+- `root/usr/libexec/rpcd/luci.sfp-status` — бэкенд rpcd, предоставляющий методы ubus `luci.sfp-status`.
+- `htdocs/luci-static/resources/view/status/include/15_sfp.js` — компонент страницы обзора.
+- `root/usr/share/rpcd/acl.d/luci-app-sfp-status.json` — определение прав ACL LuCI только для чтения.
 
-## 构建
+## Сборка
 
-将该软件包目录放入 LuCI feed，或放到 feeds/luci/applications/ 目录下，然后按常规 OpenWrt 流程进行构建：
+Поместите каталог пакета в LuCI feed или в каталог `feeds/luci/applications/`, затем собирайте обычным способом OpenWrt:
 
 ```sh
 make menuconfig
 make package/feeds/luci/luci-app-sfp-status/compile V=s
 ```
 
-## GitHub Actions 编译
+## Сборка через GitHub Actions
 
-仓库已包含 GitHub Actions 工作流 [main.yml](../.github/workflows/main.yml)，可用于自动编译此插件。
+В репозитории используется единый рабочий процесс [build-repository.yml](../.github/workflows/build-repository.yml), который собирает все пакеты репозитория, включая `luci-app-sfp-status`.
 
-工作流做的事情如下：
+Что делает рабочий процесс:
 
-- 默认下载适用于 ARMv8 设备的 OpenWrt 24.10.0 官方 SDK（mediatek/filogic）。
-- 将当前仓库中的 luci-app-sfp-status 挂载到 SDK 的 feeds/luci/applications/ 目录，并显式注册到 package/feeds/luci。
-- 安装 luci-base 相关软件包定义。
-- 运行 make package/feeds/luci/luci-app-sfp-status/compile 生成 ipk。
-- 将生成的 ipk 作为 GitHub Actions artifact 上传。
-- 在版本 tag 构建成功后，自动把 ipk 发布到 GitHub Releases。
+- Собирает пакеты для OpenWrt / ImmortalWrt 25.12 в формате `apk`.
+- Монтирует все приложения из `Luci-app/` в LuCI feed SDK и собирает их вместе с переводами.
+- Публикует общий GitHub Release со всеми пакетами и GitHub Pages-репозиторий для подключения через apk.
+- Загружает промежуточные артефакты GitHub Actions для каждого профиля сборки.
 
-使用方式：
+Как пользоваться:
 
-1. 将仓库推送到 GitHub。
-2. 打开仓库的 Actions 页面。
-3. 选择 Build luci-app-sfp-status 工作流。
-4. 点击 Run workflow 手动执行，默认会使用 mediatek/filogic 这个 ARMv8 目标；如有需要，也可以在运行前改成其他 target/subtarget。
-5. 在本次运行的 Artifacts 中下载生成的 ipk 文件。
+1. Отправьте репозиторий на GitHub.
+2. Откройте страницу Actions репозитория.
+3. Выберите рабочий процесс `Build OpenWrt package repository`.
+4. Нажмите `Run workflow`. По умолчанию используется ImmortalWrt SDK 25.12-SNAPSHOT, цель `mediatek/filogic`; при необходимости укажите другую версию, target/subtarget или SDK.
+5. Скачайте пакеты из общего GitHub Release или подключите опубликованный репозиторий.
 
-自动发布 Release 的方式：
+Единый Release:
 
-- 在本地创建版本 tag，例如：
+- При отправке тега `repo-v*` создаётся или обновляется один GitHub Release со всеми пакетами.
+- При ручном запуске с `publish_release=true` можно указать `release_tag`; если оставить поле пустым, используется `packages-latest`.
+- В одном Release лежат все `.apk` и `packages.adb`.
 
-```sh
-git tag v0.1.0
-git push origin v0.1.0
-```
+Репозиторий для OpenWrt:
 
-- GitHub Actions 会先编译插件。
-- 编译成功后，工作流会自动创建或更新同名 GitHub Release。
-- 生成的 ipk 会自动上传到该 Release 附件中。
+- apk (25.12): `https://foric27.github.io/luci-app/apk`
 
-手动发布 Release 的方式：
+Версионный псевдоним: `https://foric27.github.io/luci-app/25.12`.
 
-1. 打开 Actions 页面并运行 Build luci-app-sfp-status。
-2. 将 publish_release 设为 true。
-3. 填写 release_tag，例如 v0.1.0。
-4. 工作流会在编译成功后自动发布到对应的 GitHub Release。
+Пакеты не подписаны. При установке может потребоваться `--allow-untrusted`.
 
-说明：
+## Проверка работы
 
-- 该包在 Makefile 中声明为 all 架构，因此即使工作流默认使用 ARMv8 的 mediatek/filogic SDK 进行打包，生成的安装包仍然是 all.ipk。
-- 现在默认目标已经改为 ARMv8 场景；如果你的设备是其他 ARMv8 平台，可以在手动运行工作流时把 target/subtarget 改成对应值。
-- 如果后续需要严格跟随某个 OpenWrt 24.10 小版本，也可以在手动运行工作流时修改 openwrt_version，或直接调整工作流默认值。
-- Release 流程默认只会在版本 tag 或手动勾选 publish_release 时触发，普通提交仍然只编译并上传 artifact，不会污染 Releases 页面。
-
-## 运行验证
-
-安装生成的 apk 后，执行：
+После установки созданного пакета выполните:
 
 ```sh
-apk add --allow-untrusted luci-app-sfp-status_0.1.0-r29_all.apk
+# OpenWrt / ImmortalWrt 25.12
+apk add --allow-untrusted luci-app-sfp-status_0.1.0-r31_all.apk
+
 ubus -v list luci.sfp-status
 ubus call luci.sfp-status getStatuses '{}'
 ```
 
-> **注意**：OpenWrt 25.12+ / ImmortalWrt 25.12+ 使用 APK 格式。自定义构建的 `.apk` 未签名，安装时需加 `--allow-untrusted`。
-> 若希望永久允许未签名包，在路由器上执行：
+> **Внимание**: OpenWrt 25.12+ / ImmortalWrt 25.12+ используют формат APK. Собственные `.apk` не подписаны, поэтому при установке нужен флаг `--allow-untrusted`.
+> Чтобы разрешить неподписанные пакеты постоянно, выполните на роутере:
 >
 > ```sh
 > echo 'allow_untrusted = yes' > /etc/apk/keys/policy.conf
 > ```
 
-随后打开 LuCI：
+Затем откройте LuCI:
 
-- 升级后，状态 菜单中不再显示独立的 SFP 页面入口。
-- 如果浏览器之前打开过旧版页面，先做一次强制刷新，避免继续使用缓存的旧 JS。
-- 进入 状态 > 概览，确认每个检测到的 SFP 模块都会单独展示，并且在 luci-theme-argon 下样式显示正常。
+- После обновления в меню «Статус» больше не должно быть отдельного пункта SFP.
+- Если браузер ранее открывал старую страницу, сделайте принудительное обновление, чтобы не использовать старый кэшированный JS.
+- Откройте «Статус → Обзор» и убедитесь, что каждый обнаруженный SFP-модуль отображается отдельно и корректно выглядит в `luci-theme-argon`.

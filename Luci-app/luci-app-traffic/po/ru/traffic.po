@@ -1,0 +1,731 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: traffic\n"
+"PO-Revision-Date: 2026-11-04 00:00+0000\n"
+"Last-Translator: OpenCode\n"
+"Language-Team: Russian\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:529
+msgid "ALG or offload policy excluded"
+msgstr "Исключено ALG или политикой разгрузки"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1961
+msgid "Accounted share"
+msgstr "Учтённая доля"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2263
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2274
+msgid "All traffic"
+msgstr "Весь трафик"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1245
+msgid "Application"
+msgstr "Приложение"
+
+msgid "Application name"
+msgstr "Имя приложения"
+
+msgid "Apps"
+msgstr "Приложения"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1616
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1931
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2107
+msgid "Apps and sites"
+msgstr "Приложения и сайты"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1123
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1946
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2181
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2193
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2203
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2274
+msgid "Attributed"
+msgstr "Распознано"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1345
+msgid "Average busy time of five NPU cores"
+msgstr "Средняя занятость пяти ядер NPU"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1357
+msgid "Bidirectional"
+msgstr "Двунаправленный"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:536
+msgid "Binding condition not met"
+msgstr "Условие привязки не выполнено"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:535
+msgid "Binding parameters staged"
+msgstr "Параметры привязки подготовлены"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:535
+msgid "Binding submitted"
+msgstr "Привязка отправлена"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:532
+msgid "Binding threshold not reached"
+msgstr "Порог привязки не достигнут"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1622
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1926
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2104
+msgid "Browser clients"
+msgstr "Трафик клиентов"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1621
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1666
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1924
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2103
+msgid "Bucket"
+msgstr "Период"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1423
+msgid "Candidate"
+msgstr "Кандидат"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1426
+msgid "Candidate location; owner unverified"
+msgstr "Расположение кандидата; владелец не проверен"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1955
+msgid "Categorised"
+msgstr "Категоризировано"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1366
+msgid "Classifier setup"
+msgstr "Настройка классификатора"
+
+msgid "Clear"
+msgstr "Очистить"
+
+msgid "Clear the counters collected so far?"
+msgstr "Очистить собранные счётчики?"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1259
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2117
+msgid "Client count"
+msgstr "Число клиентов"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1730
+msgid "Collector has not produced a snapshot yet"
+msgstr "Коллектор ещё не создал снимок"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1619
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1759
+msgid "Collector version"
+msgstr "Версия коллектора"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1447
+msgid "Command responses are transport observations, not firmware heartbeats."
+msgstr "Ответы на команды отражают состояние транспорта, а не пульс прошивки."
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1405
+msgid "Connection"
+msgstr "Соединение"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1770
+msgid "Counter error"
+msgstr "Ошибка счётчика"
+
+msgid "Counter mode"
+msgstr "Режим счётчиков"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1959
+msgid "Counter total"
+msgstr "Итого по счётчикам"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1620
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1755
+msgid "Counting method"
+msgstr "Метод подсчёта"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1667
+msgid "Current hour"
+msgstr "Текущий час"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1367
+msgid "DIP filter setup"
+msgstr "Настройка фильтра DIP"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1616
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1749
+msgid "DNS mappings"
+msgstr "DNS-сопоставления"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1358
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1397
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1423
+msgid "Decapsulation"
+msgstr "Декапсуляция"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1405
+msgid "Decision"
+msgstr "Решение"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1616
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1928
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2106
+msgid "Devices"
+msgstr "Устройства"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:610
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1401
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1446
+msgid "Diagnostics unavailable"
+msgstr "Диагностика недоступна"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1354
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1405
+msgid "Direction"
+msgstr "Направление"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1953
+msgid "Domain identified"
+msgstr "Домен определён"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1358
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1396
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1423
+msgid "Encapsulation"
+msgstr "Инкапсуляция"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1423
+msgid "Encapsulation / decapsulation"
+msgstr "Инкапсуляция / декапсуляция"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:529
+msgid "Ethernet header unavailable"
+msgstr "Заголовок Ethernet недоступен"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:531
+msgid "Excluded by VLAN policy"
+msgstr "Исключено политикой VLAN"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:528
+msgid "Excluded by packet mark"
+msgstr "Исключено по метке пакета"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1342
+msgid "Firmware"
+msgstr "Прошивка"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1448
+msgid "Firmware communication"
+msgstr "Связь с прошивкой"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:534
+msgid "Flow accounting unavailable"
+msgstr "Учёт потока недоступен"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1439
+msgid "Flow diagnostics"
+msgstr "Диагностика потоков"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:534
+msgid "Flow owner or version changed"
+msgstr "Владелец или версия потока изменились"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1616
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1748
+msgid "Flows"
+msgstr "Потоки"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:533
+msgid "Fragmented packet"
+msgstr "Фрагментированный пакет"
+
+msgid "Grant access to the per-application traffic statistics"
+msgstr "Предоставляет доступ к статистике трафика по приложениям"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:606
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1410
+msgid "HNAT binding verified"
+msgstr "Привязка HNAT проверена"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1405
+msgid "Hardware counter sample"
+msgstr "Выборка аппаратного счётчика"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1390
+msgid "Hardware packet counters are unavailable on this firmware."
+msgstr "Аппаратные счётчики пакетов недоступны на этой прошивке."
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1364
+msgid "IPsec context"
+msgstr "Контекст IPsec"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1391
+msgid "Interface rates, tunnel parameters and NPU utilization are measured separately."
+msgstr "Скорость интерфейса, параметры туннелей и загрузка NPU измеряются отдельно."
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:526
+msgid "Invalid offload metadata"
+msgstr "Некорректные метаданные разгрузки"
+
+msgid "Last 12 hours"
+msgstr "Последние 12 часов"
+
+msgid "Last 24 hours"
+msgstr "Последние 24 часа"
+
+msgid "Last 7 days"
+msgstr "Последние 7 дней"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1444
+msgid "Last command"
+msgstr "Последняя команда"
+
+msgid "Last hour"
+msgstr "Последний час"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1443
+msgid "Last response"
+msgstr "Последний ответ"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1354
+msgid "Local endpoint"
+msgstr "Локальная точка"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:533
+msgid "MTU exceeds offload limit"
+msgstr "MTU превышает предел разгрузки"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1366
+msgid "Management core ACK"
+msgstr "ACK управляющего ядра"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1150
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1329
+msgid "NPU / TOPS"
+msgstr "NPU / TOPS"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:525
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1396
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1397
+msgid "NPU not ready"
+msgstr "NPU не готов"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1354
+msgid "NPU to CPU"
+msgstr "NPU → CPU"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1389
+msgid "NPU to CPU counts validated tunnel returns only. Traffic kept in hardware is outside this counter."
+msgstr "Счётчик NPU → CPU учитывает только подтверждённые возвраты туннеля. Трафик, остающийся в оборудовании, в этот счётчик не входит."
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1343
+msgid "NPU utilization"
+msgstr "Загрузка NPU"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1421
+msgid "No connection tracking"
+msgstr "Нет отслеживания соединений"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1428
+msgid "No current owner-verified sample"
+msgstr "Нет текущей выборки, проверенной владельцем"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:610
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1403
+msgid "No diagnostic samples"
+msgstr "Нет диагностических выборок"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1442
+msgid "No response recorded"
+msgstr "Ответ не записан"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1514
+msgid "No samples yet"
+msgstr "Пока нет выборок"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:507
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2353
+msgid "No traffic recorded yet."
+msgstr "Трафик пока не записан."
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:530
+msgid "No valid PPE flow slot"
+msgstr "Нет свободного слота потока PPE"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1325
+msgid "Not loaded"
+msgstr "Не загружено"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1326
+msgid "Not ready"
+msgstr "Не готово"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1366
+msgid "Not started"
+msgstr "Не запущено"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:609
+msgid "Not yet verified"
+msgstr "Ещё не проверено"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1396
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1397
+msgid "Observed status for this direction"
+msgstr "Наблюдаемое состояние для этого направления"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1367
+msgid "Offload core notification"
+msgstr "Уведомление ядра разгрузки"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:528
+msgid "Offload resources exhausted"
+msgstr "Ресурсы разгрузки исчерпаны"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1422
+msgid "Original"
+msgstr "Исходное"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1956
+msgid "Other"
+msgstr "Другое"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:531
+msgid "Output device cannot be offloaded"
+msgstr "Выходное устройство нельзя разгрузить"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:605
+msgid "PPE counters observed"
+msgstr "Счётчики PPE наблюдаются"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1438
+msgid "PPE samples belong to the displayed flow and version. They do not measure complete NPU throughput."
+msgstr "Выборки PPE относятся к отображаемому потоку и версии. Они не измеряют полную пропускную способность NPU."
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1422
+msgid "Packet direction unknown"
+msgstr "Направление пакета неизвестно"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:527
+msgid "Parameter parsing failed"
+msgstr "Не удалось разобрать параметры"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:524
+msgid "Parameters prepared"
+msgstr "Параметры подготовлены"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:607
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1360
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1367
+msgid "Parameters synchronized"
+msgstr "Параметры синхронизированы"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1366
+msgid "Pause NPU"
+msgstr "Пауза NPU"
+
+msgid "Peak"
+msgstr "Пик"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1061
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1538
+msgid "Peak (1 s)"
+msgstr "Пик (1 с)"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1538
+msgid "Peak (interval avg)"
+msgstr "Пик (среднее за интервал)"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2117
+msgid "Peak clients/hour"
+msgstr "Пик клиентов/час"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1361
+msgid "Pending"
+msgstr "Ожидание"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1354
+msgid "Protocol"
+msgstr "Протокол"
+
+msgid "Query log"
+msgstr "Журнал запросов"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1176
+msgid "RX packets"
+msgstr "Пакеты RX"
+
+msgid "Rate"
+msgstr "Скорость"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1326
+msgid "Ready"
+msgstr "Готово"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1140
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1174
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1247
+msgid "Received"
+msgstr "Получено"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1347
+msgid "Recorded"
+msgstr "Записано"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1347
+msgid "Registered tunnel types"
+msgstr "Зарегистрированные типы туннелей"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1354
+msgid "Remote endpoint"
+msgstr "Удалённая точка"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1422
+msgid "Reply"
+msgstr "Ответ"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:530
+msgid "Route or neighbor resolution failed"
+msgstr "Не удалось разрешить маршрут или соседа"
+
+msgid "Router addresses"
+msgstr "Адреса роутера"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1623
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1927
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2105
+msgid "Router and tunnel"
+msgstr "Роутер и туннель"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1741
+msgid "Running"
+msgstr "Работает"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1738
+msgid "Running, no traffic measured yet"
+msgstr "Работает, трафик пока не измерен"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:525
+msgid "Security policy restriction"
+msgstr "Ограничение политики безопасности"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1141
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1175
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1248
+msgid "Sent"
+msgstr "Отправлено"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:824
+msgid "Show domains"
+msgstr "Показать домены"
+
+msgid "Since start"
+msgstr "С момента запуска"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1734
+msgid "Snapshot is stale"
+msgstr "Снимок устарел"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1333
+msgid "Snapshot out of date"
+msgstr "Снимок устарел"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1354
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1747
+msgid "State"
+msgstr "Состояние"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1325
+msgid "Status unavailable"
+msgstr "Статус недоступен"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1361
+msgid "Synchronization failed"
+msgstr "Синхронизация не удалась"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1346
+msgid "Synchronized tunnels"
+msgstr "Синхронизированные туннели"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1383
+msgid "TOPS tunnels"
+msgstr "Туннели TOPS"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1177
+msgid "TX packets"
+msgstr "Пакеты TX"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1195
+msgid "Throughput"
+msgstr "Пропускная способность"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1443
+msgid "Timeouts"
+msgstr "Тайм-ауты"
+
+msgid "Top client"
+msgstr "Топ-клиент"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1258
+msgid "Top client (this session)"
+msgstr "Топ-клиент (эта сессия)"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1246
+msgid "Total traffic"
+msgstr "Общий трафик"
+
+msgid "Traffic"
+msgstr "Трафик"
+
+msgid "Traffic Analysis"
+msgstr "Анализ трафика"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1224
+msgid "Traffic breakdown"
+msgstr "Состав трафика"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1411
+msgid "Tunnel"
+msgstr "Туннель"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1330
+msgid "Tunnel acceleration"
+msgstr "Ускорение туннеля"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1411
+msgid "Tunnel association unavailable"
+msgstr "Связь с туннелем недоступна"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:527
+msgid "Tunnel or output device unavailable"
+msgstr "Туннель или выходное устройство недоступны"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:524
+msgid "Tunnel recognized"
+msgstr "Туннель распознан"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1413
+msgid "Tunnel state changed or pending"
+msgstr "Состояние туннеля изменилось или ожидается"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1352
+msgid "Tunnel state is incomplete or unavailable."
+msgstr "Состояние туннеля неполное или недоступно."
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1350
+msgid "Unable to refresh; showing the last snapshot."
+msgstr "Не удалось обновить; показан последний снимок."
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2185
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2388
+msgid "Unattributed"
+msgstr "Нераспознано"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1417
+msgid "Unavailable"
+msgstr "Недоступно"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:526
+msgid "Unsupported packet format"
+msgstr "Неподдерживаемый формат пакета"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1797
+msgid "Updates every %s seconds"
+msgstr "Обновление каждые %s с"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1345
+msgid "Utilization unavailable"
+msgstr "Загрузка недоступна"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1411
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1426
+msgid "Version"
+msgstr "Версия"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:536
+msgid "Waiting for decapsulation binding"
+msgstr "Ожидание привязки декапсуляции"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:524
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:608
+msgid "Waiting for synchronization"
+msgstr "Ожидание синхронизации"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:532
+msgid "Waiting for traffic identification"
+msgstr "Ожидание идентификации трафика"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1768
+msgid "Waiting to resolve"
+msgstr "Ожидание сопоставления"
+
+msgid "average over the selected range"
+msgstr "среднее за выбранный диапазон"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1539
+msgid "avg down"
+msgstr "сред. приём"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1954
+msgid "by any client DNS"
+msgstr "по DNS любого клиента"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1954
+msgid "by client DNS"
+msgstr "по DNS клиента"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1755
+msgid "conntrack"
+msgstr "conntrack"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1960
+msgid "every packet counted at the LAN interface, proxied traffic included"
+msgstr "каждый пакет, учтённый на интерфейсе LAN, включая проксируемый трафик"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2119
+msgid "maximum number of clients seen in any single hour of this range"
+msgstr "максимальное число клиентов, замеченных за один час в этом диапазоне"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1755
+msgid "nft counters"
+msgstr "счётчики nft"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2120
+msgid "number of clients seen for this application in the current session"
+msgstr "число клиентов, замеченных для этого приложения в текущей сессии"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:857
+msgid "of all traffic"
+msgstr "от всего трафика"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1376
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1418
+msgid "packets"
+msgstr "пакетов"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1947
+msgid "share of the traffic the router carried that the app and client accounting could name"
+msgstr "доля трафика, прошедшего через роутер, которую удалось распознать по приложениям и клиентам"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:833
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1257
+msgid "the busiest client of each application is recorded for the current run, while the byte columns can cover the selected range"
+msgstr "самый активный клиент каждого приложения фиксируется за текущий запуск, а столбцы байтов могут охватывать выбранный диапазон"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2285
+msgid "the busiest client of the selected range, from the archived client rows"
+msgstr "самый активный клиент выбранного диапазона по архивным строкам клиентов"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2286
+msgid "the busiest client overall, for the current run"
+msgstr "самый активный клиент в целом за текущий запуск"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1173
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2193
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2203
+msgid "total"
+msgstr "всего"
+
+#: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1540
+msgid "up"
+msgstr "отдача"

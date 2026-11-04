@@ -50,7 +50,7 @@ var PALETTE = [
  * the page that is not derived from a name.  It is not an application, so it
  * must not wear an application's colour: a hue out of the palette above would
  * read as one more thing that had been identified.  Fixed rather than hashed
- * from the label, because the label is translated - a hash of 未归属 would put
+ * from the label, because the label is translated - a hash of «Нераспознано» would put
  * the slice in a different colour on a Chinese page than on an English one. */
 var UNATTR_COLOR = '#9aa5b1';
 
@@ -424,7 +424,7 @@ function colorFor(name) {
  * fetching, when it is enabled at all, happens on the router and not here.
  *
  * `color` overrides the name-derived colour for the rows that are not
- * applications - the ring's 未归属 slice - so the avatar agrees with the slice. */
+ * applications - the ring's «Нераспознано» slice - so the avatar agrees with the slice. */
 function makeIcon(name, color) {
 	var box = E('span', {
 		'class': 'tf-icon',
@@ -864,7 +864,7 @@ function updateRow(row, a, total, topScope) {
 		 * bytes can cover the selected range (the archive stores the session
 		 * counters a range view cannot reconcile).  A ratio taken across the two
 		 * windows is not a share, so above 100% it is left off rather than
-		 * printed - 2458.0% in a 总量 column beside "30 MiB" is what it looked
+		 * printed - 2458.0% in a «Итог» column beside "30 MiB" is what it looked
 		 * like on a real page. */
 		topText = clientName(a.top) + (topScope === 'range' ? '' :
 			' ' + fmtBytes(tb) + (a.bytes && tb <= a.bytes
@@ -1114,10 +1114,10 @@ return view.extend({
 		this.donutFigEl   = el('div', { 'class': 'tf-donut-fig' });
 		this.donutTotalEl = el('div', { 'class': 'tf-donut-total' }, [ '—' ]);
 		/* The ring is the composition of the *whole* window now - its slices are
-		 * the named applications, 其余应用 and 未归属 - so its own reading is the
+		 * the named applications, «Остальные приложения» and «Нераспознано» - so its own reading is the
 		 * same total the headline above shows, and its caption is the headline's
-		 * caption: 总计 while that number really is everything the box carried,
-		 * 已归属 when the ring could only be built from the attributed sum (a
+		 * caption: «Всего» while that number really is everything the box carried,
+		 * «Распознано» when the ring could only be built from the attributed sum (a
 		 * ranged view whose archive has no device counters).  One number, one
 		 * word, in both places. */
 		this.donutCapEl = el('div', { 'class': 'tf-donut-cap' }, [ _('Attributed') ]);
@@ -1166,9 +1166,9 @@ return view.extend({
 			 * a grid rather than three caption/reading pairs. */
 			el('div', { 'class': 'tf-card tf-hero' }, [
 				el('div', { 'class': 'tf-hero-stats' }, [
-					/* The caption follows the reading: 总计 only while the number
+					/* The caption follows the reading: «Всего» only while the number
 					 * under it really is everything the box carried (the interface
-					 * counters), 已归属 when it is the attributed sum - which is
+					 * counters), «Распознано» when it is the attributed sum - which is
 					 * all a ranged view or a router without a WAN device can show. */
 					this.heroCapEl = el('div', { 'class': 'tf-hero-cap' }, [ _('total') ]),
 					el('div', { 'class': 'tf-hero-cap' }, [ _('Received') ]),
@@ -1216,10 +1216,10 @@ return view.extend({
 					/* The legend is its own labelled block: as a bare list of names
 					 * beside a ring it read as an unlabelled column of text. */
 					el('div', { 'class': 'tf-legend-box' }, [
-						/* The ring's key lists every slice of the ring, 未归属
-						 * included - so it is neither 应用 (the table's name
-						 * column) nor 已归属流量 (which it no longer is: the ring
-						 * is the whole total now).  流量构成 is what it is: the
+						/* The ring's key lists every slice of the ring, «Нераспознано»
+						 * included - so it is neither «Приложение» (the table's name
+						 * column) nor «Распознанный трафик» (which it no longer is: the ring
+						 * is the whole total now).  «Состав трафика» is what it is: the
 						 * breakdown of the total, named and unnamed alike. */
 						el('div', { 'class': 'tf-legend-cap' }, [ _('Traffic breakdown') ]),
 						this.legendEl
@@ -1788,7 +1788,7 @@ return view.extend({
 		 * card at the bottom of every ordinary page load carrying nothing else -
 		 * which is the one thing the note card was not for.  The question it does
 		 * answer, which hour is being written, is worth keeping, so it rides as
-		 * the tooltip on the 周期 box where it costs no space at all. */
+		 * the tooltip on the «Период» box where it costs no space at all. */
 		this.hourLabel = s.hour || '';
 
 		this.statBits = bits;
@@ -1882,8 +1882,8 @@ return view.extend({
 			totalSource: head.source,
 			/* The attributed sum is what the ring's named slices and the table's
 			 * rows cover; draw() measures every percentage against the headline
-			 * above instead, and shows the difference as 未归属.  It is also
-			 * passed split by direction so that row's 下载/上传 columns can be
+			 * above instead, and shows the difference as «Нераспознано».  It is also
+			 * passed split by direction so that row's «Приём/отдача» columns can be
 			 * filled and the three byte columns all reconcile. */
 			shareTotal: accTotal, shareDown: accDown, shareUp: accUp,
 			topText: topText,
@@ -2030,7 +2030,7 @@ return view.extend({
 		 * some hours and a partial attribution for others - a number smaller
 		 * than the attribution it replaces, presented as a total.  So the
 		 * reading is used only when every bucket carries it, and otherwise the
-		 * attributed sum stands, labelled 已归属 as it was before. */
+		 * attributed sum stands, labelled «Распознано» as it was before. */
 		var ifDown = 0, ifUp = 0, ifHours = 0;
 		hours.forEach(function(b) {
 			var f = b && b.iface;
@@ -2066,8 +2066,8 @@ return view.extend({
 		this.draw(items, {
 			/* The range's own total, from the device counters when the archive
 			 * carries them for every hour the range covers - that is when it is
-			 * really 总计 - and from the range's attributed bytes otherwise,
-			 * which draw() then labels 已归属.  summary.iface is deliberately NOT
+			 * really «Всего» - and from the range's attributed bytes otherwise,
+			 * which draw() then labels «Распознано».  summary.iface is deliberately NOT
 			 * used here: it is a session cumulative count from /proc/net/dev,
 			 * and showing that under a 7-day label would be a new wrong number
 			 * of exactly the kind this page is being fixed for. */
@@ -2076,7 +2076,7 @@ return view.extend({
 			/* The attributed sum - the range's own application rows - is what the
 			 * ring's named slices cover and what the protocol buckets are a
 			 * share of; every percentage the page prints is measured against the
-			 * headline instead, and 未归属 carries the difference.  When the
+			 * headline instead, and «Нераспознано» carries the difference.  When the
 			 * archive carries no device counters the two are the same number, the
 			 * difference is zero, and the ring is exactly what it was before. */
 			shareTotal: total, shareDown: gd, shareUp: gu,
@@ -2134,24 +2134,24 @@ return view.extend({
 		 * rows are part of, and the part of the total the ring's named slices
 		 * cover.  The remainder of the total is the slice that says so. */
 		var shareTotal = (stats.shareTotal === undefined) ? total : stats.shareTotal;
-		/* the same two numbers split by direction, so the 未归属 row can fill the
-		 * 下载/上传 columns instead of leaving them short */
+		/* the same two numbers split by direction, so the «Нераспознано» row can fill the
+		 * «Приём/отдача» columns instead of leaving them short */
 		var shareDown = (stats.shareDown === undefined) ? stats.down : stats.shareDown;
 		var shareUp = (stats.shareUp === undefined) ? stats.up : stats.shareUp;
-		/* 总计 is only true when the number really is everything the box carried;
+		/* «Всего» is only true when the number really is everything the box carried;
 		 * otherwise the reading is the attributed sum and says so. */
 		var exact = stats.totalSource === 'iface';
 		var self = this;
 
 		/* The ring is the whole window, not the named part of it: the ten named
-		 * applications, 其余应用, and one slice for what nothing could name.  Its
+		 * applications, «Остальные приложения», and one slice for what nothing could name.  Its
 		 * 100% is therefore the same number the headline and the table's first
 		 * row show - which is the point of drawing it this way.  The ring used to
 		 * be 100% of the *attributed* sum while the row above it read 7.32 GiB,
 		 * so SSL/TLS was 46.1% of one number and 17.5% of the other on the same
 		 * card, with nothing on the page saying which 100% it meant.
 		 *
-		 * 其余应用 is shareTotal minus the top ten, not the literal sum of ranks
+		 * «Остальные приложения» is shareTotal minus the top ten, not the literal sum of ranks
 		 * 11 and below.  The two are the same number whenever the publisher sent
 		 * every application - the collector sends the top 300 - and taking the
 		 * difference is what keeps the ring closed by construction when it did
@@ -2216,7 +2216,7 @@ return view.extend({
 		}
 
 		/* legend, keyed by name so the rows survive a reshuffle.  It lists every
-		 * slice of the ring, 其余应用 and 未归属 included: a key that leaves out
+		 * slice of the ring, «Остальные приложения» and «Нераспознано» included: a key that leaves out
 		 * the largest slice is not a key, and one that lists only the top ten
 		 * cannot add up to the 100% the ring itself is measured in. */
 		var legendSeen = {};
@@ -2258,7 +2258,7 @@ return view.extend({
 				top:   el('td', { 'class': 'tf-top' }),
 				clients: el('td', { 'class': 'tf-num' })
 			};
-			/* the label follows the same rule as the hero caption: 所有流量 only
+			/* the label follows the same rule as the hero caption: «Весь трафик» only
 			 * while the row's figures are the whole of what the box carried */
 			var glabel = el('span', { 'class': 'tf-app-name' }, [ _('All traffic') ]);
 			this.grandRow = {
@@ -2366,10 +2366,10 @@ return view.extend({
 		 * It sits directly under the grand total - the row it is the remainder of
 		 * - and not at the foot of a ranked list that can be 300 rows long, where
 		 * the number it reconciles with is a screen away.  It is not an
-		 * application, so it carries no icon: it lines up with 所有流量 instead,
+		 * application, so it carries no icon: it lines up with «Весь трафик» instead,
 		 * the other row that is about the total rather than about one app.
 		 *
-		 * Its 下载/上传 split is derived from the total's so that all three byte
+		 * Its «Приём/отдача» split is derived from the total's so that all three byte
 		 * columns reconcile exactly.  The split itself is not something the
 		 * accounting knows - these are the bytes that were never attributed - and
 		 * a dash in the two columns would have been honest but left them short. */
@@ -2397,7 +2397,7 @@ return view.extend({
 			/* the two remainders are the total's remainder whenever the attributed
 			 * sum sits inside the total, which is what it does by construction;
 			 * the clamp above is what could stop them adding up, and the row must
-			 * not contradict its own total cell, so 上传 carries that difference */
+			 * not contradict its own total cell, so «Отдача» carries that difference */
 			if (uDown + uUp !== unattrBytes) uUp = Math.max(unattrBytes - uDown, 0);
 			setText(this.unattrRow.cells.total, fmtBytes(unattrBytes) + ' (' +
 				shareLabel(unattrBytes, total) + ')');
@@ -2845,7 +2845,7 @@ function injectCss() {
 		'white-space:nowrap;background:transparent;}',
 		/* Alignment is per kind of column, and the header follows its own data:
 		 * the theme centres every .table cell, which is what left the caption
-		 * "总量" sitting in the middle of its column while the figure under it
+		 * "«Итог»" sitting in the middle of its column while the figure under it
 		 * hugged the right edge - the two never lined up.  Numbers are centred
 		 * (matching what the captions already did), the two text columns are
 		 * left-aligned with their captions, so each column reads as one thing. */
@@ -2884,7 +2884,7 @@ function injectCss() {
 		'.tf-page .tf-app{display:flex;align-items:center;gap:.55rem;min-width:0;}',
 		/* the name takes whatever the icon and the tag leave behind.  A fixed max
 		 * width truncated it while the byte columns sat half empty, which is
-		 * what "NetEase…" next to a wide 总量 column was. */
+		 * what "NetEase…" next to a wide «Итог» column was. */
 		'.tf-page .tf-app-name{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}',
 		'.tf-page .tf-service-group .tf-app-name{flex:0 1 auto;}',
 		'.tf-page .tf-disclose{width:16px;height:22px;flex:0 0 16px;padding:0;border:0;',
@@ -2901,7 +2901,7 @@ function injectCss() {
 		 * look exactly like an application */
 		'.tf-page .tf-legend-row.tf-isbucket .tf-legend-name{color:var(--tf-dim);font-style:italic;}',
 		/* nowrap on both axes: the tag is two characters wide, and letting it
-		 * wrap is what stacked it as 类 over 型 in a narrow row */
+		 * wrap is what stacked it as «категория» over «тип» in a narrow row */
 		'.tf-page .tf-tag{flex:0 0 auto;white-space:nowrap;margin-left:.15rem;padding:.05rem .34rem;',
 		'border-radius:6px;font-size:.62rem;line-height:1.5;',
 		'letter-spacing:.04em;color:var(--tf-dim);background:rgba(128,150,175,.16);text-transform:uppercase;}',

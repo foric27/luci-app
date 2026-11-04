@@ -32,7 +32,7 @@ fi
 echo "luci.traffic syntax OK"
 
 echo
-echo "=== 分派契约 ==="
+echo "=== Контракт диспетчеризации ==="
 T=$(mktemp -d)
 trap 'rm -rf "$T"' EXIT
 
@@ -65,44 +65,44 @@ fail=0
 chk() { if [ "$2" = "$3" ]; then echo "PASS: $1"; else echo "FAIL: $1 (expect '$2', got '$3')"; fail=1; fi; }
 
 got=$(STATE_DIR="$T/state" sh "$T/lt.sh" call getSummary < /dev/null)
-chk "1 call getSummary 返回快照原文"       '{"collected_at":123,"flows":7,"apps":[{"name":"X","down":1,"up":2}]}' "$got"
-chk "1a 而不是 unknown method"             "no"    "$(printf '%s' "$got" | grep -q 'unknown method' && echo yes || echo no)"
+chk "1 call getSummary возвращает исходный снимок"       '{"collected_at":123,"flows":7,"apps":[{"name":"X","down":1,"up":2}]}' "$got"
+chk "1a, а не unknown method"             "no"    "$(printf '%s' "$got" | grep -q 'unknown method' && echo yes || echo no)"
 
 # The error branch still has to exist: a genuinely unknown method must be
 # reported as one rather than silently returning nothing.
 got=$(STATE_DIR="$T/state" sh "$T/lt.sh" call noSuchMethod < /dev/null)
-chk "2 未知方法仍报 unknown method"        "OUT:error=unknown method" "$got"
+chk "2 неизвестный метод по-прежнему сообщает unknown method"        "OUT:error=unknown method" "$got"
 
 # list must advertise every method the page declares, or the page cannot call it.
 listing=$(STATE_DIR="$T/state" sh "$T/lt.sh" list < /dev/null)
 PAGE="/d/Code/Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js"
 [ -f "$PAGE" ] || PAGE="$(cd "$SELF/.." && pwd)/htdocs/luci-static/resources/view/traffic/overview.js"
-chk "3 list 声明 getSummary"              "1"     "$(grep -c 'json_add_object "getSummary"' "$RPCD")"
-chk "3a list 声明 getSeries"              "1"     "$(grep -c 'json_add_object "getSeries"' "$RPCD")"
-chk "3b list 声明 resetStats"             "1"     "$(grep -c 'json_add_object "resetStats"' "$RPCD")"
-chk "3c list 声明 resolveNow"             "1"     "$(grep -c 'json_add_object "resolveNow"' "$RPCD")"
-chk "3d 参数类型已声明（含分块游标和偏移）" "6"    "$(printf '%s\n' "$listing" | grep -c '^OUT:')"
+chk "3 list объявляет getSummary"              "1"     "$(grep -c 'json_add_object "getSummary"' "$RPCD")"
+chk "3a list объявляет getSeries"              "1"     "$(grep -c 'json_add_object "getSeries"' "$RPCD")"
+chk "3b list объявляет resetStats"             "1"     "$(grep -c 'json_add_object "resetStats"' "$RPCD")"
+chk "3c list объявляет resolveNow"             "1"     "$(grep -c 'json_add_object "resolveNow"' "$RPCD")"
+chk "3d типы параметров объявлены (включая курсор блоков и смещение)" "6"    "$(printf '%s\n' "$listing" | grep -c '^OUT:')"
 
 # Every method the page calls must be both advertised and dispatched, otherwise
 # the page gets "unknown method" or a silent default.
 for m in getSummary getHourly getConfig getSeries resolveNow resetStats; do
-    chk "4 分派覆盖 $m"                   "1"     "$(grep -c "^			$m)" "$RPCD")"
+    chk "4 диспетчеризация покрывает $m"                   "1"     "$(grep -c "^			$m)" "$RPCD")"
 done
 page_methods=$(sed -n "s/.*rpc\.declare({ *object: 'luci\.traffic', *method: '\([A-Za-z]*\)'.*/\1/p" "$PAGE" | sort -u)
 for m in $page_methods; do
-    chk "5 页面调用的 $m 已被 list 声明"   "1"     "$(grep -c "json_add_object \"$m\"" "$RPCD")"
+    chk "5 вызываемый страницей $m объявлен в list"   "1"     "$(grep -c "json_add_object \"$m\"" "$RPCD")"
 done
 
 # An empty state directory must still answer with the documented shape, so the
 # page reads one schema whether or not the collector has run yet.
 got=$(STATE_DIR="$T/empty" sh "$T/lt.sh" call getSummary < /dev/null)
 for k in collected_at interval hour flows dnsmap_lines pending rounds version acct querylog apps clients totals; do
-    chk "6 空快照含字段 $k"                "1"     "$(printf '%s' "$got" | grep -c "\"$k\":")"
+    chk "6 пустой снимок содержит поле $k"                "1"     "$(printf '%s' "$got" | grep -c "\"$k\":")"
 done
-chk "6a 空快照是合法 JSON 形状"            "{"     "$(printf '%s' "$got" | head -c 1)"
+chk "6a пустой снимок имеет корректную форму JSON"            "{"     "$(printf '%s' "$got" | head -c 1)"
 
 echo
-echo "=== 吞吐档位 ==="
+echo "=== Уровни пропускной способности ==="
 # Every tier must resolve to its own file and interval.  If a tier reads the
 # wrong file the page is not empty and not broken - it just plots the wrong
 # history - so the file binding is asserted, not only the echoed range name.
@@ -125,31 +125,31 @@ rng() { printf '%s' "$1" | sed -n 's/^{"range":"\([^"]*\)".*/\1/p'; }
 npts() { printf '%s' "$1" | tr -cd '[' | wc -c | tr -d ' '; }
 
 for r in 1h 12h 24h 7d; do
-    chk "7 getSeries $r 回显档位"          "$r"    "$(rng "$(ser "$r")")"
+    chk "7 getSeries $r возвращает уровень"          "$r"    "$(rng "$(ser "$r")")"
 done
-chk "7a 未指定档位默认 1h"                 "1h"    "$(rng "$(PATH="$T:$PATH" STATE_DIR="$T/state" sh "$T/lt.sh" call getSeries < /dev/null)")"
-chk "7b 7d 读取 series1h.tsv"             "[[1000,100,10,0,0,0],[2000,200,20,0,0,0]]" \
+chk "7a без указания уровня по умолчанию 1h"                 "1h"    "$(rng "$(PATH="$T:$PATH" STATE_DIR="$T/state" sh "$T/lt.sh" call getSeries < /dev/null)")"
+chk "7b 7d читает series1h.tsv"             "[[1000,100,10,0,0,0],[2000,200,20,0,0,0]]" \
     "$(ser 7d | sed -n 's/.*"points":\(.*\)}$/\1/p')"
 # The one second peak rides beside the round average so the chart can quote a
 # real peak.  The bucket is the minute, so a peak recorded for minute 960 has to
 # reach the point at 1000 and must not reach the one at 2000.
 printf '960\t9000\t800\t7\n' > "$T/state/peaks.tsv"
-chk "7g 1 秒峰值并入它那一分钟"            "[[1000,100,10,9000,800,7],[2000,200,20,0,0,0]]" \
+chk "7g односекундный пик включается в свою минуту"            "[[1000,100,10,9000,800,7],[2000,200,20,0,0,0]]" \
     "$(ser 7d | sed -n 's/.*"points":\(.*\)}$/\1/p')"
 # A peak of a later minute must not leak backwards into an earlier point.
 printf '960\t9000\t800\t7\n1980\t5000\t400\t3\n' > "$T/state/peaks.tsv"
-chk "7h 峰值只落进自己的分钟"              "[[1000,100,10,9000,800,7],[2000,200,20,5000,400,3]]" \
+chk "7h пик попадает только в свою минуту"              "[[1000,100,10,9000,800,7],[2000,200,20,5000,400,3]]" \
     "$(ser 7d | sed -n 's/.*"points":\(.*\)}$/\1/p')"
 : > "$T/state/peaks.tsv"
-chk "7c 12h 间隔 60 秒"                    "60"    "$(ser 12h | sed -n 's/.*"interval":\([0-9]*\).*/\1/p')"
-chk "7d 7d 间隔 3600 秒"                   "3600"  "$(ser 7d | sed -n 's/.*"interval":\([0-9]*\).*/\1/p')"
-chk "7e 12h 截断到 720 点"                 "720"   "$(( $(npts "$(ser 12h)") - 1 ))"
-chk "7f 24h 保留 800 点"                   "800"   "$(( $(npts "$(ser 24h)") - 1 ))"
-chk "7g 12h 与 24h 读同一文件"             "1"     "$(ser 12h | grep -c '"interval":60')"
-chk "7h 未知档位回落 1h"                   "1h"    "$(rng "$(ser nonsense)")"
+chk "7c 12h: интервал 60 секунд"                    "60"    "$(ser 12h | sed -n 's/.*"interval":\([0-9]*\).*/\1/p')"
+chk "7d 7d: интервал 3600 секунд"                   "3600"  "$(ser 7d | sed -n 's/.*"interval":\([0-9]*\).*/\1/p')"
+chk "7e 12h обрезается до 720 точек"                 "720"   "$(( $(npts "$(ser 12h)") - 1 ))"
+chk "7f 24h сохраняет 800 точек"                   "800"   "$(( $(npts "$(ser 24h)") - 1 ))"
+chk "7g 12h и 24h читают один файл"             "1"     "$(ser 12h | grep -c '"interval":60')"
+chk "7h неизвестный уровень откатывается к 1h"                   "1h"    "$(rng "$(ser nonsense)")"
 
 echo
-echo "=== 范围聚合不丢行 ==="
+echo "=== Агрегация диапазона не теряет строки ==="
 # The page builds its 12h/24h/7d totals by summing the hours it is given, so an
 # hour that comes back in part makes the range report less traffic than it
 # contains - the total silently drops the tail of every hour.  Both lists are
@@ -161,18 +161,18 @@ echo "=== 范围聚合不丢行 ==="
 } > "$T/data/hourly.tsv"
 hr() { PATH="$T:$PATH" STATE_DIR="$T/state" STUB_hours="$1" sh "$T/lt.sh" call getHourly < /dev/null; }
 out=$(hr 24)
-chk "8 getHourly 返回全部应用行（旧上限 20）" "25" \
+chk "8 getHourly возвращает все строки приложений (старый предел 20)" "25" \
     "$(printf '%s' "$out" | grep -o '"name":"App' | wc -l | tr -d ' ')"
-chk "8a getHourly 返回全部客户端行（旧上限 10）" "15" \
+chk "8a getHourly возвращает все строки клиентов (старый предел 10)" "15" \
     "$(printf '%s' "$out" | grep -o '"ip":"10\.0\.0\.' | wc -l | tr -d ' ')"
-chk "8b getHourly 隧道行仍在"               "999" "$(printf '%s' "$out" | sed -n 's/.*"router":\([0-9]*\).*/\1/p')"
-chk "8c 只列出被请求的小时"                 "1"   "$(printf '%s' "$out" | grep -c '"hour":"h1"')"
+chk "8b строка туннеля в getHourly сохраняется"               "999" "$(printf '%s' "$out" | sed -n 's/.*"router":\([0-9]*\).*/\1/p')"
+chk "8c перечисляются только запрошенные часы"                 "1"   "$(printf '%s' "$out" | grep -c '"hour":"h1"')"
 # A second, older hour: the window must take the newest one and leave the other
 # out of the totals entirely.
 printf 'h0\tapp\tOld\t7\t7\n' >> "$T/data/hourly.tsv"
 out1=$(hr 1)
-chk "8d 只取最新小时"                       "0"   "$(printf '%s' "$out1" | grep -c 'Old')"
-chk "8e 最新小时仍然完整"                   "25"  "$(printf '%s' "$out1" | grep -o '"name":"App' | wc -l | tr -d ' ')"
+chk "8d берётся только последний час"                       "0"   "$(printf '%s' "$out1" | grep -c 'Old')"
+chk "8e последний час по-прежнему полный"                   "25"  "$(printf '%s' "$out1" | grep -o '"name":"App' | wc -l | tr -d ' ')"
 # The hour in progress.  The collector publishes it every round as the difference
 # between its live counters and what is already archived, and the archive only
 # gets its first row when the clock crosses the hour - so a range view has to
@@ -183,20 +183,20 @@ printf '777\n'                  > "$T/state/cur.router"
 printf '2026-09-17T10\n'        > "$T/state/cur.hour"
 : > "$T/data/hourly.tsv"
 out2=$(hr 24)
-chk "8f 归档为空时给出进行中的小时"          "1"   "$(printf '%s' "$out2" | grep -c '"hour":"2026-09-17T10"')"
-chk "8g 进行中的小时含应用行"               "1"   "$(printf '%s' "$out2" | grep -c '"name":"YouTube"')"
-chk "8h 进行中的小时下/上未错位"            "60000/3600" \
+chk "8f при пустом архиве отдаётся текущий час"          "1"   "$(printf '%s' "$out2" | grep -c '"hour":"2026-09-17T10"')"
+chk "8g текущий час содержит строку приложения"               "1"   "$(printf '%s' "$out2" | grep -c '"name":"YouTube"')"
+chk "8h в текущем часе приём/отдача не перепутаны"            "60000/3600" \
     "$(printf '%s' "$out2" | sed -n 's/.*{"name":"YouTube","down":\([0-9]*\),"up":\([0-9]*\)}.*/\1\/\2/p')"
-chk "8i 进行中的小时含客户端"               "1"   "$(printf '%s' "$out2" | grep -c '"ip":"10\.0\.0\.9"')"
-chk "8j 进行中的小时含隧道"                 "1"   "$(printf '%s' "$out2" | grep -c '"router":777')"
-chk "8k 空归档时仍是合法 JSON"              '{"hours":' "$(printf '%s' "$out2" | cut -c1-9)"
+chk "8i текущий час содержит клиента"               "1"   "$(printf '%s' "$out2" | grep -c '"ip":"10\.0\.0\.9"')"
+chk "8j текущий час содержит туннель"                 "1"   "$(printf '%s' "$out2" | grep -c '"router":777')"
+chk "8k при пустом архиве JSON остаётся корректным"              '{"hours":' "$(printf '%s' "$out2" | cut -c1-9)"
 # with an archive present, both come back
 printf 'h1\tapp\tApp01\t100\t10\n' > "$T/data/hourly.tsv"
 out3=$(hr 24)
-chk "8l 有归档时归档与进行中的小时都在"      "2"   "$(printf '%s' "$out3" | grep -o '"hour":' | wc -l | tr -d ' ')"
+chk "8l при наличии архива присутствуют и архив, и текущий час"      "2"   "$(printf '%s' "$out3" | grep -o '"hour":' | wc -l | tr -d ' ')"
 
 echo
-echo "=== 每 app 的客户端（归档行 + 进行中的小时行）==="
+echo "=== Клиенты по приложению (строки архива + текущего часа) ==="
 # The archive held application rows and client rows but not the correlation
 # between them, so every per-application client column was a dash in a range view
 # and only the session view could fill it.  roll_hour now writes the correlation
@@ -213,9 +213,9 @@ echo "=== 每 app 的客户端（归档行 + 进行中的小时行）==="
 : > "$T/state/cur.apps"; : > "$T/state/cur.clients"
 printf '0\n' > "$T/state/cur.router"; : > "$T/state/cur.hour"
 out=$(hr 24)
-chk "9 归档的 app 行带上客户端"  '{"name":"OpenAI","down":1000,"up":500,"top":"192.168.2.120","top_bytes":900,"clients":3}' \
+chk "9 строка приложения из архива содержит клиентов"  '{"name":"OpenAI","down":1000,"up":500,"top":"192.168.2.120","top_bytes":900,"clients":3}' \
     "$(printf '%s' "$out" | grep -o '{"name":"OpenAI"[^}]*}')"
-chk "9a 没有 apptop 行的 app 不多出字段" '{"name":"NoRows","down":10,"up":5}' \
+chk "9a приложение без строки apptop не получает лишних полей" '{"name":"NoRows","down":10,"up":5}' \
     "$(printf '%s' "$out" | grep -o '{"name":"NoRows"[^}]*}')"
 # the hour in progress: publish_current appends the same three figures, in the
 # order <name> <down> <up> <client> <bytes> <clients>
@@ -223,17 +223,17 @@ printf 'YouTube\t60000\t3600\t10.0.0.9\t42000\t4\n' > "$T/state/cur.apps"
 printf '10.0.0.9\t42000\n' > "$T/state/cur.clients"
 printf '2026-09-17T10\n'   > "$T/state/cur.hour"
 out=$(hr 24)
-chk "9b 进行中的小时行也带上客户端" \
+chk "9b строка текущего часа тоже содержит клиентов" \
     '{"name":"YouTube","down":60000,"up":3600,"top":"10.0.0.9","top_bytes":42000,"clients":4}' \
     "$(printf '%s' "$out" | grep -o '{"name":"YouTube"[^}]*}')"
 # an application the collector had no client for still comes back whole
 printf 'Solo\t70\t30\n' >> "$T/state/cur.apps"
 out=$(hr 24)
-chk "9c 缺客户端字段时仍是三字段行" '{"name":"Solo","down":70,"up":30}' \
+chk "9c при отсутствии полей клиентов строка остаётся трёхпольной" '{"name":"Solo","down":70,"up":30}' \
     "$(printf '%s' "$out" | grep -o '{"name":"Solo"[^}]*}')"
 
 echo
-echo "=== 范围总量：每小时的网卡口径 ==="
+echo "=== Итог диапазона: счётчики интерфейса по часам ==="
 # The archive's app rows are the attribution, which under flow offloading is a
 # small fraction of what the box carried (measured: 147 MiB against 2579 MiB on
 # the WAN device).  roll_hour therefore also archives one device row per hour as
@@ -276,12 +276,12 @@ rm -f "$T/state/cur.iface"
     printf 'h1\twan\t-\t9000\t700\n'
 } > "$T/data/hourly.tsv"
 out=$(hr 24)
-chk "10 归档小时的网卡总量发到桶上（含未错位）" \
+chk "10 итог интерфейса за час архива передаётся в корзину (без перепутывания)" \
     '{"hour":"h1","apps":[{"name":"OpenAI","down":1000,"up":500}],"clients":[],"router":0,"iface":{"down":9000,"up":700}}' \
     "$(one "$out" '{"hour":"h1"')"
-chk "10a 网卡行不冒充应用"                   "0" \
+chk "10a строка интерфейса не выдаёт себя за приложение"                   "0" \
     "$(printf '%s' "$out" | grep -c '"name":"-"')"
-chk "10b 网卡行不冒充客户端"                 "0" \
+chk "10b строка интерфейса не выдаёт себя за клиента"                 "0" \
     "$(printf '%s' "$out" | grep -c '"ip":"-"')"
 
 # An archive written before the device rows existed: no row for the hour, so no
@@ -290,10 +290,10 @@ chk "10b 网卡行不冒充客户端"                 "0" \
 # showing it a total of zero.
 printf 'h1\tapp\tNoWan\t1000\t500\n' > "$T/data/hourly.tsv"
 out=$(hr 24)
-chk "10c 旧归档的桶不下发 iface"             \
+chk "10c старый архив не передаёт iface в корзине"             \
     '{"hour":"h1","apps":[{"name":"NoWan","down":1000,"up":500}],"clients":[],"router":0}' \
     "$(one "$out" '{"hour":"h1"')"
-chk "10d 缺 iface 时仍是合法 JSON"           '{"hours":' "$(printf '%s' "$out" | cut -c1-9)"
+chk "10d при отсутствии iface JSON остаётся корректным"           '{"hours":' "$(printf '%s' "$out" | cut -c1-9)"
 
 # With offloading, a current hour may carry WAN bytes before any application
 # or router-tunnel row arrives.  It still belongs in the selected range.
@@ -303,7 +303,7 @@ printf '0\n' > "$T/state/cur.router"
 printf '2026-09-17T10\n' > "$T/state/cur.hour"
 printf '9000\n700\n' > "$T/state/cur.iface"
 out=$(hr 24)
-chk "10e 仅有网卡流量的当前小时不丢失" \
+chk "10e текущий час только с трафиком интерфейса не теряется" \
     '{"hour":"2026-09-17T10","apps":[],"clients":[],"router":0,"iface":{"down":9000,"up":700}}' \
     "$(one "$out" '{"hour":"2026-09-17T10"')"
 
@@ -317,7 +317,7 @@ printf '500\n'                  > "$T/state/cur.router"
 printf '7000\n900\n'            > "$T/state/cur.iface"
 : > "$T/data/hourly.tsv"
 out=$(hr 24)
-chk "10e 进行中的小时也带上网卡总量" \
+chk "10e текущий час тоже содержит итог интерфейса" \
     '{"hour":"2026-09-17T10","apps":[{"name":"YouTube","down":60000,"up":3600}],"clients":[],"router":500,"iface":{"down":7000,"up":900}}' \
     "$(one "$out" '{"hour":"2026-09-17T10"')"
 
@@ -326,17 +326,17 @@ chk "10e 进行中的小时也带上网卡总量" \
 # down beside an up of zero reads as a direction that carried nothing.
 rm -f "$T/state/cur.iface"
 out=$(hr 24)
-chk "10f 没有接口计数时不编造总量" \
+chk "10f без счётчиков интерфейса итог не выдумывается" \
     '{"hour":"2026-09-17T10","apps":[{"name":"YouTube","down":60000,"up":3600}],"clients":[],"router":500}' \
     "$(one "$out" '{"hour":"2026-09-17T10"')"
 printf '7000\n' > "$T/state/cur.iface"
 out=$(hr 24)
-chk "10g 半截的 cur.iface 不下发 iface" \
+chk "10g неполный cur.iface не передаёт iface" \
     '{"hour":"2026-09-17T10","apps":[{"name":"YouTube","down":60000,"up":3600}],"clients":[],"router":500}' \
     "$(one "$out" '{"hour":"2026-09-17T10"')"
 printf 'nope\n900\n' > "$T/state/cur.iface"
 out=$(hr 24)
-chk "10h 非数字的 cur.iface 不下发 iface" \
+chk "10h нечисловой cur.iface не передаёт iface" \
     '{"hour":"2026-09-17T10","apps":[{"name":"YouTube","down":60000,"up":3600}],"clients":[],"router":500}' \
     "$(one "$out" '{"hour":"2026-09-17T10"')"
 
@@ -350,9 +350,9 @@ chk "10h 非数字的 cur.iface 不下发 iface" \
 printf 'h4\n' > "$T/state/cur.hour"
 printf '4\n0\n' > "$T/state/cur.iface"
 out=$(hr 3)
-chk "10i 三小时范围含当前小时共三个桶" "3" \
+chk "10i диапазон из трёх часов с текущим даёт три корзины" "3" \
     "$(printf '%s' "$out" | grep -o '"hour":' | wc -l | tr -d ' ')"
-chk "10j 最旧的第四桶不在范围内" "0" \
+chk "10j самый старый четвёртый час вне диапазона" "0" \
     "$(printf '%s' "$out" | grep -c '"hour":"h1"')"
 
 # Client counters can have traffic before classification or WAN detection.
@@ -361,10 +361,10 @@ printf '10.0.0.9\t123\n' > "$T/state/cur.clients"
 printf '0\n' > "$T/state/cur.router"
 rm -f "$T/state/cur.iface"
 out=$(hr 3)
-chk "10k 仅客户端计数的当前小时不丢失" \
+chk "10k текущий час только со счётчиками клиентов не теряется" \
     '{"hour":"h4","apps":[],"clients":[{"ip":"10.0.0.9","bytes":123}],"router":0}' \
     "$(one "$out" '{"hour":"h4"')"
 
 echo
-if [ "$fail" = 0 ]; then echo "=== 全部通过 ==="; else echo "=== 有失败 ==="; fi
+if [ "$fail" = 0 ]; then echo "=== Все проверки пройдены ==="; else echo "=== Есть ошибки ==="; fi
 exit "$fail"

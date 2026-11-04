@@ -10,8 +10,8 @@ PKG_VERSION:=0.1.2
 PKG_RELEASE:=4
 PKG_LICENSE:=Apache-2.0
 
-LUCI_TITLE:=LuCI fan control
-LUCI_DESCRIPTION:=Modern LuCI fan control dashboard for BPI-R4 pwm-fan control and thermal telemetry
+LUCI_TITLE:=Управление вентилятором в LuCI
+LUCI_DESCRIPTION:=Современная панель управления вентилятором pwm-fan и тепловой телеметрией для BPI-R4
 LUCI_DEPENDS:=+luci-base +coreutils-stat +ubus +jsonfilter
 LUCI_PKGARCH:=all
 PKG_MAINTAINER:=MedyMa

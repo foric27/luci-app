@@ -1,6 +1,6 @@
 {
 	"admin/status/traffic": {
-		"title": "流量分析",
+		"title": "Traffic Analysis",
 		"order": 60,
 		"action": {
 			"type": "view",

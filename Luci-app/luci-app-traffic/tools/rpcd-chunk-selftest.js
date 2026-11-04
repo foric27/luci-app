@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// Chinese payloads below test UTF-8 chunk boundaries and are intentionally not translated.
 'use strict';
 const fs=require('fs'),os=require('os'),path=require('path'),cp=require('child_process'),assert=require('assert');
 const dir=fs.mkdtempSync(path.join(process.env.TRAFFIC_TEST_DIR||os.tmpdir(),'traffic-chunks-'));

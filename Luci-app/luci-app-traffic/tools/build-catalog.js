@@ -117,7 +117,7 @@ async function ghTree(url, cacheName) {
 	if (fs.existsSync(file)) {
 		try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch (e) { /* refetch */ }
 	}
-	if (!GH_TOKEN) log('  (提示: 未设置 GH_TOKEN，GitHub API 未认证配额仅 60 次/小时)');
+	if (!GH_TOKEN) log('  (подсказка: GH_TOKEN не задан, неавторизованная квота GitHub API — только 60 запросов/час)');
 	const json = await httpText(url, { token: true, tries: 4 });
 	fs.writeFileSync(file, json, 'utf8');
 	return JSON.parse(json);
@@ -377,8 +377,8 @@ const CURATED = [
 	['Baidu', 'baifubao.com'], ['Baidu', 'mipcdn.com'],
 	['Baidu Netdisk', 'pan.baidu.com', 'H'],
 	/* Baidu's cloud platform is a product of its own, not the search brand.
-	 * Leaving the BCE estate on "Baidu" gave 百度智能云 the same mark as
-	 * 百度网盘, which is the one thing the two rows had to be told apart by;
+	 * Leaving the BCE estate on "Baidu" gave Baidu AI Cloud the same mark as
+	 * Baidu Netdisk, which is the one thing the two rows had to be told apart by;
 	 * with them on their own name the two marks also come from their own
 	 * icons instead of both resolving to baidu.svg. */
 	['Baidu AI Cloud', 'baidubce.com'], ['Baidu AI Cloud', 'baidubce.cn'],
@@ -482,8 +482,8 @@ const CURATED = [
 	['Microsoft', 'windowsupdate.com'], ['Microsoft', 'live.com'], ['Microsoft', 'msn.com'],
 	['Microsoft', 'bing.com'], ['Microsoft', 'office.com'], ['Microsoft', 'office.net'],
 	['Microsoft 365', 'office365.com'], ['OneDrive', 'onedrive.com'], ['OneDrive', 'sharepoint.com'],
-	/* Copilot 是微软的 Copilot；Microsoft 365 Copilot 是另一个产品，另占一行。
-	 * 域名不与上面那行重合，免得又变成两个名字抢同一批域名。 */
+	/* Copilot — это Microsoft Copilot; Microsoft 365 Copilot — отдельный продукт, поэтому он занимает отдельную строку.
+	 * Домены не пересекаются со строкой выше, чтобы два имени снова не боролись за одни и те же домены. */
 	['Microsoft 365 Copilot', 'm365.cloud.microsoft', 'H'],
 	['Microsoft 365 Copilot', 'm365copilot.com'],
 	['Outlook', 'outlook.com'], ['Microsoft Azure', 'azure.com'], ['Microsoft Azure', 'azurewebsites.net'],
@@ -723,7 +723,7 @@ async function loadBm7() {
 		services.set(entry.dir, { suffix, host });
 	}, 16);
 
-	log(`  blackmatrix7: ${services.size} 个服务目录（本次下载 ${downloaded}，其余命中缓存），DOMAIN-KEYWORD ${keywords.size} 条`);
+	log(`  blackmatrix7: ${services.size} каталогов сервисов (скачано ${downloaded}, остальные из кэша), DOMAIN-KEYWORD ${keywords.size} шт.`);
 	return { services, keywords };
 }
 
@@ -1003,7 +1003,7 @@ async function buildIcons(appNames, glyphNames) {
 		}
 	}
 	for (const f of localNames) fs.copyFileSync(path.join(LOCAL_DIR, f), path.join(ICON_DIR, f));
-	if (localNames.size) log(`  本地图标: ${[...localNames].join(', ')}`);
+	if (localNames.size) log(`  локальные иконки: ${[...localNames].join(', ')}`);
 
 	const [dashTree, simpleTree, selfhstTree] = await Promise.all([
 		ghTree(DASHBOARD_TREE, 'dashboard-tree.json'),
@@ -1037,12 +1037,12 @@ async function buildIcons(appNames, glyphNames) {
 		if (s.size) iconify.set(p, s);
 	}
 	if (iconifyMissing.length)
-		log(`  警告: Iconify 集合本次未参与匹配（读取失败且无缓存）: ${iconifyMissing.join(', ')}`);
+		log(`  предупреждение: наборы Iconify не участвовали в сопоставлении (ошибка чтения и нет кэша): ${iconifyMissing.join(', ')}`);
 	if (!iconify.size)
 		throw new Error('no Iconify collection could be read, not even from cache - ' +
 			'refusing to build a set that ignores every one of them');
 	const logos = iconify.get('logos') || new Set();
-	log(`  图标索引: dashboard-icons ${dashboard.size}，simple-icons ${simple.size}，` +
+	log(`  индекс иконок: dashboard-icons ${dashboard.size}, simple-icons ${simple.size}, ` +
 		`selfhst ${selfhst.size}，` +
 		[...iconify].map(([p, s]) => `iconify:${p} ${s.size}`).join('，'));
 
@@ -1233,7 +1233,7 @@ async function buildIcons(appNames, glyphNames) {
 	 * index, slowly.  It keeps the entries, not their names, because the third
 	 * pass needs `sourceSlug` to build its candidates - rebuilding this as names
 	 * is what made that pass write every result to slug(undefined). */
-	log(`  第一轮: 命中 ${saved.length}，未命中 ${missed.length} -> 第二轮（含 arcticons/cib/token，低并发）`);
+	log(`  первый проход: найдено ${saved.length}, не найдено ${missed.length} -> второй проход (arcticons/cib/token, низкая параллельность)`);
 	const firstPassMissed = missed.length;
 	const afterWide = [];
 	await pool(missed, async entry => {
@@ -1242,7 +1242,7 @@ async function buildIcons(appNames, glyphNames) {
 	}, 2);
 	missed.length = 0;
 	for (const e of afterWide) missed.push(e);
-	log(`  第二轮: 补上 ${firstPassMissed - missed.length} 个，仍未命中 ${missed.length} 个`);
+	log(`  второй проход: добавлено ${firstPassMissed - missed.length}, всё ещё не найдено ${missed.length}`);
 
 	/* Third pass: ask the search index instead of requiring a candidate to match
 	 * an existing name exactly.  The two passes above can only find an icon whose
@@ -1305,7 +1305,7 @@ async function buildIcons(appNames, glyphNames) {
 	}, 2);
 	missed.length = 0;
 	for (const n of searchMissed) missed.push(n);
-	log(`  第三轮(search): 补上 ${searched} 个，仍未命中 ${missed.length} 个`);
+	log(`  третий проход (search): добавлено ${searched}, всё ещё не найдено ${missed.length}`);
 
 	const glyphSaved = [], glyphMissed = [];
 	for (const [key, lucide] of Object.entries(GLYPHS)) {
@@ -1345,7 +1345,7 @@ async function buildIcons(appNames, glyphNames) {
 		saved.push({ name: appName, file: sl + '.svg', from: key, src: 'lucide-static' });
 		glyphAliased++;
 	}
-	if (glyphAliased) log(`  类别名沿用线稿: ${glyphAliased} 个`);
+	if (glyphAliased) log(`  имена категорий используют линейные глифы: ${glyphAliased}`);
 
 	/* ---- provenance manifest ---------------------------------------------
 	 * The package redistributes every one of these files and they come from six
@@ -1499,10 +1499,10 @@ async function buildIcons(appNames, glyphNames) {
 		fs.unlinkSync(path.join(ICON_DIR, f));
 		dropped++;
 	}
-	if (carried || dropped) log(`  保留未重新抓取: ${carried} 个，清理无用: ${dropped} 个`);
+	if (carried || dropped) log(`  сохранено без повторной загрузки: ${carried}, удалено неиспользуемых: ${dropped}`);
 
 	fs.writeFileSync(MANIFEST, rows.join('\n') + '\n', 'utf8');
-	log(`  来源清单: SOURCES.tsv（${rows.length - 2} 条）`);
+	log(`  список источников: SOURCES.tsv (${rows.length - 2} записей)`);
 
 	const bytes = fs.readdirSync(ICON_DIR).filter(f => f.endsWith('.svg'))
 		.reduce((sum, f) => sum + fs.statSync(path.join(ICON_DIR, f)).size, 0);
@@ -1527,10 +1527,10 @@ async function main() {
 		}
 		ensureDir(dlcDir);
 		const res = spawnSync('tar', ['-xzf', tgz, '-C', dlcDir], { stdio: 'inherit' });
-		if (res.status !== 0) throw new Error('tar 解压失败');
+		if (res.status !== 0) throw new Error('не удалось распаковать tar');
 	}
 	const dlc = readDlc(dataDir);
-	log(`  ${dlc.files.length} 个服务文件`);
+	log(`  ${dlc.files.length} файлов сервисов`);
 
 	log('[2/5] blackmatrix7/ios_rule_script');
 	const bm7 = await loadBm7();
@@ -1538,7 +1538,7 @@ async function main() {
 	/* ---- apps: name -> keys.  Smaller rule sets are consumed first so that a
 	 *      leaf service (google-play) wins over the umbrella that includes it
 	 *      (google) when both claim a domain. */
-	log('[3/5] 合并应用目录');
+	log('[3/5] Объединение каталога приложений');
 	const appSuffix = new Map();   // key -> name
 	const appHost = new Map();
 	const perName = new Map();     // name -> {sourceSlug, suffix, host}
@@ -1564,12 +1564,12 @@ async function main() {
 	let droppedShared = 0;
 	for (const [name, key, kind] of CURATED) {
 		const k = key.toLowerCase();
-		if (!validKey(k)) { log(`  ! 跳过无效的 curated 键: ${key}`); continue; }
+		if (!validKey(k)) { log(`  ! пропущен недопустимый curated-ключ: ${key}`); continue; }
 		if (kind === 'H') { if (claim(appHost, k, name, 'curated', 'curated')) curated++; }
 		else if (claim(appSuffix, k, name, 'curated', 'curated')) curated++;
 	}
-	log(`  curated 优先层: ${curated} 个键`);
-	log(`  共享基础设施整域规则已丢弃: ${droppedShared} 个键`);
+	log(`  приоритетный слой curated: ${curated} ключей`);
+	log(`  правила целых доменов общей инфраструктуры отброшены: ${droppedShared} ключей`);
 
 	for (const [dir, set] of bm7Entries) {
 		const name = prettyName(dir);
@@ -1619,7 +1619,7 @@ async function main() {
 	if (merged) {
 		for (const [k, v] of appSuffix) if (canonical.has(v)) appSuffix.set(k, canonical.get(v));
 		for (const [k, v] of appHost) if (canonical.has(v)) appHost.set(k, canonical.get(v));
-		log(`  合并同 slug 的不同拼写: ${merged} 个名称 -> ${[...new Set(canonical.values())].length}`);
+		log(`  объединено разных написаний одного slug: ${merged} имён -> ${[...new Set(canonical.values())].length}`);
 	}
 
 	/* ---- categories: only for keys no application claimed (apps come first
@@ -1657,7 +1657,7 @@ async function main() {
 		perCategory.get(c).push(k);
 	}
 	const catSizes = [...perCategory.entries()].map(([c, ks]) => [c, ks.length]).sort((a, b) => b[1] - a[1]);
-	log('  类别规模（前 15）: ' + catSizes.slice(0, 15).map(([c, n]) => `${c}=${n}`).join(' '));
+	log('  размер категорий (топ-15): ' + catSizes.slice(0, 15).map(([c, n]) => `${c}=${n}`).join(' '));
 
 	if (opt.maxCategoryKeys > 0) {
 		let dropped = 0;
@@ -1667,7 +1667,7 @@ async function main() {
 				a.length - b.length || a.localeCompare(b));
 			for (const k of ks.slice(opt.maxCategoryKeys)) { catMerged.delete(k); dropped++; }
 		}
-		if (dropped) log(`  类别上限 ${opt.maxCategoryKeys}/类：丢弃 ${dropped} 个深层域名`);
+		if (dropped) log(`  лимит категорий ${opt.maxCategoryKeys}/категорию: отброшено ${dropped} глубоких доменов`);
 	}
 
 	/* ---- write the tables */
@@ -1694,8 +1694,8 @@ async function main() {
 	const appNames = [...new Set(appsRows.map(r => r[0]))].sort();
 	const catNames = [...new Set(catRows.map(r => r[0]))].sort();
 
-	log(`  应用: ${appNames.length} 个名称 / ${appSuffix.size} 后缀键 + ${appHost.size} 精确主机键`);
-	log(`  类别: ${catNames.length} 个 / ${catMerged.size} 个键`);
+	log(`  приложения: ${appNames.length} имён / ${appSuffix.size} суффиксных ключей + ${appHost.size} точных ключей хостов`);
+	log(`  категории: ${catNames.length} / ${catMerged.size} ключей`);
 	log(`  categories: ${catNames.join(', ')}`);
 
 	/* The page draws category and protocol rows as "type" rows.  An application
@@ -1705,10 +1705,10 @@ async function main() {
 		'Email', 'SSH', 'Telnet', 'FTP', 'RDP', 'SMB', 'MQTT', 'RADIUS', 'SIP', 'L2TP', 'PPTP',
 		'IPSec', 'MSSQL', 'MySQL', 'PostgreSQL', 'Redis', 'NTP', 'SNMP', 'DHCP', 'ICMP', 'Other']);
 	const clashes = appNames.filter(n => typeNames.has(n));
-	if (clashes.length) log(`  ! 名称与类别/协议桶冲突（会在页面上被画成类型行）: ${clashes.join(', ')}`);
-	else log('  名称冲突检查: 无');
+	if (clashes.length) log(`  ! имена конфликтуют с категориями/протокольными корзинами (на странице будут нарисованы как строки типа): ${clashes.join(', ')}`);
+	else log('  проверка конфликтов имён: нет');
 
-	log('[4/5] 图标');
+	log('[4/5] Иконки');
 	let iconInfo = null;
 	if (opt.skipIcons) log('  (--skip-icons)');
 	else {
@@ -1719,15 +1719,15 @@ async function main() {
 		iconInfo = await buildIcons(
 			appNames.map(n => ({ name: n, sourceSlug: (perName.get(n) || {}).sourceSlug })),
 			glyphNeeded);
-		log(`  品牌图标 ${iconInfo.saved.length} 个，字形 ${iconInfo.glyphSaved.length} 个，共 ${(iconInfo.bytes / 1024).toFixed(0)} KiB`);
-		log(`  无上游图标（保留字母头像）: ${iconInfo.missed.length} 个`);
+		log(`  брендовых иконок ${iconInfo.saved.length}, глифов ${iconInfo.glyphSaved.length}, всего ${(iconInfo.bytes / 1024).toFixed(0)} KiB`);
+		log(`  без upstream-иконки (сохранён буквенный аватар): ${iconInfo.missed.length}`);
 	}
 
-	log('[5/5] 结果');
+	log('[5/5] Результат');
 	const sizeOf = f => (fs.statSync(path.join(DATA_DIR, f)).size / 1024).toFixed(0) + ' KiB';
-	log(`  apps.tsv       ${appsRows.length} 行, ${sizeOf('apps.tsv')}`);
-	log(`  categories.tsv ${catRows.length} 行, ${sizeOf('categories.tsv')}`);
-	if (bm7.keywords.size) log(`  未使用: blackmatrix7 DOMAIN-KEYWORD ${bm7.keywords.size} 条（采集器不做子串匹配）`);
+	log(`  apps.tsv       ${appsRows.length} строк, ${sizeOf('apps.tsv')}`);
+	log(`  categories.tsv ${catRows.length} строк, ${sizeOf('categories.tsv')}`);
+	if (bm7.keywords.size) log(`  не используется: blackmatrix7 DOMAIN-KEYWORD ${bm7.keywords.size} шт. (сборщик не делает сопоставление по подстроке)`);
 
 	const report = {
 		generated: new Date().toISOString(),
@@ -1736,7 +1736,7 @@ async function main() {
 		icons: iconInfo ? { brands: iconInfo.saved.length, glyphs: iconInfo.glyphSaved.length, bytes: iconInfo.bytes, missed: iconInfo.missed.length } : null,
 	};
 	fs.writeFileSync(path.join(CACHE_DIR, 'report.json'), JSON.stringify(report, null, 1), 'utf8');
-	log(`  报告: ${path.join(CACHE_DIR, 'report.json')}`);
+	log(`  отчёт: ${path.join(CACHE_DIR, 'report.json')}`);
 }
 
 main().catch(err => { console.error('FAILED:', err && err.stack || err); process.exit(1); });

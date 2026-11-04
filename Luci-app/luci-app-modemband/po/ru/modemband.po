@@ -1,0 +1,456 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: modemband\n"
+"PO-Revision-Date: 2026-11-04 00:00+0000\n"
+"Last-Translator: OpenCode\n"
+"Language-Team: Russian\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:33
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:45
+msgid "5G bands cannot be read. Check if your modem supports this technology and if it is in the list of supported modems."
+msgstr "Не удалось прочитать диапазоны 5G. Проверьте, поддерживает ли модем эту технологию и есть ли он в списке поддерживаемых."
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:327
+msgid "AT command to restart the modem."
+msgstr "AT-команда для перезапуска модема."
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:987
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1037
+msgid "Access Technology"
+msgstr "Технология доступа"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:519
+msgid "Additional options"
+msgstr "Дополнительные параметры"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:519
+msgid "Additional options useful for modem configuration."
+msgstr "Дополнительные параметры для настройки модема."
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:84
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:595
+msgid "Apply changes"
+msgstr "Применить изменения"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:472
+msgid "Band Settings"
+msgstr "Настройки диапазонов"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:511
+msgid "Band selection switch"
+msgstr "Переключатель выбора диапазонов"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:833
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:299
+msgid "Bands are disabled..."
+msgstr "Диапазоны отключены..."
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:561
+msgid "Check if you have selected the bands correctly."
+msgstr "Проверьте правильность выбранных диапазонов."
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:334
+msgid "Checking this option disables the notification that appears every time the bands are changed."
+msgstr "При включении уведомление при каждом изменении диапазонов не показывается."
+
+msgid "China Broadnet"
+msgstr "China Broadnet"
+
+msgid "China Mainland"
+msgstr "Материковый Китай"
+
+msgid "China Mobile"
+msgstr "China Mobile"
+
+msgid "China Telecom"
+msgstr "China Telecom"
+
+msgid "China Unicom"
+msgstr "China Unicom"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:287
+msgid "Configuration"
+msgstr "Настройка"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:458
+msgid "Configuration modem frequency bands. More information about the modemband application on the %seko.one.pl forum%s."
+msgstr "Настройка частотных диапазонов модема. Подробнее о приложении modemband — на %sфоруме eko.one.pl%s."
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:521
+msgid "Connection / router restart"
+msgstr "Перезапуск соединения / роутера"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:991
+msgid "Current Cell"
+msgstr "Текущая сота"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:43
+msgid "Currently set 5G NSA bands"
+msgstr "Текущие диапазоны 5G NSA"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:31
+msgid "Currently set 5G SA bands"
+msgstr "Текущие диапазоны 5G SA"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:19
+msgid "Currently set LTE bands"
+msgstr "Текущие диапазоны LTE"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:66
+msgid "Deselect all"
+msgstr "Снять все"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1016
+msgid "Device Status"
+msgstr "Состояние устройства"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:292
+msgid "Device communication"
+msgstr "Связь с устройством"
+
+msgid "Disabled"
+msgstr "Отключено"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:413
+msgid "Do you really want to restart the device?"
+msgstr "Действительно перезагрузить устройство?"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:377
+msgid "Do you really want to set up all possible bands for the modem?"
+msgstr "Действительно настроить все возможные диапазоны для модема?"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:378
+msgid "Edit"
+msgstr "Изменить"
+
+msgid "Emergency Numbers"
+msgstr "Экстренные номера"
+
+msgid "Enabled"
+msgstr "Включено"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1017
+msgid "Failure Reason"
+msgstr "Причина сбоя"
+
+msgid "Grant access to LuCI app modemband"
+msgstr "Предоставляет доступ к приложению modemband в LuCI"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:525
+msgid "Hint: The name of the WAN section can be changed in the package settings panel."
+msgstr "Подсказка: имя раздела WAN можно изменить в панели настроек пакета."
+
+msgid "Hong Kong"
+msgstr "Гонконг"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1015
+msgid "IMEI"
+msgstr "IMEI"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:297
+msgid "Interface"
+msgstr "Интерфейс"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:21
+msgid "LTE bands cannot be read. Check if your modem supports this technology and if it is in the list of supported modems."
+msgstr "Не удалось прочитать диапазоны LTE. Проверьте, поддерживает ли модем эту технологию и есть ли он в списке поддерживаемых."
+
+msgid "Macao"
+msgstr "Макао"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:287
+msgid "Manage modem communication, restart behavior and template customization from one page."
+msgstr "Управление связью с модемом, поведением при перезапуске и шаблонами на одной странице."
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1012
+msgid "Manufacturer"
+msgstr "Производитель"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1013
+msgid "Model"
+msgstr "Модель"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:343
+msgid "Modem"
+msgstr "Модем"
+
+msgid "Modem Configuration"
+msgstr "Настройка модема"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:940
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1246
+msgid "Modem Overview"
+msgstr "Обзор модема"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:359
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:490
+msgid "Modem information"
+msgstr "Информация о модеме"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:321
+msgid "Modem restart"
+msgstr "Перезапуск модема"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:322
+msgid "Modem restart after making changes to bands."
+msgstr "Перезапуск модема после изменения диапазонов."
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:495
+msgid "Modification of the bands"
+msgstr "Изменение диапазонов"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1010
+msgid "Module Information"
+msgstr "Информация о модуле"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1004
+msgid "Module Temperature"
+msgstr "Температура модуля"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1005
+msgid "Module Voltage"
+msgstr "Напряжение модуля"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:298
+msgid "Network interface for Internet access."
+msgstr "Сетевой интерфейс для доступа в интернет."
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:417
+msgid "No Service"
+msgstr "Нет сети"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:968
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:972
+msgid "No active network information is currently available."
+msgstr "Сейчас нет активной информации о сети."
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:569
+msgid "No band changes to apply."
+msgstr "Нет изменений диапазонов для применения."
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:981
+msgid "No runtime modem data is available. Install and start ModemManager to show live status."
+msgstr "Нет данных о модеме. Установите и запустите ModemManager, чтобы отображать состояние в реальном времени."
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:309
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:387
+msgid "No supported modem was found, quitting..."
+msgstr "Поддерживаемый модем не найден, выход..."
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1029
+msgid "Operator"
+msgstr "Оператор"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:983
+msgid "Operator Information"
+msgstr "Информация об операторе"
+
+msgid "Overview"
+msgstr "Обзор"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:160
+msgid "Perform reboot"
+msgstr "Выполнить перезагрузку"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:504
+msgid "Please select a band(s)"
+msgstr "Выберите диапазон(ы)"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:313
+msgid "Please select a port"
+msgstr "Выберите порт"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:305
+msgid "Port for communication with the modem"
+msgstr "Порт связи с модемом"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:311
+msgid "Port not found, quitting..."
+msgstr "Порт не найден, выход..."
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1018
+msgid "Power State"
+msgstr "Состояние питания"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:42
+msgid "Preferred 5G NSA bands"
+msgstr "Предпочитаемые диапазоны 5G NSA"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:30
+msgid "Preferred 5G SA bands"
+msgstr "Предпочитаемые диапазоны 5G SA"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:18
+msgid "Preferred LTE bands"
+msgstr "Предпочитаемые диапазоны LTE"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:480
+msgid "Preferred bands settings"
+msgstr "Настройки предпочитаемых диапазонов"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1019
+msgid "Primary Port"
+msgstr "Основной порт"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:416
+msgid "Rebooting…"
+msgstr "Перезагрузка…"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:133
+msgid "Refresh"
+msgstr "Обновить"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:988
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1006
+msgid "Region"
+msgstr "Регион"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1038
+msgid "Registration State"
+msgstr "Состояние регистрации"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:154
+msgid "Restart"
+msgstr "Перезапустить"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:316
+msgid "Restart WAN"
+msgstr "Перезапуск WAN"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:293
+msgid "Restart and notification behavior"
+msgstr "Перезапуск и уведомления"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:326
+msgid "Restart with AT command"
+msgstr "Перезапуск AT-командой"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:139
+msgid "Restore default bands"
+msgstr "Восстановить диапазоны по умолчанию"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1014
+msgid "Revision"
+msgstr "Ревизия"
+
+msgid "SIM Card Information"
+msgstr "Информация о SIM-карте"
+
+msgid "SIM Status"
+msgstr "Состояние SIM"
+
+msgid "SIM Type"
+msgstr "Тип SIM"
+
+msgid "SIM not detected"
+msgstr "SIM-карта не обнаружена"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:76
+msgid "Select all"
+msgstr "Выбрать все"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:306
+msgid "Select one of the available ttyUSBX ports."
+msgstr "Выберите один из доступных портов ttyUSBX."
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:343
+msgid "Select the modem settings file"
+msgstr "Выберите файл настроек модема"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:495
+msgid "Select the preferred band(s) for the modem."
+msgstr "Выберите предпочитаемые диапазоны для модема."
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:344
+msgid "Select the template assigned to the Vendor and ProdID of the modem."
+msgstr "Выберите шаблон, назначенный Vendor и ProdID модема."
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1039
+msgid "Serving Band"
+msgstr "Обслуживающий диапазон"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1035
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1040
+msgid "Signal Details"
+msgstr "Подробности сигнала"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:767
+msgid "Signal Quality"
+msgstr "Качество сигнала"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1003
+msgid "Signal Strength"
+msgstr "Уровень сигнала"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:44
+msgid "Supported 5G NSA bands"
+msgstr "Поддерживаемые диапазоны 5G NSA"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:32
+msgid "Supported 5G SA bands"
+msgstr "Поддерживаемые диапазоны 5G SA"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:20
+msgid "Supported LTE bands"
+msgstr "Поддерживаемые диапазоны LTE"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:379
+msgid "Supported bands depend on the region in which the modem operates. By modifying the DEFAULT_LTE_BANDS variable, you can easily adapt the package to your modem."
+msgstr "Поддерживаемые диапазоны зависят от региона работы модема. Изменив переменную DEFAULT_LTE_BANDS, можно легко адаптировать пакет под свой модем."
+
+msgid "Taiwan"
+msgstr "Тайвань"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:295
+msgid "Template editor"
+msgstr "Редактор шаблона"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:338
+msgid "Template loaded"
+msgstr "Шаблон загружен"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:294
+msgid "Template selection"
+msgstr "Выбор шаблона"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:313
+msgid "The modemband error."
+msgstr "Ошибка modemband."
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:396
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:582
+msgid "The new bands settings have been sent to the modem. If the changes are not visible, a restart of the connection, modem or router may be required."
+msgstr "Новые настройки диапазонов отправлены в модем. Если изменения не видны, может потребоваться перезапуск соединения, модема или роутера."
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:333
+msgid "Turn off notifications"
+msgstr "Отключить уведомления"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:789
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:796
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:969
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:970
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:974
+msgid "Unavailable from current backend"
+msgstr "Недоступно через текущий бэкенд"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:819
+msgid "Unknown"
+msgstr "Неизвестно"
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:317
+msgid "WAN restart after making changes to bands."
+msgstr "Перезапуск WAN после изменения диапазонов."
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:417
+msgid "Waiting for device..."
+msgstr "Ожидание устройства..."
+
+#: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:281
+msgid "Waiting to read data from the modem..."
+msgstr "Ожидание данных от модема..."

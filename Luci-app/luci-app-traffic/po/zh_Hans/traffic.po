@@ -1,0 +1,767 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: luci-app-traffic\n"
+"PO-Revision-Date: 2026-09-16 00:00+0000\n"
+"Last-Translator: MedyMa\n"
+"Language-Team: zh_Hans\n"
+"Language: zh_Hans\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Traffic"
+msgstr "流量统计"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Per-application traffic, measured on this router: byte counters from conntrack joined with the domain names AdGuard Home resolved. Traffic that the proxy carries is listed separately, so it is not counted twice."
+msgstr "按应用统计的流量，全部在本机测量：conntrack 的字节计数与 AdGuard Home 解析出的域名关联。代理隧道承载的流量单独列出，不会重复计入。"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Since start"
+msgstr "本次启动以来"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Last 24 hours"
+msgstr "最近 24 小时"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Last 7 days"
+msgstr "最近 7 天"
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Rate"
+msgstr "速率"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Clear"
+msgstr "清空"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Clear the counters collected so far?"
+msgstr "确定清空已统计的流量数据？"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Router and tunnel"
+msgstr "隧道"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Browser clients"
+msgstr "客户端合计"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Bucket"
+msgstr "周期"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "No traffic recorded yet."
+msgstr "暂无流量记录。"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "by client DNS"
+msgstr "同客户端 DNS 识别"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "by any client DNS"
+msgstr "任意客户端 DNS 识别"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Domain identified"
+msgstr "域名命中"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Categorised"
+msgstr "分类归入"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Other"
+msgstr "其他"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "type"
+msgstr "类型"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "All traffic"
+msgstr "所有流量"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Top client"
+msgstr "热门客户端"
+#: root/usr/share/rpcd/acl.d/luci-app-traffic.json:3
+msgid "Grant access to the per-application traffic statistics"
+msgstr "授予访问按应用流量统计的权限"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Throughput"
+msgstr "吞吐速率"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Last hour"
+msgstr "最近 1 小时"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Last 12 hours"
+msgstr "最近 12 小时"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "average over the selected range"
+msgstr "所选时间范围内的平均值"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Peak"
+msgstr "峰值"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Peak (1 s)"
+msgstr "峰值（1 秒）"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Peak (interval avg)"
+msgstr "峰值（区间均值）"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "avg down"
+msgstr "下行均值"
+
+
+
+# The generic one-word msgids ("Application", "Total", "Down", "Up", "Clients")
+# are deliberately NOT used: luci-base translates those itself and its text wins
+# at runtime ("Application" came out as "应用层", which means something else
+# entirely).  Every string this page needs is therefore spelled out.
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Application name"
+msgstr "应用"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Application"
+msgstr "应用"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Total traffic"
+msgstr "总量"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Received"
+msgstr "下载"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Sent"
+msgstr "上传"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Client count"
+msgstr "客户端数"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Peak clients/hour"
+msgstr "单小时客户端峰值"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "maximum number of clients seen in any single hour of this range"
+msgstr "所选范围中任一小时观察到的最大客户端数；跨小时未去重"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "number of clients seen for this application in the current session"
+msgstr "本次运行中此应用的客户端数"
+
+# The strip box for the same figure uses its own word: sitting next to
+# "客户端合计" (the bytes) a second "客户端数" reads as more of the same thing,
+# where "设备数" is plainly a count of devices.  The table header keeps
+# "客户端数", which is what its column actually holds.
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Devices"
+msgstr "设备数"
+
+# The strip box that counts the applications the table is listing.  It is the
+# same word the table's own column header uses ("Application name"), so the box
+# and the column read as one thing, and "应用" rather than "应用数" because the
+# caption is already the name of what is being counted - next to "设备数" and
+# "周期" a second "数" suffix would read as more of the same.
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Apps"
+msgstr "应用"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Apps and sites"
+msgstr "应用与站点"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "No samples yet"
+msgstr "暂无采样数据"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "State"
+msgstr "状态"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Running"
+msgstr "运行中"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Running, no traffic measured yet"
+msgstr "运行中，尚未统计到流量"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Collector has not produced a snapshot yet"
+msgstr "采集器尚未生成快照"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Snapshot is stale"
+msgstr "快照已过期"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Flows"
+msgstr "连接跟踪"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "DNS mappings"
+msgstr "域名映射"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Waiting to resolve"
+msgstr "待解析"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Query log"
+msgstr "查询日志"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Router addresses"
+msgstr "路由器自身地址"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Counter total"
+msgstr "计数器总量"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Accounted share"
+msgstr "已分类占比"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "every packet counted at the LAN interface, proxied traffic included"
+msgstr "在 LAN 接口处逐包计数，包含被代理的流量"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Counting method"
+msgstr "计数方式"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "nft counters"
+msgstr "nft 计数器"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "conntrack"
+msgstr "连接跟踪"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Counter error"
+msgstr "计数器错误"
+
+# The warning that the nft counters are being used on a router whose firewall
+# offloads forwarded traffic past them - the combination that undercounts.
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Counter mode"
+msgstr "计数口径"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "flow offloading is on: the nft counters miss client traffic"
+msgstr "已开启流量卸载：nft 计数会漏掉客户端流量"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Collector version"
+msgstr "版本"
+
+# The hour the collector is currently accumulating.  It was labelled "Bucket",
+# which is also the caption of the archived-hour count in the same strip - two
+# different readings under one word once the strips were merged into one row.
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Current hour"
+msgstr "当前小时"
+
+# Small-case variants: "Total"/"Up" are translated by luci-base, so the page
+# uses its own caption strings where the wording has to be exact.
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "total"
+msgstr "总计"
+
+# What the ring is a breakdown of.  The hero already says 总计 for the same
+# number; the ring's own label says what the slices add up to.
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Total volume"
+msgstr "总流量"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "up"
+msgstr "上行"
+
+# --- 0.1.90: 接口计数器成为权威总量 -----------------------------------------
+# 「总计/下载/上传」现在优先取 /proc/net/dev 的接口计数（summary.iface），它不受
+# 流卸载影响；归属值（应用/客户端明细之和）只作为占比呈现，因此不能再自称「总计」。
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Attributed"
+msgstr "已归属"
+
+# 已归属占比的说明：路由器实际承载的流量里，应用与客户端归属能说出名字的部分。
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "share of the traffic the router carried that the app and client accounting could name"
+msgstr "在路由器实际承载的流量中，应用与客户端归属能说出名字的部分所占比例"
+
+# 会话视图的卸载告警：这里的总量来自接口计数（准确），明细只是其中一部分。
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "flow offloading is on: the app breakdown only accounts for part of the traffic, while the totals above come from the interface counters and are exact"
+msgstr "已开启流量卸载：应用明细只覆盖了其中一部分流量，上方总计来自接口计数器，是准确的"
+
+# 范围视图的卸载告警：归档小时来自归属层，没有对应的接口总量，所以不能说「总量准确」。
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "flow offloading is on: the accounting layer only sees part of the forwarded traffic, so the figures below are a share of what the box carried"
+msgstr "已开启流量卸载：记账层只能看到转发流量的一部分，下方数字只是实际承载量的一份占比"
+
+# 环形图右侧那份清单是「已归属流量」的构成（协议桶也在其中），不能沿用表头那份
+# 「应用」文案，否则 SSL/TLS 又会被读成一个应用。
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Attributed traffic"
+msgstr "已归属流量"
+
+# 热门客户端是本次运行的累计值，而旁边的字节列可能只覆盖所选范围，两个窗口不同。
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Top client (this session)"
+msgstr "热门客户端（本次运行）"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "the busiest client of each application is recorded for the current run, while the byte columns can cover the selected range"
+msgstr "每个应用的热门客户端记录的是本次运行的累计值，而字节列可能只覆盖所选时间范围，两者不是同一个统计窗口"
+
+# 合计行的热门客户端属于该行自己的窗口：会话视图看本次运行，范围视图看归档的客户端行。
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "the busiest client overall, for the current run"
+msgstr "整体最忙的客户端，统计自本次运行"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "the busiest client of the selected range, from the archived client rows"
+msgstr "所选时间范围内最忙的客户端，取自归档的客户端记录"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+# 环形图里其余应用的合计切片：环现在代表总计，图例也把它和未归属一起列出
+msgid "Other apps"
+msgstr "其余应用"
+
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Other listed traffic"
+msgstr "其余已列流量"
+
+# --- 环形图代表总计，不再是已归属 ---------------------------------------------
+# 环里「没能归属」的那一段：本窗口的总量减去应用/客户端归属能说出名字的部分。
+# 开流卸载或走代理隧道时它很大（实测占 62%），所以它必须有一眼可辨的颜色：中性
+# 灰，而不是调色板里的应用色——没有任何东西被识别出来，它不该看起来像一个应用。
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Unattributed"
+msgstr "未归属"
+
+# 环形图右侧那份清单的标题。环现在画的是整个窗口的构成（前十名 + 其余应用 +
+# 未归属），其 100% 就是上方总计，所以它不再是「已归属流量」的构成。
+#: htdocs/luci-static/resources/view/traffic/overview.js
+msgid "Traffic breakdown"
+msgstr "流量构成"
+
+msgid "Show domains"
+msgstr "展开域名"
+
+msgid "of all traffic"
+msgstr "占全部流量"
+
+msgid "Updates every %s seconds"
+msgstr "%s 秒更新"
+
+msgid "TOPS tunnels"
+msgstr "TOPS 隧道"
+
+msgid "Firmware ready"
+msgstr "固件已就绪"
+
+msgid "Firmware not ready"
+msgstr "固件未就绪"
+
+msgid "Tunnel states are software snapshots. WAN and conntrack remain the byte sources; TOPS events are not added to traffic totals."
+msgstr "隧道状态来自软件快照。流量字节仍取自 WAN 与 conntrack，TOPS 事件计数不计入流量总量。"
+
+msgid "Synchronized"
+msgstr "已同步"
+
+msgid "Pending"
+msgstr "待同步"
+
+msgid "No synchronized tunnel entries yet"
+msgstr "暂未记录隧道表项"
+
+msgid "Tunnel state unavailable"
+msgstr "无法读取隧道状态"
+
+msgid "Local endpoint"
+msgstr "本地端点"
+
+msgid "Remote endpoint"
+msgstr "远端端点"
+
+msgid "Index"
+msgstr "索引"
+
+msgid "Protocol"
+msgstr "协议"
+
+msgid "NPU / TOPS"
+msgstr "NPU / TOPS"
+
+msgid "Tunnel acceleration"
+msgstr "隧道加速"
+
+msgid "Not loaded"
+msgstr "未加载"
+
+msgid "Status unavailable"
+msgstr "状态不可用"
+
+msgid "Ready"
+msgstr "已就绪"
+
+msgid "Not ready"
+msgstr "未就绪"
+
+msgid "Snapshot out of date"
+msgstr "快照已过期"
+
+msgid "Firmware"
+msgstr "固件状态"
+
+msgid "Registered tunnel types"
+msgstr "已注册协议数"
+
+msgid "Synchronized tunnels"
+msgstr "已同步隧道"
+
+msgid "Recorded"
+msgstr "已记录"
+
+msgid "Hardware forwarding"
+msgstr "硬件收发"
+
+msgid "Verified"
+msgstr "已验证"
+
+msgid "Not verified"
+msgstr "待验证"
+
+msgid "Parameter synchronization is not packet verification"
+msgstr "参数同步不代表收发已验证"
+
+msgid "Unable to refresh; showing the last snapshot."
+msgstr "刷新失败，当前显示上一次快照。"
+
+msgid "Tunnel state is incomplete or unavailable."
+msgstr "隧道状态读取不完整或暂时不可用。"
+
+msgid "Direction"
+msgstr "方向"
+
+msgid "Bidirectional"
+msgstr "双向"
+
+msgid "Encapsulation"
+msgstr "封装"
+
+msgid "Decapsulation"
+msgstr "解封装"
+
+msgid "Parameters synchronized"
+msgstr "参数已同步"
+
+msgid "Synchronization failed"
+msgstr "同步失败"
+
+msgid "Not started"
+msgstr "尚未开始"
+
+msgid "Classifier setup"
+msgstr "分类器配置"
+
+msgid "Pause NPU"
+msgstr "暂停 NPU"
+
+msgid "Management core ACK"
+msgstr "管理核确认"
+
+msgid "Offload core notification"
+msgstr "卸载核通知"
+
+msgid "DIP filter setup"
+msgstr "DIP 过滤器配置"
+
+msgid "No tunnel entries"
+msgstr "暂无隧道记录"
+
+msgid "Waiting for supported tunnel traffic."
+msgstr "固件已就绪，等待支持的隧道流量。"
+
+msgid "Tunnel learning starts when the firmware is ready."
+msgstr "固件就绪后开始学习隧道。"
+
+msgid "Conntrack accounting status is unavailable."
+msgstr "暂时无法读取连接流量统计状态。"
+
+msgid "Conntrack accounting is disabled; application attribution may be incomplete."
+msgstr "连接流量统计未开启，应用流量归属可能不完整。"
+
+msgid "How this status is counted"
+msgstr "状态与流量统计说明"
+
+msgid "WAN counters provide total traffic; conntrack provides application attribution. TOPS setup events are not traffic bytes."
+msgstr "总流量取自 WAN 计数，应用归属取自连接统计。TOPS 建立事件不作为流量字节累加。"
+
+msgid "Synchronized parameters alone do not confirm hardware packet forwarding."
+msgstr "仅凭隧道参数已同步，无法确认硬件已完成报文收发。"
+
+msgid "NPU utilization"
+msgstr "NPU 使用率"
+
+msgid "Utilization unavailable"
+msgstr "暂时无法读取使用率"
+
+msgid "Average busy time of five NPU cores"
+msgstr "NPU 五个核心的平均忙碌比例"
+
+msgid "Ordinary Internet traffic is handled by PPE/WED. An empty TOPS table can coexist with active hardware forwarding."
+msgstr "普通上网流量由 PPE／WED 处理；TOPS 表为空时，硬件转发仍可正常工作。"
+
+msgid "1-second samples; gaps are left empty."
+msgstr "每秒采样；采样缺口保留为空。"
+
+msgid "5 minutes ago"
+msgstr "5 分钟前"
+
+msgid "Average"
+msgstr "平均值"
+
+msgid "Download"
+msgstr "下载"
+
+msgid "Now"
+msgstr "现在"
+
+msgid "RX packets"
+msgstr "接收包速率"
+
+msgid "Realtime network"
+msgstr "实时网络"
+
+msgid "Sample unavailable or establishing a new baseline."
+msgstr "采样不可用或正在建立新基线。"
+
+msgid "TX packets"
+msgstr "发送包速率"
+
+msgid "Upload"
+msgstr "上传"
+
+msgid "WAN interface counters"
+msgstr "WAN 接口计数器"
+
+msgid "WAN sample unavailable. Interface traffic is separate from application attribution and NPU utilization."
+msgstr "WAN 采样不可用。接口吞吐、应用归属流量和 NPU 利用率分别统计。"
+
+msgid "WAN throughput over the last five minutes"
+msgstr "最近 5 分钟的 WAN 吞吐"
+
+msgid "Waiting for a WAN sample…"
+msgstr "正在等待 WAN 采样…"
+
+msgid "NPU to CPU"
+msgstr "NPU 回送 CPU"
+
+msgid "IPsec context"
+msgstr "IPsec 加密上下文"
+
+msgid "NPU to CPU counts validated tunnel returns only. Traffic kept in hardware is outside this counter."
+msgstr "仅统计经硬件标识核验的 NPU 隧道回送包，不涵盖始终在硬件中转发的流量。"
+
+msgid "Hardware packet counters are unavailable on this firmware."
+msgstr "当前固件未提供可核验的硬件包计数。"
+
+msgid "Interface rates, tunnel parameters and NPU utilization are measured separately."
+msgstr "接口速率、隧道参数和 NPU 使用率分别采集。"
+
+msgid "packets"
+msgstr "包"
+
+msgid "Tunnel recognized"
+msgstr "已识别隧道"
+
+msgid "Parameters prepared"
+msgstr "参数已准备"
+
+msgid "Waiting for synchronization"
+msgstr "等待参数同步"
+
+msgid "NPU not ready"
+msgstr "NPU 未就绪"
+
+msgid "Security policy restriction"
+msgstr "安全策略限制"
+
+msgid "Invalid offload metadata"
+msgstr "卸载元数据无效"
+
+msgid "Unsupported packet format"
+msgstr "不支持此报文格式"
+
+msgid "Parameter parsing failed"
+msgstr "参数解析失败"
+
+msgid "Tunnel or output device unavailable"
+msgstr "隧道或出口设备不可用"
+
+msgid "Offload resources exhausted"
+msgstr "卸载资源不足"
+
+msgid "Excluded by packet mark"
+msgstr "报文标记排除"
+
+msgid "ALG or offload policy excluded"
+msgstr "ALG 或卸载策略排除"
+
+msgid "Ethernet header unavailable"
+msgstr "缺少以太网头"
+
+msgid "No valid PPE flow slot"
+msgstr "没有有效的 PPE 流项"
+
+msgid "Route or neighbor resolution failed"
+msgstr "路由或邻居解析失败"
+
+msgid "Output device cannot be offloaded"
+msgstr "出口设备不支持卸载"
+
+msgid "Excluded by VLAN policy"
+msgstr "VLAN 策略排除"
+
+msgid "Waiting for traffic identification"
+msgstr "等待流量识别"
+
+msgid "Binding threshold not reached"
+msgstr "未达到绑定门槛"
+
+msgid "Fragmented packet"
+msgstr "分片报文"
+
+msgid "MTU exceeds offload limit"
+msgstr "MTU 超出卸载限制"
+
+msgid "Flow owner or version changed"
+msgstr "流归属或版本已变化"
+
+msgid "Flow accounting unavailable"
+msgstr "单流计数不可用"
+
+msgid "Binding parameters staged"
+msgstr "绑定参数已暂存"
+
+msgid "Binding submitted"
+msgstr "绑定已提交"
+
+msgid "Waiting for decapsulation binding"
+msgstr "等待解封装绑定"
+
+msgid "Binding condition not met"
+msgstr "绑定条件不满足"
+
+msgid "PPE counters observed"
+msgstr "已观察到 PPE 计数"
+
+msgid "HNAT binding verified"
+msgstr "HNAT 绑定已核验"
+
+msgid "Not yet verified"
+msgstr "尚未验证"
+
+msgid "No diagnostic samples"
+msgstr "暂无诊断样本"
+
+msgid "Diagnostics unavailable"
+msgstr "诊断接口不可用"
+
+msgid "Observed status for this direction"
+msgstr "此方向的观测状态"
+
+msgid "Connection"
+msgstr "连接"
+
+msgid "Decision"
+msgstr "处理结果"
+
+msgid "Hardware counter sample"
+msgstr "硬件计数样本"
+
+msgid "Tunnel"
+msgstr "隧道"
+
+msgid "Version"
+msgstr "版本"
+
+msgid "Tunnel association unavailable"
+msgstr "尚未关联隧道"
+
+msgid "Tunnel state changed or pending"
+msgstr "隧道状态已变化或待同步"
+
+msgid "Unavailable"
+msgstr "不可用"
+
+msgid "No connection tracking"
+msgstr "无连接跟踪"
+
+msgid "Reply"
+msgstr "回程"
+
+msgid "Original"
+msgstr "去程"
+
+msgid "Candidate"
+msgstr "候选报文"
+
+msgid "Encapsulation / decapsulation"
+msgstr "封装／解封装"
+
+msgid "No current owner-verified sample"
+msgstr "无当前流归属匹配的计数样本"
+
+msgid "PPE samples belong to the displayed flow and version. They do not measure complete NPU throughput."
+msgstr "PPE 样本仅对应所示连接和版本，不代表完整 NPU 吞吐。"
+
+msgid "Flow diagnostics"
+msgstr "链路诊断"
+
+msgid "No response recorded"
+msgstr "暂无应答记录"
+
+msgid "Last response"
+msgstr "距最近应答"
+
+msgid "Timeouts"
+msgstr "超时次数"
+
+msgid "Last command"
+msgstr "最近命令"
+
+msgid "Command responses are transport observations, not firmware heartbeats."
+msgstr "命令应答用于观察通信状态，不能作为固件心跳。"
+
+msgid "Firmware communication"
+msgstr "固件通信"
+
+msgid "Packet direction unknown"
+msgstr "报文方向未确定"
+
+msgid "Candidate location; owner unverified"
+msgstr "候选流项，归属尚未验证"
+
+msgid "Traffic Analysis"
+msgstr "流量分析"

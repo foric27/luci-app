@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// The Chinese payload below tests UTF-8 handling and is intentionally not translated.
 const fs=require('fs'),assert=require('assert');
 const src=fs.readFileSync(__dirname+'/../htdocs/luci-static/resources/view/traffic/overview.js','utf8');
 const body=src.match(/function callHourly\(hours\) \{([\s\S]*?)\n\}/);

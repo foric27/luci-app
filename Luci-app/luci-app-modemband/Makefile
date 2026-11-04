@@ -6,8 +6,8 @@
 
 include $(TOPDIR)/rules.mk
 
-LUCI_TITLE:=LuCI JS Support for modemband application
-LUCI_DESCRIPTION:=LuCI JS interface for the modemband. The package allows set LTE/5G bands for selected 4G/5G modems.
+LUCI_TITLE:=Поддержка modemband в LuCI JS
+LUCI_DESCRIPTION:=Интерфейс LuCI JS для modemband. Пакет позволяет настраивать диапазоны LTE/5G для поддерживаемых модемов 4G/5G.
 LUCI_DEPENDS:=+modemband
 
 PKG_NAME:=luci-app-modemband

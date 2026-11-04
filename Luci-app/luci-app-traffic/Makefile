@@ -6,8 +6,8 @@ PKG_RELEASE:=5
 PKG_LICENSE:=Apache-2.0
 LUCI_PKGARCH:=all
 
-LUCI_TITLE:=LuCI per-application traffic statistics
-LUCI_DESCRIPTION:=Per-application traffic statistics, UCG style: the totals come from the WAN interface counters, so they stay right with flow offloading on; the per-application breakdown comes from conntrack correlated with AdGuard Home DNS answers, and the proxy tunnel is accounted separately.
+LUCI_TITLE:=Статистика трафика по приложениям в LuCI
+LUCI_DESCRIPTION:=Статистика трафика по приложениям в стиле UCG: итоги берутся из счётчиков интерфейса WAN и остаются точными при включённой разгрузке потоков; разбивка по приложениям строится по conntrack, сопоставленному с DNS-ответами AdGuard Home, а прокси-туннель учитывается отдельно.
 LUCI_DEPENDS:=+luci-base +lua +luci-lib-nixio +curl +ca-bundle +coreutils-timeout
 
 define Build/Prepare/$(PKG_NAME)
@@ -22,9 +22,6 @@ define Build/Prepare/$(PKG_NAME)
 	chmod 0755 $(PKG_BUILD_DIR)/root/usr/share/traffic/realtime.sh
 	$(SED) 's|^COLLECTOR_VERSION=.*|COLLECTOR_VERSION=$(PKG_VERSION)-r$(PKG_RELEASE)|' \
 		$(PKG_BUILD_DIR)/root/usr/share/traffic/collector.sh
-	$(INSTALL_DIR) $(PKG_BUILD_DIR)/root/usr/lib/lua/luci/i18n
-	po2lmo ${CURDIR}/translations/zh_Hans/traffic.po \
-		$(PKG_BUILD_DIR)/root/usr/lib/lua/luci/i18n/traffic.zh-cn.lmo
 endef
 
 define Package/$(PKG_NAME)/conffiles

@@ -9,7 +9,7 @@ PKG_NAME:=luci-app-turboacc-mtk
 PKG_RELEASE:=2
 PKG_LICENSE:=GPL-3.0-only
 
-LUCI_TITLE:=LuCI support for MTK HNAT
+LUCI_TITLE:=Поддержка MTK HNAT в LuCI
 LUCI_DEPENDS:= \
 	+luci-base \
 	+rpcd \

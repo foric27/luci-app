@@ -415,3 +415,21 @@ msgstr "中国澳门"
 
 msgid "Taiwan"
 msgstr "中国台湾"
+
+msgid "Enabled"
+msgstr "已启用"
+
+msgid "Disabled"
+msgstr "未启用"
+
+msgid "Failure Reason"
+msgstr "故障原因"
+
+msgid "Grant access to LuCI app modemband"
+msgstr "授予 LuCI 应用 modemband 访问权限"
+
+msgid "IMEI"
+msgstr "IMEI"
+
+msgid "Power State"
+msgstr "电源状态"

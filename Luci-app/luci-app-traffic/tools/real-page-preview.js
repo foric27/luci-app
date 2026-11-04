@@ -63,14 +63,14 @@ const viewStub={extend(o){ viewStub.__obj=o; return o; }};
 const domStub={content(node,ch){ node.children=[]; (Array.isArray(ch)?ch:[ch]).forEach(x=>{ if(x) node.appendChild(x); }); }};
 const rpcStub={declare(spec){ return ()=>Promise.resolve(spec.method === 'getHourlyChunk'
   ? {cursor:'preview',offset:0,next:12,total:12,done:true,data:Buffer.from('{\"hours\":[]}').toString('base64')} : {}); }};
-const PO = loadPo(path.join(__dirname, '..', 'translations', 'zh_Hans', 'traffic.po'));
+const PO = loadPo(path.join(__dirname, '..', 'po', 'zh_Hans', 'traffic.po'));
 // an untranslated string falls through to its msgid, which is what LuCI does
 const translate = s => (PO[s] !== undefined ? PO[s] : s);
 factory(viewStub,rpcStub,domStub,{add(){}},translate,E,{bind(f,c){return f.bind(c);},resource(p){return p;},env:{}},
   documentStub,function(){ return {onload:null,src:'',className:''}; },()=>true);
 const view=viewStub.__obj;
 
-/* The page's labels come from translations/zh_Hans/traffic.po, and the preview has to show
+/* The page's labels come from po/zh_Hans/traffic.po, and the preview has to show
  * them: the strip boxes are sized for the Chinese ones, which are two to six
  * characters.  An English preview hides the very thing the width was chosen for
  * (and made long captions wrap, which Chinese never does), so it is not a
@@ -119,7 +119,7 @@ const SERIES={ range:'24h', interval:60, points:Array.from({length:180},(_,i)=>{
   return [t,d,Math.round(d*0.16)]; }) };
 
 /* ---- build the page for real ---- */
-/* The two figures under 下载/上传 are the difference between two consecutive
+/* The two figures under «Приём/отдача» are the difference between two consecutive
  * snapshots, which in the page comes from refresh() polling a summary and then
  * the next one ten seconds later.  The preview calls the render methods directly,
  * so it has to stand in for that - otherwise the reading the design is about

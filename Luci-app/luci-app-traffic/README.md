@@ -1,144 +1,151 @@
 # luci-app-traffic
 
-Per-application traffic statistics for OpenWrt / ImmortalWrt, in the style of a
-UniFi gateway: an application name, an icon, and how many bytes went down and
-up — measured **on the router**, so it still works for traffic that a proxy
-hides from an upstream gateway.
+Статистика трафика по приложениям для OpenWrt / ImmortalWrt в стиле шлюза
+UniFi: имя приложения, иконка и сколько байтов было принято и отправлено —
+измеряется **на роутере**, поэтому работает и для трафика, который прокси
+скрывает от вышестоящего шлюза.
 
-## Why this exists
+## Зачем это нужно
 
-An upstream device that classifies traffic by DPI (UniFi's application
-breakdown, for example) only sees what leaves the router. Once PassWall or
-OpenClash is in use, everything is inside an encrypted tunnel to one node, and
-every byte collapses into a single `SSL/TLS` bucket. AdGuard Home makes it
-worse for DNS-based identification: the clients' queries never leave the box.
+Вышестоящее устройство, классифицирующее трафик по DPI (например, разбивка по
+приложениям в UniFi), видит только то, что покидает роутер. Когда используется
+PassWall или OpenClash, всё оказывается внутри зашифрованного туннеля к одной
+ноде, и каждый байт схлопывается в одну корзину `SSL/TLS`. С AdGuard Home
+ситуация для идентификации по DNS ещё хуже: запросы клиентов вообще не покидают
+устройство.
 
-The router, by contrast, sits at both ends of the tunnel. It can see
-the domain a client resolved, and it can see how many bytes each flow carried.
-This package joins those two facts and reports per-application traffic that an
-upstream gateway fundamentally cannot.
+Роутер, напротив, находится на обоих концах туннеля. Он видит домен, который
+разрешил клиент, и видит, сколько байтов нёс каждый поток. Этот пакет объединяет
+два факта и показывает трафик по приложениям, который вышестоящий шлюз
+принципиально увидеть не может.
 
-## How it works
+## Как это работает
 
 ```
-conntrack bytes  ─┐
-                  ├─► (client, destination IP) ─► domain ─► application
-AGH querylog     ─┘
+байты conntrack ─┐
+                 ├─► (клиент, IP назначения) ─► домен ─► приложение
+журнал запросов AGH ─┘
 ```
 
-1. **Connection counters** come from `/proc/net/nf_conntrack`. The collector
-   prefers paired `bytes_total=` / `packets_total=` lifetime counters and a
-   kernel `traffic_id=` when available. They survive nlbwmon's netlink counter
-   resets; ordinary `bytes=` / `packets=` remain a supported, explicitly less
-   complete fallback. The collector samples every `traffic.settings.interval`
-   seconds (default 10). An optional bounded `/proc/net/nf_conntrack_closed`
-   snapshot supplies final counters and short connections between scans.
-2. **Domains** come from AdGuard Home's query log, read incrementally. Its
-   `Answer` field is a base64 DNS message; `ans.lua` decodes it and yields
-   `(client, domain, resolved IP)`.
-3. **Attribution** matches a flow's `(source, destination)` against those
-   mappings. A flow whose source is the router itself is the proxy tunnel and
-   is reported separately, so the traffic it carries is not counted twice. "The
-   router itself" means two things: a source outside the LAN prefixes (the far
-   end of a tunnel), and a source that *is* one of the box's own LAN addresses
-   (`self`, auto-detected on the LAN interface, v4 and v6). The second case
-   matters on a box that runs its own proxy: those connections are sourced from
-   the LAN address, and counting them as a client put `192.168.2.1` at the top
-   of the client list with 39 MB against it.
-   For inbound DNAT, the translated LAN endpoint comes from the reply tuple.
-   The counter baseline retains the original source and destination.
-4. **Names** — every flow gets a name, in this order:
-   1. `/etc/traffic/apps.tsv`, matched against the **host name exactly** first
-      (AdGuard Home reports `music.163.com`, so sub-domain rules work) and then
-      against the **longest matching domain suffix**;
-   2. `/etc/traffic/categories.tsv`, longest suffix match — hardware and
-      advertising domains then read as `CDN` / `Ads` / `Games` instead of a
-      meaningless host name;
-   3. the registrable domain itself: a website is identified by its domain,
-      which is what the reader actually recognises;
-   4. failing all of that (no DNS answer at all), a **protocol bucket** derived
-      from protocol and port — `SSL/TLS`, `QUIC`, `HTTP`, `DNS`, `STUN`,
-      `RTSP`, `Email`, `Other`. That is why an unnamed encrypted flow shows up
-      as `SSL/TLS` rather than disappearing into an "unknown" heap.
+1. **Счётчики соединений** берутся из `/proc/net/nf_conntrack`. Сборщик
+   предпочитает парные пожизненные счётчики `bytes_total=` / `packets_total=`
+   и ядерный `traffic_id=`, когда они доступны. Они переживают сбросы
+   netlink-счётчиков nlbwmon; обычные `bytes=` / `packets=` остаются
+   поддерживаемым, но явно менее полным резервным вариантом. Сборщик делает
+   замер каждые `traffic.settings.interval` секунд (по умолчанию 10).
+   Необязательный ограниченный снимок `/proc/net/nf_conntrack_closed` даёт
+   финальные счётчики и короткие соединения между сканированиями.
+2. **Домены** берутся из журнала запросов AdGuard Home и читаются
+   инкрементально. Поле `Answer` — это DNS-сообщение в base64; `ans.lua`
+   декодирует его и возвращает `(клиент, домен, разрешённый IP)`.
+3. **Атрибуция** сопоставляет `(источник, назначение)` потока с этими
+   сопоставлениями. Поток, источник которого — сам роутер, считается
+   прокси-туннелем и показывается отдельно, чтобы его трафик не учитывался
+   дважды. «Сам роутер» означает две вещи: источник вне префиксов LAN (дальний
+   конец туннеля) и источник, который *является* одним из собственных адресов
+   LAN устройства (`self`, автоматически определяется на интерфейсе LAN, v4 и
+   v6). Второй случай важен на устройстве с собственным прокси: такие соединения
+   имеют источником адрес LAN, и если считать их клиентом, `192.168.2.1`
+   оказывался первым в списке клиентов с 39 MB. Для входящего DNAT
+   транслированный LAN-эндпоинт берётся из кортежа ответа. Базовая линия
+   счётчиков сохраняет исходные источник и назначение.
+4. **Имена** — каждый поток получает имя в таком порядке:
+   1. `/etc/traffic/apps.tsv`, сначала точное совпадение с **именем хоста**
+      (AdGuard Home сообщает `music.163.com`, поэтому правила поддоменов
+      работают), затем **самый длинный совпавший суффикс домена**;
+   2. `/etc/traffic/categories.tsv`, самое длинное совпадение суффикса — тогда
+      домены оборудования и рекламы читаются как `CDN` / `Ads` / `Games`, а не
+      как бессмысленное имя хоста;
+   3. сам регистрируемый домен: сайт определяется своим доменом, который
+      читатель действительно узнаёт;
+   4. если ничего не сработало (ответа DNS нет вообще) — **протокольная
+      корзина**, выведенная из протокола и порта: `SSL/TLS`, `QUIC`, `HTTP`,
+      `DNS`, `STUN`, `RTSP`, `Email`, `Other`. Поэтому неопознанный
+      зашифрованный поток показывается как `SSL/TLS`, а не исчезает в куче
+      «неизвестного».
 
-   The two catalogues are large (see below), so they are **not** read on every
-   poll: a host name is resolved once, when it is first seen, and the answer is
-   cached in `/tmp/traffic/namemap.tsv`. The poll path then reads only that
-   cache, which is what keeps a 32,000-key catalogue from costing more than the
-   accounting itself. Replacing the catalogue (an upgrade) invalidates the
-   cache and everything is resolved again in one batch.
+   Оба каталога большие (см. ниже), поэтому они **не читаются при каждом
+   опросе**: имя хоста разрешается один раз, при первом появлении, а ответ
+   кэшируется в `/tmp/traffic/namemap.tsv`. Затем путь опроса читает только
+   этот кэш — именно это не даёт каталогу на 32 000 ключей стоить дороже самого
+   учёта. Замена каталога (обновление) инвалидирует кэш, и всё разрешается
+   заново одним пакетом.
 
-5. **Per-host counters** (the `accounting` option, on by default). Everything
-   above is conntrack and DNS, which cannot be the whole story: a conntrack
-   entry can be missed when the table is full, `nf_conntrack_acct` can be off,
-   and a domain resolved by the proxy rather than locally leaves no DNS answer
-   to name the flow with. So the client **totals** come from a byte counter per
-   host, created in a small nftables table of its own (`inet traffic_acct`):
+5. **Счётчики по хостам** (параметр `accounting`, по умолчанию включён). Всё
+   вышеперечисленное — это conntrack и DNS, которые не могут быть полной
+   картиной: запись conntrack может быть пропущена при переполнении таблицы,
+   `nf_conntrack_acct` может быть выключен, а домен, разрешённый прокси, а не
+   локально, не оставляет ответа DNS для имени потока. Поэтому **итоги
+   клиентов** берутся из счётчика байтов на хост, созданного в собственной
+   небольшой таблице nftables (`inet traffic_acct`):
 
-   | direction | hook | match |
+   | направление | hook | совпадение |
    |---|---|---|
-   | upload | `prerouting`, priority `raw` | `iifname <lan> ip saddr <client>` |
-   | download | `postrouting`, priority `101` | `oifname <lan> ip daddr <client>` |
+   | upload | `prerouting`, приоритет `raw` | `iifname <lan> ip saddr <client>` |
+   | download | `postrouting`, приоритет `101` | `oifname <lan> ip daddr <client>` |
 
-   Upload is matched by source and download by destination, and no packet
-   matches both, so a directly routed download is not counted twice. Filtering
-   on the LAN interface is what keeps the proxy's own sockets out of it, since
-   those leave by the WAN device.
+   Загрузка сопоставляется по источнику, скачивание — по назначению, и ни один
+   пакет не совпадает с обоими, поэтому напрямую маршрутизированное скачивание
+   не считается дважды. Фильтрация по интерфейсу LAN не даёт собственным
+   сокетам прокси попасть в учёт, поскольку они уходят через устройство WAN.
 
-   This is the idea behind **wrtbwmon** — account per host with firewall
-   counters rather than with conntrack — but deliberately **not** its hook
-   choice. wrtbwmon counts in the `FORWARD` chain.
-   That cannot work here: passwall's own nft table has only `prerouting` and
-   `output` base chains, and every proxied connection ends in `tproxy to :port`
-   or `redirect to :port`, both of which hand the connection to a local socket.
-   Proxied client traffic therefore goes `PREROUTING → INPUT` and never reaches
-   `FORWARD` — and AdGuard Home's DNS redirect leaves `PREROUTING` the same way.
-   A `FORWARD` counter would miss exactly the bulk it was added to measure.
-   (`wrtbwmon`'s `readDB.awk` is also gawk-only: it dispatches on `ARGIND`,
-   which busybox `awk` does not have, so on this target it would silently do
-   nothing at all.)
+   Это идея **wrtbwmon** — учитывать по хосту счётчиками firewall, а не
+   conntrack, — но намеренно **не** его выбор hook. wrtbwmon считает в цепочке
+   `FORWARD`. Здесь это не работает: собственная таблица nft passwall имеет
+   только базовые цепочки `prerouting` и `output`, а каждое проксируемое
+   соединение заканчивается в `tproxy to :port` или `redirect to :port`, и оба
+   варианта передают соединение локальному сокету. Поэтому проксируемый трафик
+   клиентов идёт `PREROUTING → INPUT` и никогда не доходит до `FORWARD` — а
+   перенаправление DNS AdGuard Home покидает `PREROUTING` тем же путём.
+   Счётчик `FORWARD` пропустил бы именно тот объём, для которого его добавляли.
+   (`readDB.awk` в `wrtbwmon` к тому же рассчитан только на gawk: он
+   использует `ARGIND`, которого нет в busybox `awk`, поэтому на этой цели он
+   молча не делал бы вообще ничего.)
 
-   The download hook must be `postrouting` and not `prerouting` for the same
-   reason: the download half of a proxied connection is produced by a local
-   socket and leaves through `OUTPUT`, so it never appears in `prerouting`.
+   Hook скачивания должен быть `postrouting`, а не `prerouting`, по той же
+   причине: половина скачивания проксируемого соединения создаётся локальным
+   сокетом и уходит через `OUTPUT`, поэтому никогда не появляется в
+   `prerouting`.
 
-   The counters are the client totals; the application breakdown stays
-   conntrack-based, and the page reports both, so the share of traffic that
-   could not be attributed is visible instead of hidden. With no `nft`
-   installed, or with `accounting` set to `0`, the client totals fall back to
-   conntrack and the page says so.
+   Счётчики — это итоги клиентов; разбивка по приложениям остаётся на
+   conntrack, и страница показывает оба значения, поэтому доля трафика,
+   которую не удалось атрибутировать, видна, а не скрыта. Если `nft` не
+   установлен или `accounting` равен `0`, итоги клиентов откатываются на
+   conntrack, и страница сообщает об этом.
 
-   **Flow offloading defeats any netfilter counter**, this one included: an
-   offloaded flow stops traversing the hooks after its first packets. For exact
-   totals, leave `option flow_offloading` off in `/etc/config/firewall`.
+   **Flow offloading делает бесполезным любой счётчик netfilter**, включая
+   этот: разгруженный поток перестаёт проходить через hook после первых
+   пакетов. Для точных итогов отключите `option flow_offloading` в
+   `/etc/config/firewall`.
 
-### Where the names come from, and where they cannot
+### Откуда берутся имена и где их взять нельзя
 
-Naming a flow needs a `(client, domain, resolved IP)` triple. On this kind of
-router the client query does not necessarily reach AdGuard Home, because
-passwall reshapes DNS:
+Для имени потока нужна тройка `(клиент, домен, разрешённый IP)`. На таком
+роутере запрос клиента не обязательно доходит до AdGuard Home, потому что
+passwall перестраивает DNS:
 
-* passwall's `helper_dnsmasq.lua` **stretches** the system dnsmasq — it takes
-  over `dhcp.@dnsmasq[0].server` and installs its own conf-dir — so the client
-  talks to dnsmasq and dnsmasq decides which domains go where;
-* passwall's default `dns_shunt` is `chinadns-ng`, and its default
-  `dns_redirect` is `1`, so proxied domains are answered by passwall itself;
-* AdGuard Home's default redirect mode is literally `dnsmasq-upstream`: it sits
-  *behind* dnsmasq, not in front of the clients.
+* `helper_dnsmasq.lua` passwall **растягивает** системный dnsmasq — забирает
+  `dhcp.@dnsmasq[0].server` и устанавливает свой conf-dir — поэтому клиент
+  общается с dnsmasq, а dnsmasq решает, куда направить домены;
+* по умолчанию `dns_shunt` в passwall — `chinadns-ng`, а `dns_redirect` —
+  `1`, поэтому на проксируемые домены отвечает сам passwall;
+* режим перенаправления AdGuard Home по умолчанию буквально
+  `dnsmasq-upstream`: он стоит *за* dnsmasq, а не перед клиентами.
 
-Two consequences, both visible on a real router as a large unattributed share:
+Отсюда два следствия, оба видны на реальном роутере как большая
+неатрибутированная доля:
 
-1. **A proxied domain is answered by passwall, so AdGuard never sees the query.**
-   Its log cannot name that flow, and no local DNS answer exists to match the
-   flow destination against.
-2. **For the queries AdGuard does see, the client field is dnsmasq
-   (`127.0.0.1`), not the device**, so an exact client-to-name match is
-   impossible and the flow can only be named through the "any client resolved
-   this address" path — or not at all.
+1. **На проксируемый домен отвечает passwall, поэтому AdGuard вообще не видит
+   запрос.** Его журнал не может назвать этот поток, и локального ответа DNS
+   нет, чтобы сопоставить его с назначением потока.
+2. **Для запросов, которые AdGuard всё же видит, поле клиента — dnsmasq
+   (`127.0.0.1`), а не устройство**, поэтому точное сопоставление клиента с
+   именем невозможно, и поток можно назвать только через путь «какой-либо
+   клиент разрешил этот адрес» — или не назвать вообще.
 
-The `dnsmasq_log` option closes both gaps where a log file exists, because
-dnsmasq's own query log carries the real client address *and* the domains that
-never reach AdGuard:
+Параметр `dnsmasq_log` закрывает оба пробела там, где есть файл журнала,
+потому что собственный журнал запросов dnsmasq содержит реальный адрес
+клиента *и* домены, которые никогда не доходят до AdGuard:
 
 ```
 uci set dhcp.@dnsmasq[0].logqueries='1'
@@ -146,428 +153,461 @@ uci set dhcp.@dnsmasq[0].logfacility='/tmp/dnsmasq.log'
 uci commit dhcp && /etc/init.d/dnsmasq restart
 ```
 
-Reading that file is off unless it exists; `traffic.settings.dnsmasq_log` can
-also point at it explicitly. It is read incrementally, and a query and its
-answer are paired by name (the answer line carries no client), so two devices
-asking for the same name at the same moment can be attributed to the wrong one —
-rare, and still better than no name.
+Чтение этого файла отключено, пока он не существует; `traffic.settings.dnsmasq_log`
+также может указывать на него явно. Файл читается инкрементально, а запрос и
+ответ сопоставляются по имени (строка ответа не содержит клиента), поэтому два
+устройства, запросившие одно имя в один момент, могут быть отнесены не к тому
+клиенту — редко, но всё же лучше, чем отсутствие имени.
 
-What remains unnameable by design: a domain the **proxy node resolves
-remotely**. Nothing on the router ever sees that answer, so no counter, log or
-catalogue here can name it; such flows stay in the protocol bucket. Naming them
-needs the proxy's own logs, which is a different integration.
+Что остаётся неименуемым по замыслу: домен, который **прокси-нода разрешает
+удалённо**. Ничто на роутере не видит этот ответ, поэтому ни счётчик, ни
+журнал, ни каталог здесь не могут его назвать; такие потоки остаются в
+протокольной корзине. Для их имени нужны журналы самого прокси — это другая
+интеграция.
 
-Flow state lives in `/tmp/traffic`. Once an hour the traffic of that hour is
-appended to `<datadir>/hourly.tsv`, which is the persistent history. The live
-counters are **not** reset by that: the page shows the session, and a session
-that fell back to zero at the top of every hour read as traffic going missing.
-The hour is worked out as the difference between the live counters and a
-snapshot taken at the previous roll (in `/tmp/traffic/arch`), so each row in the
-history still holds exactly one hour.
+Состояние потоков живёт в `/tmp/traffic`. Раз в час трафик этого часа
+добавляется в `<datadir>/hourly.tsv`, который является постоянной историей.
+Живые счётчики при этом **не** сбрасываются: страница показывает сессию, а
+сессия, обнулявшаяся в начале каждого часа, читалась как пропажа трафика. Час
+вычисляется как разница между живыми счётчиками и снимком, сделанным при
+предыдущем пересчёте (в `/tmp/traffic/arch`), поэтому каждая строка истории
+по-прежнему содержит ровно один час.
 
-## Installation
+## Установка
 
 ```
 opkg install luci-app-traffic      # 24.10
-apk add luci-app-traffic           # 25.12, when built with CONFIG_USE_APK
+apk add luci-app-traffic           # 25.12, если собрано с CONFIG_USE_APK
 ```
 
-The collector is enabled by default (`/etc/config/traffic`, `option enabled 1`)
-and runs after the network is up. Nothing else needs configuring: the LAN
-prefix is detected from the LAN interface and the querylog path from AdGuard
-Home's workdir. Both are shown on the page and can be overridden.
+Переводы теперь поставляются отдельными пакетами: `luci-i18n-traffic-ru` и
+`luci-i18n-traffic-zh-cn` (при сборке через единый workflow репозитория).
 
-## Versioning
+Сборщик включён по умолчанию (`/etc/config/traffic`, `option enabled 1`) и
+запускается после поднятия сети. Больше ничего настраивать не нужно: префикс
+LAN определяется по интерфейсу LAN, а путь к журналу запросов — по рабочему
+каталогу AdGuard Home. Оба значения показаны на странице и могут быть
+переопределены.
 
-**Every change bumps `PKG_VERSION` by one patch level and resets `PKG_RELEASE`
-to 1.** The version is substituted into the collector at build time and the page
-shows it in the status strip, so the build that is actually running can be told
-from the one that was installed. Without this, two different collectors look
-identical after installation and opkg does not even treat the second as an
-upgrade.
+## Версионирование
 
-## Configuration
-| Option | Default | Meaning |
+**Каждое изменение повышает `PKG_VERSION` на один патч-уровень и сбрасывает
+`PKG_RELEASE` в 1.** Версия подставляется в сборщик во время сборки, и
+страница показывает её в строке состояния, поэтому фактически работающую
+сборку можно отличить от установленной. Без этого два разных сборщика после
+установки выглядят одинаково, и opkg даже не считает второй обновлением.
+
+## Конфигурация
+| Параметр | По умолчанию | Значение |
 |---|---|---|
-| `enabled` | `1` | run the collector |
-| `interval` | `10` | seconds between samples (minimum 2) |
-| `datadir` | `/etc/traffic` | where `hourly.tsv` (the history) is kept |
-| `querylog` | auto | AdGuard Home's `querylog.json` |
-| `dnsmasq_log` | auto | dnsmasq's query log, a second name source (see below) |
-| `lan4` / `lan6` | auto | client prefixes; anything else is "the router itself" |
-| `self` | auto | the box's own LAN addresses (space-separated); their flows are tunnel traffic, not a client |
-| `accounting` | `1` | per-host nftables counters for the client totals; `0` falls back to conntrack alone |
-| `appmap` | `/etc/traffic/apps.tsv` | the application catalogue |
-| `retention_days` | `7` | how much hourly history to keep |
-| `top_apps` / `top_clients` | `50` / `20` | how many entries the snapshot carries |
-| `resolve_interval` | `30` | minimum seconds between catalogue reads (see below) |
-| `dnsmap_max` | `50000` | upper bound on the `(client, host, ip)` map |
-| `purge_size_mb` | `100` | history is dropped when the data directory passes this size (see below) |
+| `enabled` | `1` | запускать сборщик |
+| `interval` | `10` | секунд между замерами (минимум 2) |
+| `datadir` | `/etc/traffic` | где хранится `hourly.tsv` (история) |
+| `querylog` | auto | `querylog.json` AdGuard Home |
+| `dnsmasq_log` | auto | журнал запросов dnsmasq, второй источник имён (см. ниже) |
+| `lan4` / `lan6` | auto | префиксы клиентов; всё остальное — «сам роутер» |
+| `self` | auto | собственные адреса LAN устройства (через пробел); их потоки — трафик туннеля, а не клиента |
+| `accounting` | `1` | счётчики nftables по хостам для итогов клиентов; `0` — только conntrack |
+| `appmap` | `/etc/traffic/apps.tsv` | каталог приложений |
+| `retention_days` | `7` | сколько часовой истории хранить |
+| `top_apps` / `top_clients` | `50` / `20` | сколько записей содержит снимок |
+| `resolve_interval` | `30` | минимальное число секунд между чтениями каталога (см. ниже) |
+| `dnsmap_max` | `50000` | верхняя граница карты `(клиент, хост, ip)` |
+| `purge_size_mb` | `100` | история удаляется, когда каталог данных превышает этот размер (см. ниже) |
 
-Every option can also be set through the environment (`TRAFFIC_INTERVAL`,
-`TRAFFIC_QUERYLOG`, …), which is how the offline tests drive it.
+Каждый параметр также можно задать через окружение (`TRAFFIC_INTERVAL`,
+`TRAFFIC_QUERYLOG`, …) — именно так его используют офлайн-тесты.
 
-### The history is bounded by the collector, not by a button
+### Историю ограничивает сборщик, а не кнопка
 
-There is deliberately no "clear" button on the page. Clearing is housekeeping,
-and a button on a dashboard is an invitation to throw the history away by
-accident; it also cannot be undone, which is a poor fit for a single click next
-to the numbers.
+На странице намеренно нет кнопки «Очистить». Очистка — это обслуживание, а
+кнопка на панели управления — приглашение случайно выбросить историю; к тому
+же действие нельзя отменить, что плохо сочетается с одним кликом рядом с
+цифрами.
 
-The collector bounds its own store instead:
+Вместо этого сборщик сам ограничивает хранилище:
 
-* once a **calendar month**, on the first start of a new month;
-* whenever `<datadir>` grows past **`purge_size_mb`** (100 MB by default).
+* раз в **календарный месяц**, при первом запуске нового месяца;
+* всякий раз, когда `<datadir>` превышает **`purge_size_mb`** (по умолчанию
+  100 MB).
 
-`hourly.tsv` is the file that actually grows without bound — an application row
-and a client row per application and client, per hour, kept forever. The two
-series files are already bounded by their point counts, and the name maps live
-in tmpfs and are bounded by `dnsmap_max`; they are cleared too, because they are
-what the purge is meant to reclaim.
+`hourly.tsv` — единственный файл, который действительно растёт без границ:
+строка приложения и строка клиента для каждого приложения и клиента, за каждый
+час, навсегда. Два файла серий уже ограничены числом точек, а карты имён живут
+в tmpfs и ограничены `dnsmap_max`; они тоже очищаются, потому что именно их
+предназначена освобождать очистка.
 
-**Only history is dropped.** The live counters are the session in progress, and
-clearing them would make the page fall back to zero for traffic that is still on
-the wire — the opposite of what the page is for. Each purge writes one line to
-the log (`logread -e traffic`).
+**Удаляется только история.** Живые счётчики — это текущая сессия, и их
+очистка заставила бы страницу показывать ноль для трафика, который всё ещё идёт
+по сети — противоположность назначению страницы. Каждая очистка пишет одну
+строку в журнал (`logread -e traffic`).
 
-## The catalogue
+## Каталог
 
-`/etc/traffic/apps.tsv` and `/etc/traffic/categories.tsv` are generated, not
-hand-written. **1,669 application and site names** over ~32,000 keys, plus category rules:
+`/etc/traffic/apps.tsv` и `/etc/traffic/categories.tsv` генерируются, а не
+пишутся вручную. **1 669 имён приложений и сайтов** на ~32 000 ключей, плюс
+правила категорий:
 
-| File | Rows | What it holds |
+| Файл | Строк | Что содержит |
 |---|---|---|
-| `apps.tsv` | 32,015 | `<name>` `<TAB>` `<key>` `<TAB>` `H\|S` — `H` matches the host name exactly, `S` matches it as the longest domain suffix |
-| `categories.tsv` | 10,384 | `<Category>` `<TAB>` `<key>` — suffix match only, used when no application claimed the host |
+| `apps.tsv` | 32 015 | `<name>` `<TAB>` `<key>` `<TAB>` `H\|S` — `H` сопоставляет имя хоста точно, `S` — как самый длинный суффикс домена |
+| `categories.tsv` | 10 384 | `<Category>` `<TAB>` `<key>` — только совпадение суффикса, используется, когда ни одно приложение не заявило хост |
 
-Both are built by `tools/build-catalog.js` from two upstream projects, because
-neither is enough alone:
+Оба файла собираются `tools/build-catalog.js` из двух upstream-проектов,
+потому что ни одного из них недостаточно по отдельности:
 
 * **[domain-list-community](https://github.com/v2fly/domain-list-community)**
-  (MIT) — 1,539 service files, the broadest domain coverage, but its file names
-  are slugs (`googlefcm`, `2kgames`) and it composes services with `include:`;
+  (MIT) — 1 539 файлов сервисов, самое широкое покрытие доменов, но имена
+  файлов там слаги (`googlefcm`, `2kgames`), а сервисы компонуются через
+  `include:`;
 * **[ios_rule_script](https://github.com/blackmatrix7/ios_rule_script)**
-  (GPL-2.0) — 666 per-service rule sets whose directory names are already brand
-  names (`XiaoHongShu`, `Epic`, `AppStore`, `AppleFirmware`) and which cover the
-  game clients, app stores and Apple/macOS services.
+  (GPL-2.0) — 666 наборов правил по сервисам, имена каталогов которых уже
+  являются брендами (`XiaoHongShu`, `Epic`, `AppStore`, `AppleFirmware`) и
+  которые покрывают игровые клиенты, магазины приложений и сервисы
+  Apple/macOS.
 
 ```
-node tools/build-catalog.js          # re-download, regenerate tables and icons
+node tools/build-catalog.js          # перезагрузить, пересоздать таблицы и иконки
 node tools/build-catalog.js --skip-icons
 ```
 
-It also copies brand logos from
+Скрипт также копирует логотипы брендов из
 [dashboard-icons](https://github.com/homarr-labs/dashboard-icons),
-[Iconify's logos collection](https://iconify.design),
-[selfhst/icons](https://github.com/selfhst/icons) and
-[simple-icons](https://simpleicons.org), matched by slug and, when that fails,
-by prefix or substring so that `Sina` finds `sinaweibo`. Anything still missing
-gets one more attempt through [Iconify's search
-API](https://iconify.design/docs/api/search.html), accepted only when the icon it
-returns actually names the application. The remaining names keep their letter
-avatar — a logo is never invented.
+[коллекции логотипов Iconify](https://iconify.design),
+[selfhst/icons](https://github.com/selfhst/icons) и
+[simple-icons](https://simpleicons.org), сопоставляя по слагу, а при неудаче —
+по префиксу или подстроке, чтобы `Sina` находил `sinaweibo`. Всё, что всё ещё
+отсутствует, получает ещё одну попытку через
+[поисковый API Iconify](https://iconify.design/docs/api/search.html); результат
+принимается только если возвращённая иконка действительно называет приложение.
+Остальные имена сохраняют буквенный аватар — логотип никогда не выдумывается.
 
-Two rules keep the tables readable rather than merely large. Sources that are
-*routing bundles* rather than products (`ChinaMax`, `Global`, `Proxy`, the
-advertising and privacy blocklists) are excluded outright — the `Privacy`
-bundle alone claimed 39,896 keys, over half the catalogue, and would have shown
-every tracker as one row. And when two services claim the same key, the smaller
-rule set wins, so `play.google.com` reads as *Google Play* rather than *Google*;
-a small curated layer fixes the brands whose only upstream owner is a bundle
-(`taobao.com` is listed under `alibaba` and nowhere else).
+Два правила сохраняют таблицы читаемыми, а не просто большими. Источники,
+являющиеся *наборами маршрутизации*, а не продуктами (`ChinaMax`, `Global`,
+`Proxy`, блок-листы рекламы и приватности), исключаются полностью — один
+набор `Privacy` заявлял 39 896 ключей, больше половины каталога, и показал бы
+каждый трекер одной строкой. А когда два сервиса заявляют один ключ,
+побеждает меньший набор правил, поэтому `play.google.com` читается как
+*Google Play*, а не *Google*; небольшой выверенный слой исправляет бренды,
+единственным upstream-владельцем которых является набор (`taobao.com`
+числится под `alibaba` и больше нигде).
 
-## Cost on the router, and on the page
+## Стоимость на роутере и на странице
 
-The tables are large and the page polls while it is open, so both ends are
-built to do nothing when nothing changed.
+Таблицы большие, а страница опрашивает данные, пока открыта, поэтому обе
+стороны сделаны так, чтобы ничего не делать, когда ничего не изменилось.
 
-**On the router**, one poll (measured at 2,000 conntrack flows, 5,000 resolved
-host names, 400 applications):
+**На роутере**, один опрос (измерено при 2 000 потоках conntrack, 5 000
+разрешённых имён хостов, 400 приложениях):
 
-| Stage | Cost | Note |
+| Этап | Стоимость | Примечание |
 |---|---|---|
-| `poll_ct` | dominant | parsing `/proc/net/nf_conntrack` is the floor; it is what the accounting *is* |
-| `classify` | small | reads the cached name map, not the catalogue |
-| `write_summary` | small | the heaviest N are selected inside awk, so no `sort`/`head` pipeline is spawned |
-| `resolve_names` | rare | reads the 786 KB catalogue only for host names never seen before |
+| `poll_ct` | доминирует | разбор `/proc/net/nf_conntrack` — это нижняя граница; это и есть учёт |
+| `classify` | малая | читает кэшированную карту имён, а не каталог |
+| `write_summary` | малая | самые тяжёлые N выбираются внутри awk, поэтому конвейер `sort`/`head` не запускается |
+| `resolve_names` | редкая | читает каталог 786 KB только для имён хостов, которые ещё не встречались |
 
-The catalogue is the one genuinely large thing, and it is read **once per new
-host name**, never per poll. Host names it has seen wait out `resolve_interval`
-(30 s) before a second look — except while the page is open, when the page calls
-`resolveNow` and the collector drops the wait, so a name that just appeared is
-resolved within a poll. Nobody watching, no cost.
+Каталог — единственная действительно большая вещь, и он читается **один раз
+на новое имя хоста**, никогда при каждом опросе. Уже встречавшиеся имена
+хостов ждут `resolve_interval` (30 с) перед вторым обращением — кроме случая,
+когда страница открыта: тогда страница вызывает `resolveNow`, и сборщик
+сбрасывает ожидание, поэтому имя, только что появившееся, разрешается в
+пределах одного опроса. Никто не смотрит — нет затрат.
 
-**On the page**, the DOM is updated rather than rebuilt. A refresh reuses the
-row it already has for each application and only writes the cells whose text
-actually changed. Measured over a 100-row table, second refresh:
+**На странице** DOM обновляется, а не пересобирается. Обновление переиспользует
+строку, уже имеющуюся для каждого приложения, и записывает только те ячейки,
+текст которых действительно изменился. Измерено на таблице из 100 строк, второе
+обновление:
 
-| | rebuild (before) | reuse (now) |
+| | пересборка (было) | переиспользование (сейчас) |
 |---|---|---|
-| nodes created, data unchanged | 1,060 | **0** |
-| nodes created, every byte changed | 1,060 | **0** |
-| nodes created, values *and* order changed | 1,060 | 52 |
-| `Image` objects created | 100 | **0** |
-| `L.resource()` calls | 100 | **0** |
+| создано узлов, данные не изменились | 1 060 | **0** |
+| создано узлов, изменился каждый байт | 1 060 | **0** |
+| создано узлов, изменились значения *и* порядок | 1 060 | 52 |
+| создано объектов `Image` | 100 | **0** |
+| вызовов `L.resource()` | 100 | **0** |
 
-The icon count is the one that matters for memory: an `<img>` per row per
-refresh means the browser decodes the same 100 SVGs again every five seconds.
-Now each icon is created once, when its row first appears, and kept.
+Именно количество иконок важно для памяти: `<img>` на каждую строку при каждом
+обновлении означает, что браузер заново декодирует одни и те же 100 SVG каждые
+пять секунд. Теперь каждая иконка создаётся один раз, когда её строка впервые
+появляется, и сохраняется.
 
-Two cheap gates sit in front of that. A refresh whose snapshot has not advanced
-(the collector writes every 10 s, the page polls every 5 s) returns before
-touching the DOM, and a hidden tab skips the fetch entirely until it is shown
-again.
+Перед этим стоят два дешёвых ограничителя. Обновление, снимок которого не
+продвинулся (сборщик пишет каждые 10 с, страница опрашивает каждые 5 с),
+возвращается до обращения к DOM, а скрытая вкладка вообще пропускает загрузку,
+пока её снова не покажут.
 
-**The donut and the chart are built with `createElementNS`.** LuCI's `E()` ends
-up in `document.createElement()`, which never produces an SVG element — a chart
-built that way is created without complaint, passes every syntax check, and then
-renders as nothing at all. `tools/page-render-selftest.js` drives the real
-`draw()`/`drawSeries()`/`drawStatus()` with a stub DOM that records namespaces
-and asserts what actually landed in the tree, which is the only way this class
-of bug shows up off-device.
+**Кольцевая диаграмма и график строятся через `createElementNS`.** `E()` в
+LuCI в итоге вызывает `document.createElement()`, который никогда не создаёт
+SVG-элемент — график, построенный так, создаётся без ошибок, проходит все
+проверки синтаксиса и затем не отображается вообще. `tools/page-render-selftest.js`
+прогоняет настоящие `draw()`/`drawSeries()`/`drawStatus()` с заглушкой DOM,
+которая записывает пространства имён и проверяет, что реально попало в дерево;
+это единственный способ обнаружить такой класс ошибок вне устройства.
 
-**A status strip explains the state of the collector** — running or not, how old
-the snapshot is, the interval, how many conntrack entries and host names it has,
-how many names are waiting to be resolved, which layer produced the client
-totals and which collector build is running. Each reading is its own soft grey
-chip, so a label and its value read as one item instead of a long row where the
-eye has to work out which caption belongs to which number. An empty page is
-otherwise a dead end: "no traffic yet", "the service is not running" and "the
-counters are not available" all look identical. The query log path is not shown:
-it is a configuration detail the page acts on, not something a reader can use,
-and it crowded out the readings that do say what is wrong.
+**Строка состояния объясняет состояние сборщика** — работает он или нет,
+насколько стар снимок, интервал, сколько записей conntrack и имён хостов,
+сколько имён ждут разрешения, какой слой дал итоги клиентов и какая сборка
+сборщика работает. Каждое показание — отдельная мягкая серая плашка, поэтому
+подпись и значение читаются как один элемент, а не как длинная строка, где глаз
+должен выяснять, какая подпись относится к какому числу. Иначе пустая страница
+становится тупиком: «трафика пока нет», «служба не запущена» и «счётчики
+недоступны» выглядят одинаково. Путь к журналу запросов не показывается: это
+деталь конфигурации, на которую страница опирается, а не то, что читатель может
+использовать, и она вытесняла показания, которые действительно сообщают, что не
+так.
 
-**On the RPC path**, `getSummary` hands the snapshot file straight to the caller
-instead of parsing it with jshn and serialising it again. The collector writes
-it write-to-temp-then-rename, so a reader never sees a partial file, and the
-round trip was only ever validating a file this package wrote itself.
+**На пути RPC** `getSummary` передаёт файл снимка вызывающему напрямую, вместо
+того чтобы разбирать его через jshn и сериализовать заново. Сборщик пишет его
+по схеме «запись во временный файл, затем переименование», поэтому читатель
+никогда не видит частичный файл, а круговой обход лишь проверял файл, который
+этот пакет написал сам.
 
-## The page
+## Страница
 
-Found under **Services → 流量统计** (`admin/services/traffic`).
+Находится в **Статус → Анализ трафика** (`admin/status/traffic`). Маршрут `admin/services/traffic` сохранён как совместимый псевдоним.
 
-The layout follows the Argon theme's card style: translucent blurred panels,
-rounded corners, a soft shadow, and the theme's own primary colour as the
-accent when it defines one (`var(--primary)`), with bright fallbacks so it also
-looks right on the default theme. Dark mode is honoured through the class Argon
-sets on `<body>`. Nothing depends on Argon-only class names.
+Макет следует стилю карточек темы Argon: полупрозрачные размытые панели,
+скруглённые углы, мягкая тень и собственный основной цвет темы в качестве
+акцента, когда он определён (`var(--primary)`), с яркими резервными цветами,
+чтобы страница выглядела правильно и в теме по умолчанию. Тёмный режим
+учитывается через класс, который Argon ставит на `<body>`. Ничто не зависит от
+классов, существующих только в Argon.
 
-Each application keeps a colour derived from **its own name**, never from its
-rank, so the donut, the legend and the table always agree and nothing changes
-colour just because the order moved. Two names that hash to the same slot are
-separated in name order, which is likewise rank-independent.
+Каждое приложение сохраняет цвет, производный от **собственного имени**, а не
+от ранга, поэтому кольцевая диаграмма, легенда и таблица всегда согласованы, и
+ничто не меняет цвет только из-за изменения порядка. Два имени, попавшие в один
+слот хеша, разделяются по порядку имён, что также не зависит от ранга.
 
-* **Hero card** — total carried by clients, down/up rates, and the range
-  selector. The range defaults to **one day**, which is the window the total, the
-  donut, the table and the chart all describe. The two rates are the current
-  live rates in every range; the range changes the totals and chart window, not
-  what the rate means. There is no reset button (see
-  [above](#the-history-is-bounded-by-the-collector-not-by-a-button)).
-* **Throughput card** — down/up over time, drawn as plain SVG. Its tier is not a
-  second choice: the curve is the selected range at a coarser granularity, so the
-  page carries **one** range control instead of two that could be set to
-  disagree. The page opens on the day tier, and "since start" — which is not a
-  window at all — keeps it, so the curve does not shrink to an hour when the
-  table is switched to the session. **10 s points for the last hour** (the sharp view — a burst keeps its
-  shape), **1 min points for 12 h and for the last day** (the same file, two
-  lengths), and **1 h points for the last week**. The minute
-  and hour tiers live in `<datadir>` (`series60.tsv`, `series1h.tsv`) so they
-  survive a reboot; the 10 s tier is session state in `/tmp`. A quiet round is
-  recorded as a zero point rather than skipped. Points use actual timestamps;
-  missing intervals break the curve and its fill. The y axis describes interval
-  averages. A larger one-second peak is marked and quoted separately so it
-  cannot flatten the average-rate curve. A colour key
-  names the two curves under the header, because they often differ by orders of
-  magnitude and a small upload curve would otherwise read as a stray line.
-* **Donut card and throughput card** — the composition and the curve are the two
-  halves of one row, equal width from the same `calc(50% - .5rem)`, with the
-  collector state above them, the readings above the list, and the list last. The
-  card order is set with flex `order`, so it lives in one place instead of being
-  whatever order the cards happen to be built in. This was a grid placed by named
-  areas first, which reads better but did not survive a real browser: the area
-  template was ignored and the columns fell back to `auto`, so every card shrank
-  to its own content and the page came out as a ragged left-aligned stack. There
-  is deliberately **no `gap`** anywhere in the page layout either — flex `gap`
-  needs Safari 14.1, and a browser without it drops the spacing silently, so the
-  gutter is a margin on the left half. Below the tablet width the halves go full
-  width, in the same order.
-* **Donut card** — the ten largest applications with a matching legend. It used
-  to be a full-width block above the table, and before that a column beside the
-  table; as half of the row with the curve, the legend still spreads sideways
-  instead of being squeezed into one narrow column. Named slices below 0.5% of
-  the headline total join **Attributed**; the complete application
-  rows remain in the table. **Unattributed** stays separate and neutral. All
-  percentages use the headline total. Names that arrive in the snapshot —
-  applications, site names and the protocol buckets (`SSL/TLS`, `QUIC`,
-  `Other`) — are shown exactly as the collector wrote them and are deliberately
-  not translated. They are data rather than interface copy: one snapshot is read
-  by every language, and a bucket renamed in the browser would stop matching the
-  same bucket in the snapshot, the hourly archive and the logs, which is what
-  makes a log line or a screenshot checkable against the page. Only the two
-  names the page invents — **Attributed** and **Unattributed** — are localized.
-* **List card** — application, total and share, received, sent, busiest client,
-  device count; 100 rows kept in the DOM, so a page left open all day does not
-  grow. The column widths live in a `<colgroup>`: under `table-layout:fixed` those
-  are the widths the browser actually uses, and a percentage on the cells could be
-  overridden by the theme, which collapsed the name column to its own ellipsis
-  while the byte columns — the widest of which holds "528 KiB (32.4%)" — took the
-  rest of the card. The name now takes whatever the icon and the `TYPE` tag leave,
-  the tag never wraps into two stacked characters, the row backgrounds are set
-  explicitly so the theme's stripes cannot show through the tinted total row, and
-  each column's caption is aligned with its own data — the theme centres every
-  cell, which left "总量" in the middle of its column while the figure under it
-  hugged the right edge. Numbers are centred, the two text columns are left
-  aligned, and every cell carries the same padding.
-  Below the tablet width the list scrolls sideways rather than squeezing the names;
-  on a phone the busiest-client and device-count columns drop out.
-* **Footer card** — proxy tunnel total, client total, and the identification
-  rate (by the same client's DNS, by any client's DNS, unidentified).
+* **Главная карточка** — общий объём, проведённый клиентами, скорости
+  приёма/отдачи и выбор диапазона. Диапазон по умолчанию — **один день**, это
+  окно, которое описывают итог, кольцевая диаграмма, таблица и график. Две
+  скорости — текущие живые скорости в любом диапазоне; диапазон меняет итоги и
+  окно графика, а не смысл скорости. Кнопки сброса нет (см.
+  [выше](#историю-ограничивает-сборщик-а-не-кнопка)).
+* **Карточка пропускной способности** — приём/отдача во времени, нарисованные
+  обычным SVG. Её уровень не является вторым выбором: кривая — это выбранный
+  диапазон с более грубой детализацией, поэтому на странице **один** элемент
+  управления диапазоном вместо двух, которые могли бы противоречить друг
+  другу. Страница открывается на суточном уровне, и «с момента запуска», что
+  вообще не является окном, сохраняет его, поэтому кривая не сжимается до часа,
+  когда таблица переключается на сессию. **Точки 10 с за последний час**
+  (резкий вид — всплеск сохраняет форму), **точки 1 мин за 12 ч и за последние
+  сутки** (тот же файл, две длины) и **точки 1 ч за последнюю неделю**.
+  Минутный и часовой уровни живут в `<datadir>` (`series60.tsv`,
+  `series1h.tsv`), поэтому переживают перезагрузку; уровень 10 с — состояние
+  сессии в `/tmp`. Тихий цикл записывается нулевой точкой, а не пропускается.
+  Точки используют реальные метки времени; пропущенные интервалы разрывают
+  кривую и её заливку. Ось Y описывает средние по интервалу. Более крупный
+  односекундный пик отмечается и указывается отдельно, чтобы не сплющивать
+  кривую средних скоростей. Цветовая легенда под заголовком называет две
+  кривые, потому что они часто различаются на порядки, и маленькая кривая
+  отдачи иначе читалась бы как случайная линия.
+* **Карточка кольцевой диаграммы и карточка пропускной способности** —
+  композиция и кривая — две половины одного ряда, равной ширины из одного
+  `calc(50% - .5rem)`, с состоянием сборщика над ними, показаниями над списком
+  и списком последним. Порядок карточек задан через flex `order`, поэтому
+  находится в одном месте, а не зависит от того, в каком порядке карточки
+  случайно построены. Сначала это была сетка, размещённая по именованным
+  областям, которая читается лучше, но не пережила реальный браузер: шаблон
+  областей игнорировался, столбцы откатывались к `auto`, каждая карточка
+  сжималась до своего содержимого, и страница превращалась в рваную стопку с
+  выравниванием влево. В макете страницы намеренно **нет `gap`** — flex `gap`
+  требует Safari 14.1, а браузер без него молча теряет отступ, поэтому
+  промежуток — это margin у левой половины. Ниже ширины планшета половины
+  занимают полную ширину в том же порядке.
+* **Карточка кольцевой диаграммы** — десять крупнейших приложений с
+  соответствующей легендой. Раньше это был блок на всю ширину над таблицей, а
+  ещё раньше — колонка рядом с таблицей; как половина ряда с кривой, легенда
+  по-прежнему разворачивается в стороны, а не сжимается в одну узкую колонку.
+  Именованные сектора меньше 0,5% от общего итога присоединяются к
+  **Распознано**; полные строки приложений остаются в таблице.
+  **Нераспознано** остаётся отдельным и нейтральным. Все проценты используют
+  общий итог. Имена, приходящие в снимке, — приложения, имена сайтов и
+  протокольные корзины (`SSL/TLS`, `QUIC`, `Other`) — показываются точно так,
+  как их записал сборщик, и намеренно не переводятся. Это данные, а не текст
+  интерфейса: один снимок читается на всех языках, и корзина, переименованная в
+  браузере, перестала бы совпадать с той же корзиной в снимке, часовом архиве и
+  журналах, а именно это делает строку журнала или скриншот проверяемыми по
+  странице. Локализуются только два имени, которые изобретает страница, —
+  **Распознано** и **Нераспознано**.
+* **Карточка списка** — приложение, итог и доля, принято, отправлено, самый
+  активный клиент, число устройств; в DOM хранится 100 строк, поэтому страница,
+  открытая весь день, не растёт. Ширины столбцов заданы в `<colgroup>`: при
+  `table-layout:fixed` именно их использует браузер, а процент на ячейках мог бы
+  быть переопределён темой, что сжимало столбец имени до собственного
+  многоточия, пока байтовые столбцы — самый широкий из которых содержит
+  «528 KiB (32.4%)» — занимали остаток карточки. Теперь имя занимает то, что
+  оставляют иконка и тег `TYPE`, тег никогда не переносится в два составленных
+  символа, фон строк задан явно, чтобы полосы темы не просвечивали через
+  тонированную итоговую строку, а подпись каждого столбца выровнена по своим
+  данным — тема центрирует каждую ячейку, из-за чего подпись «итог» оказывалась в
+  середине столбца, а число под ней прижималось к правому краю. Числа
+  центрированы, два текстовых столбца выровнены по левому краю, и каждая
+  ячейка имеет одинаковые отступы. Ниже ширины планшета список прокручивается
+  вбок, а не сжимает имена; на телефоне столбцы самого активного клиента и
+  числа устройств скрываются.
+* **Нижняя карточка** — итог прокси-туннеля, итог клиентов и коэффициент
+  идентификации (по DNS того же клиента, по DNS любого клиента, не
+  идентифицировано).
 
-Column and caption strings are spelled out on purpose ("Application name",
-"Total traffic", "Received"): the one-word msgids (`Application`, `Total`,
-`Down`, `Up`, `Clients`) are translated by luci-base itself and its text wins at
-runtime, so `Application` came out as *应用层* — a firewall term, not a label for
-a list of apps.
+Строки столбцов и подписей намеренно написаны полностью («Application name»,
+«Total traffic», «Received»): однословные msgid (`Application`, `Total`,
+`Down`, `Up`, `Clients`) переводятся самим luci-base, и его текст побеждает во
+время выполнения, поэтому `Application` выходил как *прикладной уровень* — термин
+firewall, а не подпись для списка приложений.
 
-## Icons
+## Иконки
 
-The package ships **1,503 SVG files** (about **2.90 MiB** uncompressed; the
-0.1.102 set was 900 files / 2.17 MiB). This includes brand artwork, category
-glyphs, and 18 explicitly neutral placeholders; file count is not brand coverage.
+Пакет содержит **1 503 файла SVG** (около **2,90 MiB** без сжатия; набор
+0.1.102 — 900 файлов / 2,17 MiB). Сюда входят брендовые изображения, глифы
+категорий и 18 явно нейтральных заглушек; количество файлов не равно покрытию
+брендов.
 
-| Kind | Count | Source | Rendered as |
+| Тип | Количество | Источник | Как отображается |
 |---|---|---|---|
-| Brand logos | catalogued in `SOURCES.tsv` | [dashboard-icons](https://github.com/homarr-labs/dashboard-icons), [Iconify](https://iconify.design), [selfhst/icons](https://github.com/selfhst/icons), [simple-icons](https://simpleicons.org) and locally curated sources | the product mark |
-| Category / protocol glyphs | 71 Lucide assets plus other generic icons | [lucide-static](https://lucide.dev) (ISC) and sources recorded in `SOURCES.tsv` | line art in muted grey, plus a `TYPE` tag in the list |
+| Логотипы брендов | учтены в `SOURCES.tsv` | [dashboard-icons](https://github.com/homarr-labs/dashboard-icons), [Iconify](https://iconify.design), [selfhst/icons](https://github.com/selfhst/icons), [simple-icons](https://simpleicons.org) и локально выверенные источники | знак продукта |
+| Глифы категорий / протоколов | 71 ресурс Lucide плюс другие общие иконки | [lucide-static](https://lucide.dev) (ISC) и источники, записанные в `SOURCES.tsv` | линейный рисунок приглушённым серым плюс тег `TYPE` в списке |
 
-The two kinds are deliberately not interchangeable. A brand logo answers *which
-product*, a glyph answers *what kind of traffic* — SSL/TLS, QUIC, HTTP, DNS,
-STUN, RTSP, CDN, Media, Games, Ads, Tracker, IPTV… A bucket row is drawn with
-its glyph, an italic muted name and a `TYPE` tag, so it can never be mistaken
-for an application.
+Эти два типа намеренно не взаимозаменяемы. Логотип бренда отвечает, *какой
+продукт*, глиф отвечает, *какой вид трафика* — SSL/TLS, QUIC, HTTP, DNS, STUN,
+RTSP, CDN, Media, Games, Ads, Tracker, IPTV… Строка корзины рисуется своим
+глифом, курсивным приглушённым именем и тегом `TYPE`, поэтому её никогда нельзя
+спутать с приложением.
 
-Brand icons are keyed by the application name: lower-cased with runs of
-non-alphanumerics turned into dashes (`YouTube` → `youtube.svg`, `China Mobile`
-→ `china-mobile.svg`). The page loads
-`/luci-static/resources/traffic/icons/<name>.svg` and keeps its coloured letter
-avatar until that file has actually loaded, so a missing icon is invisible
-rather than broken. Both the image and the avatar occupy the same 26 px box, so
-row rhythm never shifts.
+Брендовые иконки привязаны к имени приложения: нижний регистр, серии
+неалфавитно-цифровых символов превращаются в дефисы (`YouTube` → `youtube.svg`,
+`China Mobile` → `china-mobile.svg`). Страница загружает
+`/luci-static/resources/traffic/icons/<name>.svg` и сохраняет цветной буквенный
+аватар, пока файл действительно не загрузится, поэтому отсутствующая иконка
+незаметна, а не выглядит сломанной. И изображение, и аватар занимают один и тот
+же блок 26 px, поэтому ритм строк никогда не смещается.
 
-The local `icons/domains.tsv` index maps **875 source-verified site domains** to
-packaged artwork, including their subdomains. It is loaded once with the icon
-indexes; SVG images are requested for rendered rows, not all 1,503 files.
-For a bare domain, the page can also reuse an already packaged logo with the same
-root name (for example, `stripe.com` uses `stripe.svg`). A short, verified alias
-list groups related domain rows under their service and lets the reader expand
-the original domain traffic; a shared CDN is kept separate. If an icon index
-arrives after the first table render, visible rows try again. Unknown domains
-retain their exact name and a two-letter fallback mark. The browser never asks
-a third-party favicon service for each row. Additional packaged icons can be
-added with a matching `SOURCES.tsv` provenance row and then checked with
-`node tools/check-icons.js`.
+Локальный индекс `icons/domains.tsv` сопоставляет **875 проверенных по
+источнику доменов сайтов** с упакованными изображениями, включая их поддомены.
+Он загружается один раз вместе с индексами иконок; SVG-изображения
+запрашиваются для отрисованных строк, а не для всех 1 503 файлов. Для
+«голого» домена страница также может переиспользовать уже упакованный логотип с
+тем же корневым именем (например, `stripe.com` использует `stripe.svg`).
+Короткий проверенный список псевдонимов группирует связанные строки доменов под
+их сервисом и позволяет читателю раскрыть трафик исходного домена; общий CDN
+остаётся отдельным. Если индекс иконок приходит после первой отрисовки таблицы,
+видимые строки пытаются снова. Неизвестные домены сохраняют точное имя и
+двухбуквенную резервную метку. Браузер никогда не запрашивает сторонний сервис
+favicon для каждой строки. Дополнительные упакованные иконки можно добавить,
+записав соответствующую строку происхождения в `SOURCES.tsv`, а затем проверить
+через `node tools/check-icons.js`.
 
-### 自动网站图标缓存（1.1.8）
+### Автоматический кэш иконок сайтов (1.1.8)
 
-无需任何设置。包内图标优先；未收录网站由路由器后台获取 favicon，网页与手机 App 共用 `/traffic-site-icons/websites.tsv` 索引及图片。获取失败保留旧图标；没有旧图标时显示域名前两个字母和固定配色。
+Настройка не требуется. Сначала используются иконки из пакета; для сайтов, которых нет в каталоге, роутер в фоне загружает favicon, а веб-страница и мобильное приложение совместно используют индекс `/traffic-site-icons/websites.tsv` и изображения. При неудаче сохраняется старая иконка; если старой нет, показываются первые две буквы домена и фиксированный цвет.
 
-缓存查询先匹配精确主机名，再匹配已识别后缀边界内最近的父域，例如 `api.example.com` 可以复用 `example.com`。不跨已列出的公共后缀和托管租户边界；未知后缀只匹配精确域名。父域缓存不覆盖包内品牌图标。
+Поиск в кэше сначала сопоставляет точное имя хоста, затем ближайший родительский домен в пределах распознанного суффикса, например `api.example.com` может переиспользовать `example.com`. Границы публичных суффиксов и арендаторов хостинга не пересекаются; для неизвестных суффиксов совпадает только точный домен. Кэш родительского домена не перекрывает брендовые иконки из пакета.
 
-- 自动选择已挂载、可写的 NVMe；无可用 NVMe 时放在 `/tmp/traffic-site-icons`，缓存不写系统闪存。`/www/traffic-site-icons` 只建立发布缓存的符号链接。
-- 每分钟最多处理一个网站，使用独占进程锁；整个任务最多 20 秒，单次 HTTPS 请求最多 4 秒。与流量采集并行，不增加常驻进程，不阻塞实时速率。
-- 每小时扫描 `totals.tsv` 中完整的网站清单并生成待处理快照，不按流量排名截取前 256 个网站。每分钟沿游标继续处理一个缺失或到期站点，缓存淘汰后也不会反复处理前几个网站而遗漏后面的站点。
-- 单图下载最多 64 KiB，总缓存最多 16 MiB（按磁盘分配量计入图片，并动态预留索引、失败记录与临时替换空间）。最多保留 4096 条缓存记录；下载队列覆盖全部已发现网站，容量不足时淘汰旧记录。网页和手机完整读取已有索引。
-- 成功缓存 7 天后按需更新，失败至少 24 小时后再试；未活跃超过 7 天的记录清理。索引仅在内容变化时原子替换，避免重复写入。
-- 只访问 HTTPS 公网 IPv4 / IPv6 地址，固定经过校验的 DNS 结果，每种地址最多尝试 4 个，由 curl 在同一次下载中选择可连接的地址；每次传输总时限仍为 4 秒。不跟随重定向、不发送代理、Cookie 或路由器凭据。当前接受 PNG / ICO，并检查图标尺寸；主动内容 SVG、其他格式及无法访问的站点使用已有图标或字母回退。
-- `/tmp` 占用 RAM，重启后丢失；NVMe 缓存可跨重启保留。16 MiB 是上限，并非预分配量；对于 4 GB 内存约为 0.4%，Lua / curl 运行时内存另计。
+- Автоматически выбирается смонтированный NVMe с доступной записью; если подходящего NVMe нет, кэш размещается в `/tmp/traffic-site-icons` и не пишется в системную флеш-память. `/www/traffic-site-icons` служит только символической ссылкой на опубликованный кэш.
+- Не более одного сайта в минуту, с эксклюзивной блокировкой процесса; вся задача не дольше 20 секунд, один HTTPS-запрос — не дольше 4 секунд. Работает параллельно со сбором трафика, не добавляет постоянный процесс и не блокирует измерение скорости в реальном времени.
+- Раз в час сканируется полный список сайтов из `totals.tsv` и создаётся снимок для обработки, без отсечения первых 256 сайтов по рейтингу трафика. Каждую минуту курсор продвигается к одному отсутствующему или устаревшему сайту, поэтому после очистки кэша первые сайты не обрабатываются повторно в ущерб остальным.
+- Одно изображение — не более 64 KiB, весь кэш — не более 16 MiB (с учётом фактического размера изображений на диске и динамического резерва под индекс, записи неудач и временную замену). Хранится не более 4096 записей; очередь загрузки охватывает все обнаруженные сайты, при нехватке места старые записи вытесняются. Веб-страница и мобильное приложение полностью читают существующий индекс.
+- Успешно закэшированные записи обновляются по необходимости через 7 дней, неудачные повторяются не раньше чем через 24 часа; записи, неактивные более 7 дней, удаляются. Индекс атомарно заменяется только при изменении содержимого, чтобы избежать повторных записей.
+- Доступны только HTTPS-адреса публичных IPv4 / IPv6, с фиксацией проверенного результата DNS, не более 4 попыток на каждый тип адреса; curl выбирает доступный адрес в рамках одной загрузки. Общий лимит передачи по-прежнему 4 секунды. Перенаправления не отслеживаются, прокси, Cookie и учётные данные роутера не отправляются. Сейчас принимаются PNG / ICO с проверкой размеров; активный SVG, другие форматы и недоступные сайты используют существующую иконку или буквенный резерв.
+- `/tmp` занимает RAM и теряется после перезагрузки; кэш на NVMe переживает перезагрузку. 16 MiB — это верхняя граница, а не предварительно выделенный объём; для 4 GB памяти это около 0,4%, память Lua / curl считается отдельно.
 
-实际占用可查看 `cat /tmp/traffic/website-icons.metrics`：包含自动目录、实际分配字节数、记录数量、候选网站数 `candidate_sites`、全量扫描时间 `scan_at`、Lua 堆内存与该轮 CPU 时间。Lua 堆不等于进程 RSS，也不包含 curl；整机峰值需在路由器运行采集任务时测量 `/proc/<pid>/status`。本机策略测试不能代替 MT7988 实测。
+Фактическое использование можно посмотреть через `cat /tmp/traffic/website-icons.metrics`: там есть автоматический каталог, фактически выделенные байты, число записей, число сайтов-кандидатов `candidate_sites`, время полного сканирования `scan_at`, память кучи Lua и время CPU этого цикла. Куча Lua не равна RSS процесса и не включает curl; пиковое значение по системе нужно измерять в `/proc/<pid>/status` во время работы сборщика на роутере. Локальные тесты политики не заменяют измерения на MT7988.
 
-Direct filename matching covers **835 / 1,669 catalogue names** and **77.7% of
-catalogue rules**. The actual page resolver, including aliases, covers
-**839 / 1,669 names** and **78.4% of catalogue rules**. These counts include
-category/neutral glyphs and do not measure observed traffic or unique brands.
-The domain index additionally gives raw site rows a path to artwork even when
-their names are absent from the catalogue. All 875 mappings are tested through
-the actual page resolver by `node tools/icon-resolution-selftest.js`.
+Прямое сопоставление имён файлов покрывает **835 / 1 669 имён каталога** и
+**77,7% правил каталога**. Фактический резолвер страницы, включая псевдонимы,
+покрывает **839 / 1 669 имён** и **78,4% правил каталога**. Эти числа включают
+глифы категорий/нейтральные и не измеряют наблюдаемый трафик или уникальные
+бренды. Индекс доменов дополнительно даёт «сырым» строкам сайтов путь к
+изображению, даже когда их имён нет в каталоге. Все 875 сопоставлений
+проверяются фактическим резолвером страницы через
+`node tools/icon-resolution-selftest.js`.
 
-The expansion lock `tools/site-icons.tsv` records 595 extra selections: 579
-have site domains, while 16 are game/platform marks available by explicit
-application name (some are reserved for future catalogue entries). A packaged
-PlayStation model icon does not imply that traffic can identify that console
-model. Dedicated game host rules cover Honkai Star Rail, Honkai Impact 3rd,
-Zenless Zone Zero and Wuthering Waves without relabelling shared publisher hosts.
-`node tools/expand-icons.js` maintains the set and its domain index.
+Блокировка расширения `tools/site-icons.tsv` содержит 595 дополнительных
+выборок: у 579 есть домены сайтов, а 16 — игровые/платформенные знаки,
+доступные по явному имени приложения (некоторые зарезервированы для будущих
+записей каталога). Наличие упакованной иконки модели PlayStation не означает,
+что трафик может определить эту модель консоли. Отдельные правила игровых
+хостов покрывают Honkai Star Rail, Honkai Impact 3rd, Zenless Zone Zero и
+Wuthering Waves, не переименовывая общие хосты издателя.
+`node tools/expand-icons.js` поддерживает набор и его индекс доменов.
 
-Legacy untraceable icons were replaced with recorded upstream artwork or
-explicit neutral placeholders. Reviewed replacements are pinned in
-`tools/icons-local`; the generator preserves their complete provenance rows.
-It no longer accepts prefix/substring brand matches (for example BlueDriver
-for Blued or Stoat for STO Express). `check-icons.js` rejects unknown or empty
-source metadata. Source records point to upstream terms; they are not a blanket
-licence grant for third-party trademarks.
+Старые неотслеживаемые иконки заменены записанными upstream-изображениями или
+явными нейтральными заглушками. Проверенные замены закреплены в
+`tools/icons-local`; генератор сохраняет их полные строки происхождения. Он
+больше не принимает совпадения брендов по префиксу/подстроке (например,
+BlueDriver для Blued или Stoat для STO Express). `check-icons.js` отвергает
+неизвестные или пустые метаданные источника. Записи источников указывают на
+условия upstream; они не являются общим разрешением лицензии на сторонние
+товарные знаки.
 
-Where an upstream set states its licence the row carries it, as an SPDX id with
-the URL that states it: the Iconify sets are recorded from the icon-sets
-`collections.json` index, which is the only place they declare one - the
-per-collection JSON the glyphs themselves come from has no licence field at
-all. The sets do not agree with each other, which is why the column is filled
-rather than waved at: `cbi` is CC BY-NC-SA 4.0 while `cib` is CC0-1.0, and
-`arcticons` is share-alike. `check-icons.js` rejects a set that carries two
-different licences or that falls back to "see the collection licence", so a set
-nobody has verified fails instead of being described vaguely.
+Там, где upstream-набор указывает свою лицензию, строка содержит её в виде
+SPDX-идентификатора с URL, который её задаёт: наборы Iconify записываются из
+индекса `collections.json` наборов иконок — единственного места, где они её
+объявляют; в JSON отдельной коллекции, откуда берутся сами глифы, поля лицензии
+нет вообще. Наборы не согласуются между собой, поэтому столбец заполняется, а
+не отмахивается от вопроса: `cbi` — CC BY-NC-SA 4.0, а `cib` — CC0-1.0, и
+`arcticons` — share-alike. `check-icons.js` отвергает набор с двумя разными
+лицензиями или с откатом на «см. лицензию коллекции», поэтому набор, который
+никто не проверил, падает, а не описывается расплывчато.
 
-Uncovered names retain their avatar. To add an icon by hand,
-put an SVG in `htdocs/luci-static/resources/traffic/icons/`, record its source
-in `root/usr/share/traffic/icons/SOURCES.tsv`, and run
-`node tools/check-icons.js --write` to refresh the index. No page code change is
-needed when its filename matches the service slug. The manifest ships with the
-package but outside the web directory: it is a licensing record for the
-redistributed artwork, nothing on the router reads it at runtime, and a 210 KiB
-table does not need to be served to every LAN client. The icons themselves stay
-in `htdocs/` because the page loads those.
+Непокрытые имена сохраняют аватар. Чтобы добавить иконку вручную, положите SVG
+в `htdocs/luci-static/resources/traffic/icons/`, запишите источник в
+`root/usr/share/traffic/icons/SOURCES.tsv` и запустите
+`node tools/check-icons.js --write` для обновления индекса. Изменение кода
+страницы не нужно, если имя файла совпадает со слагом сервиса. Манифест
+поставляется с пакетом, но вне веб-каталога: это лицензионная запись для
+распространяемых изображений, на роутере её никто не читает во время работы, и
+таблицу на 210 KiB не нужно отдавать каждому клиенту LAN. Сами иконки остаются
+в `htdocs/`, потому что страница загружает их.
 
-Note that `currentColor` is replaced with an explicit grey when a glyph is
-saved, and a monochrome brand mark is pinned to the same grey: an SVG loaded
-through `<img>` does not inherit the page colour, so `currentColor` would
-resolve to black and disappear in dark mode.
+Обратите внимание: `currentColor` заменяется явным серым при сохранении глифа,
+а монохромный знак бренда закрепляется на том же сером: SVG, загруженный через
+`<img>`, не наследует цвет страницы, поэтому `currentColor` разрешился бы в
+чёрный и исчез в тёмном режиме.
 
-Icons remain the trademarks of their owners and are used here only to identify
-the corresponding service. The licences the bundled sets declare are recorded
-per row in `root/usr/share/traffic/icons/SOURCES.tsv`; check them before
-redistributing.
+Иконки остаются товарными знаками своих владельцев и используются здесь только
+для идентификации соответствующего сервиса. Лицензии, которые объявляют
+входящие в пакет наборы, записаны по строкам в
+`root/usr/share/traffic/icons/SOURCES.tsv`; проверьте их перед
+распространением.
 
-## Realtime network and counter integrity
+## Сеть в реальном времени и целостность счётчиков
 
-The existing application/client list is unchanged. A separate network panel
-shows WAN download/upload in Mbps and RX/TX packets per second, plus a straight
-five-minute curve sampled every second. One procd worker reads the same WAN
-device for every browser. Rates use monotonic elapsed time; missed ticks,
-counter resets and device recreation produce gaps and a fresh baseline.
-Closing the page stops sampling after the 60-second watch expires. The default
-one-second path never scans conntrack, nft rules, PPE flow tables or hardware MIBs.
+Существующий список приложений/клиентов не меняется. Отдельная сетевая панель
+показывает скачивание/загрузку WAN в Mbps и пакеты RX/TX в секунду, а также
+прямую кривую за пять минут с выборкой раз в секунду. Один процесс procd читает
+одно и то же устройство WAN для каждого браузера. Скорости используют
+монотонное прошедшее время; пропущенные тики, сбросы счётчиков и пересоздание
+устройства дают разрывы и новую базовую линию. Закрытие страницы останавливает
+выборку после истечения 60-секундного наблюдения. Путь по умолчанию с шагом в
+одну секунду никогда не сканирует conntrack, правила nft, таблицы потоков PPE
+или аппаратные MIB.
 
-The regular collector's connection scan retains uint64 counters as decimal
-strings while calculating deltas, including values above JavaScript's exact
-integer range. No separate current-flow table, ranking cache or browser poll
-is created.
+Сканирование соединений обычного сборщика сохраняет счётчики uint64 в виде
+десятичных строк при вычислении разниц, включая значения выше точного
+целочисленного диапазона JavaScript. Отдельная таблица текущих потоков, кэш
+ранжирования или опрос браузера не создаются.
 
-On the matching 24.10 kernel, unique connection IDs prevent a reused tuple from
-inheriting old counters. The optional closed-connection ring recovers final
-snapshots and connections that begin and end between scans; buffer overflow,
-expired watches and missing records have explicit metadata in the private
-`/tmp/traffic/conntrack.json` diagnostic snapshot. This is
-separate from hardware read-clear accounting and does not establish that every
-last packet in flight was captured. Older kernels still work with reduced
-coverage. Upgrading an old baseline does not recredit existing lifetime bytes.
+На соответствующем ядре 24.10 уникальные идентификаторы соединений не дают
+переиспользованному кортежу унаследовать старые счётчики. Необязательное
+кольцо закрытых соединений восстанавливает финальные снимки и соединения,
+которые начинаются и заканчиваются между сканированиями; переполнение буфера,
+истёкшие наблюдения и отсутствующие записи имеют явные метаданные в приватном
+диагностическом снимке `/tmp/traffic/conntrack.json`. Это отдельно от
+аппаратного учёта с чтением и сбросом и не доказывает, что был захвачен каждый
+последний пакет в полёте. Старые ядра по-прежнему работают с меньшим покрытием.
+Обновление старой базовой линии не пересчитывает существующие пожизненные
+байты.
 
-While the page is open, the regular collector also caches the optional NPU
-provider once per round. Browsers read that shared cache. Five-core utilization
-and loaded firmware information are displayed when the provider supplies them;
-unavailable measurements are distinct from zero. NPU busy time, WAN throughput
-and attributed connection bytes remain separate measurements.
+Пока страница открыта, обычный сборщик также кэширует необязательный
+провайдер NPU один раз за цикл. Браузеры читают этот общий кэш. Загрузка пяти
+ядер и сведения о загруженной прошивке отображаются, когда провайдер их
+предоставляет; недоступные измерения отличаются от нуля. Время занятости NPU,
+пропускная способность WAN и атрибутированные байты соединений остаются
+отдельными измерениями.
 
-Offline regressions for these paths:
+Офлайн-регрессии для этих путей:
 
 ```sh
 python3 tools/realtime-selftest.py
@@ -577,58 +617,58 @@ node ../../tools/router-status-boundary-test.js
 python3 tools/tops-rpc-selftest.py --jshn-bin /path/to/host/jshn --jshn-shell /path/to/jshn.sh --output /tmp/rpc-receipts
 ```
 
-## Limitations — read before trusting the numbers
+## Ограничения — прочитайте перед тем, как доверять числам
 
-* **Coverage is not 100%.** Attribution needs a DNS answer. QUIC, ECH,
-  hard-coded IPs and applications that resolve through another path show up as
-  the destination's registrable name or as `unknown`. The page reports the
-  match rate so the coverage is visible rather than implied.
-* **Proxied destinations** are attributed from the client's own DNS lookups.
-  The flows themselves keep their real destination IP under tproxy, so this
-  works, but it is a correlation, not the proxy's own connection table.
-* **Long-lived idle connections** keep a domain that was resolved hours
-  earlier; a connection that outlives its DNS entry can be attributed to the
-  wrong domain. The mapping is refreshed on every lookup.
-* **IPv6** addresses are written differently by conntrack and by AdGuard Home
-  (leading zeros), so some IPv6 flows will not match even though IPv4 does.
-* The hourly history lives on the writable root. Add it to the sysupgrade keep
-  list if you want it to survive an upgrade.
+* **Покрытие не 100%.** Для атрибуции нужен ответ DNS. QUIC, ECH,
+  жёстко заданные IP и приложения, разрешаемые через другой путь, показываются
+  как регистрируемое имя назначения или как `unknown`. Страница сообщает
+  коэффициент совпадения, поэтому покрытие видно, а не подразумевается.
+* **Проксируемые назначения** атрибутируются по DNS-запросам самого клиента.
+  Потоки сохраняют реальный IP назначения под tproxy, поэтому это работает, но
+  это корреляция, а не собственная таблица соединений прокси.
+* **Долгоживущие простаивающие соединения** сохраняют домен, разрешённый
+  несколько часов назад; соединение, пережившее свою запись DNS, может быть
+  отнесено к неверному домену. Сопоставление обновляется при каждом поиске.
+* **IPv6**-адреса записываются по-разному в conntrack и AdGuard Home (ведущие
+  нули), поэтому некоторые потоки IPv6 не совпадут, даже если IPv4 совпадает.
+* Часовая история живёт на записываемом корне. Добавьте её в список сохранения
+  sysupgrade, если хотите, чтобы она пережила обновление.
 
-## Files
+## Файлы
 
-| Path | Purpose |
+| Путь | Назначение |
 |---|---|
-| `/usr/share/traffic/collector.sh` | sampling, attribution, snapshot |
-| `/usr/share/traffic/connections.awk` | connection deltas and counter quality metadata |
-| `/usr/share/traffic/realtime.sh` | one-second WAN sampling worker |
-| `/tmp/traffic/live.json` | bounded five-minute WAN rates and PPS |
-| `/tmp/traffic/conntrack.json` | bounded private counter coverage diagnostics |
-| `/tmp/traffic/npu.json` | shared optional NPU telemetry cache |
-| `/usr/share/traffic/ans.lua` | base64 DNS answer → A/AAAA records |
-| `/etc/init.d/traffic` | procd service for the collector |
-| `/usr/libexec/rpcd/luci.traffic` | snapshot, hourly aggregation, reset |
-| `/www/luci-static/resources/view/traffic/overview.js` | the page |
-| `/etc/config/traffic` | settings |
-| `/etc/traffic/apps.tsv` | application catalogue (`name`, `key`, `H\|S`) |
-| `/etc/traffic/categories.tsv` | domain suffix → category (CDN, Games, Ads, …) |
-| `/etc/traffic/hourly.tsv` | per-hour history (the persistent totals) |
-| `/etc/traffic/series60.tsv` | 1-minute throughput for the last 24 h |
-| `/tmp/traffic/series10.tsv` | 10-second throughput for the last hour |
-| `/tmp/traffic/namemap.tsv` | host name → resolved name (the catalogue cache) |
-| `/tmp/traffic/version` | state schema; a change rebuilds the live counters (see below) |
+| `/usr/share/traffic/collector.sh` | выборка, атрибуция, снимок |
+| `/usr/share/traffic/connections.awk` | разницы соединений и метаданные качества счётчиков |
+| `/usr/share/traffic/realtime.sh` | процесс секундной выборки WAN |
+| `/tmp/traffic/live.json` | ограниченные пятиминутные скорости WAN и PPS |
+| `/tmp/traffic/conntrack.json` | ограниченная приватная диагностика покрытия счётчиков |
+| `/tmp/traffic/npu.json` | общий кэш необязательной телеметрии NPU |
+| `/usr/share/traffic/ans.lua` | base64 DNS-ответ → записи A/AAAA |
+| `/etc/init.d/traffic` | служба procd для сборщика |
+| `/usr/libexec/rpcd/luci.traffic` | снимок, часовая агрегация, сброс |
+| `/www/luci-static/resources/view/traffic/overview.js` | страница |
+| `/etc/config/traffic` | настройки |
+| `/etc/traffic/apps.tsv` | каталог приложений (`name`, `key`, `H\|S`) |
+| `/etc/traffic/categories.tsv` | суффикс домена → категория (CDN, Games, Ads, …) |
+| `/etc/traffic/hourly.tsv` | часовая история (постоянные итоги) |
+| `/etc/traffic/series60.tsv` | минутная пропускная способность за последние 24 ч |
+| `/tmp/traffic/series10.tsv` | 10-секундная пропускная способность за последний час |
+| `/tmp/traffic/namemap.tsv` | имя хоста → разрешённое имя (кэш каталога) |
+| `/tmp/traffic/version` | схема состояния; изменение пересоздаёт живые счётчики (см. ниже) |
 
-The live counters in `/tmp/traffic` are running totals, so a change in what they
-mean cannot be applied to numbers already accumulated. `version` records the
-schema they were built with: when it does not match the collector, the client,
-application, router and attribution counters are dropped and rebuilt on the next
-sample. The history in `<datadir>` (`hourly.tsv`, `series60.tsv`) and the
-conntrack baseline (`flow.state`) are left alone, so the change costs the
-session's totals, not the day's chart.
+Живые счётчики в `/tmp/traffic` — это накопленные итоги, поэтому изменение их
+смысла нельзя применить к уже накопленным числам. `version` записывает схему,
+с которой они были построены: если она не совпадает со сборщиком, счётчики
+клиентов, приложений, роутера и атрибуции удаляются и пересоздаются при
+следующем замере. История в `<datadir>` (`hourly.tsv`, `series60.tsv`) и базовая
+линия conntrack (`flow.state`) остаются нетронутыми, поэтому изменение стоит
+итогов сессии, а не дневного графика.
 
-Not installed, but shipped in the repository for regeneration and verification:
+Не устанавливаются, но поставляются в репозитории для пересоздания и проверки:
 
-| Path | Purpose |
+| Путь | Назначение |
 |---|---|
-| `tools/build-catalog.js` | rebuild both catalogues and the icon set from upstream |
-| `tools/collector-selftest.sh` | offline regression: every attribution path, the box's own addresses, the state schema |
-| `tools/page-render-selftest.js` | offline rendering check (SVG namespace, chart, status strip) |
+| `tools/build-catalog.js` | пересобрать оба каталога и набор иконок из upstream |
+| `tools/collector-selftest.sh` | офлайн-регрессия: каждый путь атрибуции, собственные адреса устройства, схема состояния |
+| `tools/page-render-selftest.js` | офлайн-проверка рендеринга (пространство имён SVG, график, строка состояния) |

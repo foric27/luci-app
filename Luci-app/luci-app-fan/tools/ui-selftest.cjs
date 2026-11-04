@@ -1,4 +1,5 @@
 'use strict';
+// Chinese strings below are fixtures for the zh_Hans locale and are intentionally not translated.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');

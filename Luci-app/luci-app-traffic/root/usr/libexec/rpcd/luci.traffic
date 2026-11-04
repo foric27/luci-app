@@ -205,7 +205,7 @@ get_hourly() {
 				# the archive actually holds a row for it: a range the archive
 				# predates carries no such row, and the absence of the field is
 				# what makes the page fall back to the attributed bytes and say
-				# 已归属 instead of presenting a part of the hour as its total.
+				# "Распознано" instead of presenting a part of the hour as its total.
 				if (h in wd) printf ",\"iface\":{\"down\":%d,\"up\":%d}", wd[h], wu[h]
 				printf "}"
 			}

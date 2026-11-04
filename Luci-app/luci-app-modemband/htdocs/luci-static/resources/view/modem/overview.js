@@ -715,13 +715,13 @@ function formatSimStatus(simInfo, mmInfo) {
 		return simInfo.pinState;
 
 	if (mmInfo && mmInfo.failReason === 'sim-missing')
-		return '未检测到 SIM 卡 · sim-missing';
+		return _('SIM not detected') + ' · sim-missing';
 
 	if (simInfo.active != null)
-		return simInfo.active ? '已启用' : '未启用';
+		return simInfo.active ? _('Enabled') : _('Disabled');
 
 	if (!simInfo.path)
-		return '未检测到 SIM 卡';
+		return _('SIM not detected');
 
 	return '--';
 }
@@ -1020,15 +1020,15 @@ function renderOverview(state) {
 				])
 			]),
 			E('div', { 'class': 'mb-section-card' }, [
-				E('div', { 'class': 'mb-section-title' }, 'SIM 卡信息'),
+				E('div', { 'class': 'mb-section-title' }, _('SIM Card Information')),
 				renderInfoTable([
-					[ 'SIM 状态', formatSimStatus(simInfo, mmInfo) ],
+					[ _('SIM Status'), formatSimStatus(simInfo, mmInfo) ],
 					[ 'ICCID', simInfo.iccid || '--' ],
 					[ 'IMSI', simInfo.imsi || '--' ],
 					[ 'EID', simInfo.eid || '--' ],
 					[ _('Operator'), formatSimOperator(simInfo) || operatorInfo || '--' ],
-					[ 'SIM 类型', simInfo.simType || '--' ],
-					[ '紧急号码', simInfo.emergencyNumbers || '--' ]
+					[ _('SIM Type'), simInfo.simType || '--' ],
+					[ _('Emergency Numbers'), simInfo.emergencyNumbers || '--' ]
 				])
 			]),
 			E('div', { 'class': 'mb-section-card' }, [

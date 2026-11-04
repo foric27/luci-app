@@ -11,13 +11,13 @@ include $(INCLUDE_DIR)/package.mk
 define Package/$(PKG_NAME)
   SECTION:=utils
   CATEGORY:=Utilities
-  TITLE:=Read-only router system and wireless status
+  TITLE:=Системный статус роутера и Wi-Fi только для чтения
   DEPENDS:=+rpcd +ubus +jshn +coreutils-timeout
 endef
 
 define Package/$(PKG_NAME)/description
-  Independent CPU counters, sanitized radio status and 24-hour wireless history.
-  Does not require LuCI or a traffic statistics package.
+  Независимые счётчики CPU, очищенный статус радио и 24-часовая история Wi-Fi.
+  Не требует LuCI или пакета статистики трафика.
 endef
 
 define Build/Compile

@@ -386,3 +386,42 @@ msgstr "Brak zmian pasm do zastosowania."
 msgid "The modemband error."
 msgstr "Błąd modemband."
 
+
+msgid "Disabled"
+msgstr "Wyłączone"
+
+msgid "Emergency Numbers"
+msgstr "Numery alarmowe"
+
+msgid "Enabled"
+msgstr "Włączone"
+
+msgid "Failure Reason"
+msgstr "Przyczyna błędu"
+
+msgid "Grant access to LuCI app modemband"
+msgstr "Przyznaje dostęp do aplikacji modemband w LuCI"
+
+msgid "IMEI"
+msgstr "IMEI"
+
+msgid "Operator"
+msgstr "Operator"
+
+msgid "Power State"
+msgstr "Stan zasilania"
+
+msgid "Restart WAN"
+msgstr "Restart WAN"
+
+msgid "SIM Card Information"
+msgstr "Informacje o karcie SIM"
+
+msgid "SIM Status"
+msgstr "Stan karty SIM"
+
+msgid "SIM Type"
+msgstr "Typ karty SIM"
+
+msgid "SIM not detected"
+msgstr "Nie wykryto karty SIM"

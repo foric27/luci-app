@@ -1,0 +1,77 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: sfp-status\n"
+"PO-Revision-Date: 2026-11-04 00:00+0000\n"
+"Last-Translator: OpenCode\n"
+"Language-Team: Russian\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:122
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:194
+msgid "Bias Current"
+msgstr "Ток смещения"
+
+msgid "Grant UCI read and RPC access to LuCI app SFP status"
+msgstr "Предоставляет доступ UCI на чтение и RPC к статусу SFP в LuCI"
+
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:170
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:187
+msgid "Interface"
+msgstr "Интерфейс"
+
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:128
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:184
+msgid "Module"
+msgstr "Модуль"
+
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:123
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:195
+msgid "RX Power"
+msgstr "Мощность RX"
+
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:206
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:276
+msgid "SFP"
+msgstr "SFP"
+
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:173
+msgid "SFP Interfaces"
+msgstr "Интерфейсы SFP"
+
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:118
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:190
+msgid "SFP Name"
+msgstr "Имя SFP"
+
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:120
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:192
+msgid "SFP Speed"
+msgstr "Скорость SFP"
+
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:165
+msgid "Status"
+msgstr "Статус"
+
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:124
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:196
+msgid "TX Power"
+msgstr "Мощность TX"
+
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:119
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:191
+msgid "Temperature"
+msgstr "Температура"
+
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:165
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:237
+msgid "Unavailable"
+msgstr "Недоступно"
+
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:121
+#: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:193
+msgid "Voltage"
+msgstr "Напряжение"

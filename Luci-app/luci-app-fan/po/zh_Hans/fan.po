@@ -139,3 +139,6 @@ msgstr "当前"
 
 msgid "Full speed"
 msgstr "满速"
+
+msgid "Grant runtime and UCI access for luci-app-fan"
+msgstr "授予 luci-app-fan 运行时和 UCI 访问权限"

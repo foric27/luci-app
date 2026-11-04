@@ -252,60 +252,60 @@ echo "--- stat  ---"; cat "$T/state/stat.tsv"
 echo "--- namemap (host, kind, name) ---"; cat "$T/state/namemap.tsv"
 
 echo
-echo "=== 断言 ==="
+echo "=== Проверки ==="
 fail=0
 row() { awk -F'\t' -v n="$1" '$1==n {print $2"/"$3}' "$T/state/totals.tsv"; }
 nm()  { awk -F'\t' -v h="$1" '$1==h {print $2" "$3}' "$T/state/namemap.tsv"; }
 chk() { if [ "$2" = "$3" ]; then echo "PASS: $1"; else echo "FAIL: $1 (expect '$2', got '$3')"; fail=1; fi; }
 
-chk "1  精确主机名优先于后缀"            "100/1000"   "$(row 'NetEase Music')"
-chk "1a 同一后缀下的其他域归其自身"       ""           "$(row 'NetEase')"
-chk "2  普通后缀命中"                    "200/2000"   "$(row 'Taobao')"
-chk "3  最长后缀优先 (cdn.example.com)"  "400/4000"   "$(row 'Deep')"
-chk "3a 短后缀未抢走长后缀的流量"         ""           "$(row 'Example')"
-chk "4  多标签后缀 (bar.co.uk)"          "800/8000"   "$(row 'Foo Bar UK')"
-chk "5  类别后缀命中 -> CDN"             "300/3000"   "$(row 'CDN')"
-chk "6  无表项 -> 站点自身域名"           "900/9000"   "$(row 'unknownsite.org')"
-chk "7  其他客户端解析过该地址 -> 命中"    "1000/10000" "$(row 'Example Org')"
-chk "7b 大写主机名归一化后仍命中"          "1100/11000" "$(row 'Meituan')"
-chk "8a 无 DNS + tcp/443 -> SSL/TLS"     "500/5000"   "$(row 'SSL/TLS')"
-chk "8b 无 DNS + udp/443 -> QUIC"        "600/6000"   "$(row 'QUIC')"
-chk "8c 无 DNS + tcp/554 -> RTSP"        "700/7000"   "$(row 'RTSP')"
-chk "10 隧道流单独统计"                   "8800"       "$(cat "$T/state/router.tsv")"
-chk "11 三类计数合计 = 客户端总量"         "72600"      "$(awk -F'\t' '{s+=$1+$2+$3+$4} END{print s+0}' "$T/state/stat.tsv")"
-chk "11a 命名(同客户端 DNS)"              "38500"      "$(cut -f1 "$T/state/stat.tsv")"
-chk "11b 命名(任意客户端 DNS)"            "11000"      "$(cut -f2 "$T/state/stat.tsv")"
-chk "11c 分类归入"                        "3300"       "$(cut -f3 "$T/state/stat.tsv")"
-chk "11d 其他（协议桶）"                  "19800"      "$(cut -f4 "$T/state/stat.tsv")"
-chk "12 隧道未混入应用列表"               "11"         "$(grep -c . "$T/state/totals.tsv")"
+chk "1  точное имя хоста важнее суффикса"            "100/1000"   "$(row 'NetEase Music')"
+chk "1a другие домены того же суффикса относятся к себе"       ""           "$(row 'NetEase')"
+chk "2  обычный суффикс совпал"                    "200/2000"   "$(row 'Taobao')"
+chk "3  самый длинный суффикс важнее (cdn.example.com)"  "400/4000"   "$(row 'Deep')"
+chk "3a короткий суффикс не забрал трафик длинного"         ""           "$(row 'Example')"
+chk "4  многоуровневый суффикс (bar.co.uk)"          "800/8000"   "$(row 'Foo Bar UK')"
+chk "5  суффикс категории совпал -> CDN"             "300/3000"   "$(row 'CDN')"
+chk "6  нет записи -> собственный домен сайта"           "900/9000"   "$(row 'unknownsite.org')"
+chk "7  адрес разрешён другим клиентом -> совпадение"    "1000/10000" "$(row 'Example Org')"
+chk "7b имя хоста в верхнем регистре после нормализации совпадает"          "1100/11000" "$(row 'Meituan')"
+chk "8a нет DNS + tcp/443 -> SSL/TLS"     "500/5000"   "$(row 'SSL/TLS')"
+chk "8b нет DNS + udp/443 -> QUIC"        "600/6000"   "$(row 'QUIC')"
+chk "8c нет DNS + tcp/554 -> RTSP"        "700/7000"   "$(row 'RTSP')"
+chk "10 трафик туннеля учитывается отдельно"                   "8800"       "$(cat "$T/state/router.tsv")"
+chk "11 сумма трёх категорий = итог клиентов"         "72600"      "$(awk -F'\t' '{s+=$1+$2+$3+$4} END{print s+0}' "$T/state/stat.tsv")"
+chk "11a именовано (DNS того же клиента)"              "38500"      "$(cut -f1 "$T/state/stat.tsv")"
+chk "11b именовано (DNS любого клиента)"            "11000"      "$(cut -f2 "$T/state/stat.tsv")"
+chk "11c отнесено к категории"                        "3300"       "$(cut -f3 "$T/state/stat.tsv")"
+chk "11d прочее (протокольная корзина)"                  "19800"      "$(cut -f4 "$T/state/stat.tsv")"
+chk "12 туннель не попал в список приложений"               "11"         "$(grep -c . "$T/state/totals.tsv")"
 # read a field out of the snapshot's totals object only - a bare grep for
 # "down": would also match every per-application entry
 tot() { grep -o '"totals":{[^}]*}' "$T/state/summary.json" | grep -o "\"$1\":[0-9]*" | cut -d: -f2; }
-chk "13 快照 totals.down"                 "66000"      "$(tot down)"
-chk "13a 快照 totals.up"                  "6600"       "$(tot up)"
-chk "13b 快照 totals.router"              "8800"       "$(tot router)"
+chk "13 снимок totals.down"                 "66000"      "$(tot down)"
+chk "13a снимок totals.up"                  "6600"       "$(tot up)"
+chk "13b снимок totals.router"              "8800"       "$(tot router)"
 
 echo
-echo "=== 名称缓存（resolve-on-insert）==="
-chk "14 namemap 记录精确命中"             "app NetEase Music" "$(nm 'music.163.com')"
-chk "14a namemap 记录最长后缀命中"         "app Deep"          "$(nm 'deep.cdn.example.com')"
-chk "14b namemap 记录类别归入"             "cat CDN"           "$(nm 'x.fastly.net')"
-chk "14c namemap 记录站点兜底"             "site unknownsite.org" "$(nm 'shop.unknownsite.org')"
-chk "14d namemap 未收录无关主机"           ""                  "$(nm 'not.in.the.map')"
-chk "14e namemap 键已归一化为小写"         "app Meituan"       "$(nm 'www.meituan.com')"
+echo "=== Кэш имён (resolve-on-insert) ==="
+chk "14 namemap записывает точное совпадение"             "app NetEase Music" "$(nm 'music.163.com')"
+chk "14a namemap записывает совпадение самого длинного суффикса"         "app Deep"          "$(nm 'deep.cdn.example.com')"
+chk "14b namemap записывает отнесение к категории"             "cat CDN"           "$(nm 'x.fastly.net')"
+chk "14c namemap записывает резервный домен сайта"             "site unknownsite.org" "$(nm 'shop.unknownsite.org')"
+chk "14d namemap не содержит посторонний хост"           ""                  "$(nm 'not.in.the.map')"
+chk "14e ключ namemap нормализован в нижний регистр"         "app Meituan"       "$(nm 'www.meituan.com')"
 # the catalogue was already read once; without new host names it must not grow
 nm_before=$(grep -c . "$T/state/namemap.tsv")
 
 echo
-echo "=== 吞吐时间序列（两级粒度）==="
+echo "=== Временной ряд пропускной способности (два уровня) ==="
 # every round records one point, so the two tiers must agree with the totals
-chk "16 series10 点与 totals 自洽（下行）"  "66000" "$(awk -F'\t' '{s+=$2} END{print s+0}' "$T/state/series10.tsv")"
-chk "16a series10 点与 totals 自洽（上行）" "6600"  "$(awk -F'\t' '{s+=$3} END{print s+0}' "$T/state/series10.tsv")"
-chk "16b 至少记录了 1 个采样点"             "yes"   "$(awk 'END{print (NR>=1)?"yes":"no"}' "$T/state/series10.tsv")"
-chk "16c minute 累加器对齐整分钟"           "0"     "$(( $(sed -n '1p' "$T/state/minute.tsv") % 60 ))"
+chk "16 точки series10 согласованы с totals (приём)"  "66000" "$(awk -F'\t' '{s+=$2} END{print s+0}' "$T/state/series10.tsv")"
+chk "16a точки series10 согласованы с totals (отдача)" "6600"  "$(awk -F'\t' '{s+=$3} END{print s+0}' "$T/state/series10.tsv")"
+chk "16b записана хотя бы 1 точка выборки"             "yes"   "$(awk 'END{print (NR>=1)?"yes":"no"}' "$T/state/series10.tsv")"
+chk "16c минутный аккумулятор выровнен по целой минуте"           "0"     "$(( $(sed -n '1p' "$T/state/minute.tsv") % 60 ))"
 
 echo
-echo "=== 目录变更必须让缓存失效 ==="
+echo "=== Изменение каталога должно инвалидировать кэш ==="
 # Rewrite the application table (a different size, as a real upgrade would be)
 # and point the suffix at a new name: the cached answer has to be replaced.
 {
@@ -322,30 +322,30 @@ echo "=== 目录变更必须让缓存失效 ==="
 # also stage a finished minute, so the next run has to fold it into the day tier
 printf '%s\n%s\n%s\n' "$(( $(date +%s) / 60 * 60 - 60 ))" 4242 424 > "$T/state/minute.tsv"
 run_collector 30
-chk "15 目录变更后 namemap 重新解析"       "app Fastly"        "$(nm 'x.fastly.net')"
-chk "15a 目录变更后长后缀重新解析"         "app Deep CDN"      "$(nm 'deep.cdn.example.com')"
-chk "15b 缓存未被重复追加"                 "$nm_before"        "$(grep -c . "$T/state/namemap.tsv")"
+chk "15 после изменения каталога namemap разрешает заново"       "app Fastly"        "$(nm 'x.fastly.net')"
+chk "15a после изменения каталога длинный суффикс разрешается заново"         "app Deep CDN"      "$(nm 'deep.cdn.example.com')"
+chk "15b кэш не дописан повторно"                 "$nm_before"        "$(grep -c . "$T/state/namemap.tsv")"
 # Asserting that the seeded minute is present, rather than that it is the last
 # row: if the run happens to span a real minute boundary the collector also
 # flushes the minute that just ended, so the seeded row is no longer last.  That
 # took a few percent of runs to fail, which is not a property worth asserting.
-chk "17 跨分钟后上一分钟落盘 series60"     "1"                 "$(awk -F'\t' '$2==4242 && $3==424 { n++ } END { print n + 0 }' "$T/data/series60.tsv")"
-chk "17a series60 只保留完整分钟"          "0"                 "$(( $(awk -F'\t' 'END{print $1}' "$T/data/series60.tsv") % 60 ))"
+chk "17 после смены минуты предыдущая минута записана в series60"     "1"                 "$(awk -F'\t' '$2==4242 && $3==424 { n++ } END { print n + 0 }' "$T/data/series60.tsv")"
+chk "17a series60 хранит только полные минуты"          "0"                 "$(( $(awk -F'\t' 'END{print $1}' "$T/data/series60.tsv") % 60 ))"
 # the conntrack snapshot is unchanged since the first run, so these rounds carry
 # no traffic at all - and a quiet round must still get a point, otherwise the
 # chart would show a hole instead of zero
-chk "17b 无流量轮次记录为 0 点"            "yes"               "$(awk -F'\t' '$2=="0" && $3=="0" {print "yes"; exit}' "$T/state/series10.tsv" | grep -q . && echo yes || echo no)"
+chk "17b цикл без трафика записан нулевой точкой"            "yes"               "$(awk -F'\t' '$2=="0" && $3=="0" {print "yes"; exit}' "$T/state/series10.tsv" | grep -q . && echo yes || echo no)"
 
 echo
-echo "=== 冷数据窗口上限 ==="
+echo "=== Ограничение окна холодных данных ==="
 # shrink the day tier to 3 points and pre-fill it: the oldest must be dropped
 printf '1\t1\t1\n2\t2\t2\n3\t3\t3\n4\t4\t4\n5\t5\t5\n' > "$T/data/series60.tsv"
 printf '%s\n%s\n%s\n' "$(( $(date +%s) / 60 * 60 - 60 ))" 77 7 > "$T/state/minute.tsv"
 run_collector 30 TRAFFIC_SERIES_COLD=180
-chk "18 series60 裁剪到上限（3 点）"       "3"                 "$(grep -c . "$T/data/series60.tsv")"
+chk "18 series60 обрезан до предела (3 точки)"       "3"                 "$(grep -c . "$T/data/series60.tsv")"
 # Same reasoning as 17: the invariant is that trimming dropped the oldest
 # points, not which row happens to be last when the run spans a minute boundary.
-chk "18a 保留的是最新点而非最旧点"         "0"                 "$(awk -F'\t' '($2==1 && $3==1) || ($2==2 && $3==2) { n++ } END { print n + 0 }' "$T/data/series60.tsv")"
+chk "18a сохранены новые точки, а не старые"         "0"                 "$(awk -F'\t' '($2==1 && $3==1) || ($2==2 && $3==2) { n++ } END { print n + 0 }' "$T/data/series60.tsv")"
 
 # an idle minute is data too: skipping it would compress the chart's time axis,
 # because the points are spaced by index.  A minute of its own (-120) keeps the
@@ -353,11 +353,11 @@ chk "18a 保留的是最新点而非最旧点"         "0"                 "$(aw
 # same wall-clock minute.
 printf '%s\n%s\n%s\n' "$(( $(date +%s) / 60 * 60 - 120 ))" 0 0 > "$T/state/minute.tsv"
 run_collector 30 TRAFFIC_SERIES_COLD=180
-chk "18b 空闲的一分钟仍会落盘"             "0/0"               "$(awk -F'\t' 'END{print $2"/"$3}' "$T/data/series60.tsv")"
-chk "18c 空闲点也受窗口上限约束"           "3"                 "$(grep -c . "$T/data/series60.tsv")"
+chk "18b простаивающая минута всё равно записывается"             "0/0"               "$(awk -F'\t' 'END{print $2"/"$3}' "$T/data/series60.tsv")"
+chk "18c простаивающие точки тоже ограничены окном"           "3"                 "$(grep -c . "$T/data/series60.tsv")"
 
 echo
-echo "=== 按需解析（页面打开时不等节流窗口）==="
+echo "=== Разрешение по запросу (страница не ждёт окно троттлинга) ==="
 # a fresh resolve timestamp means the throttle would normally hold this host
 # name back; the page asks for it now by dropping the flag
 printf '%s\n' "$(date +%s)" > "$T/state/nmtime"
@@ -371,18 +371,18 @@ printf '1\n' > "$T/state/pending"
 # it, so "the throttle held the name back" is a statement about the throttle and
 # not about how long this phase happened to take.
 run_collector 30 TRAFFIC_RESOLVE=3600
-chk "19 节流生效：新主机名暂不解析"        ""                  "$(nm 'newhost.meituan.com')"
-chk "19a 待解析数量会上报"                 "1"                 "$(sed -n '1p' "$T/state/pending")"
+chk "19 троттлинг работает: новое имя хоста пока не разрешается"        ""                  "$(nm 'newhost.meituan.com')"
+chk "19a число ожидающих разрешения передаётся"                 "1"                 "$(sed -n '1p' "$T/state/pending")"
 : > "$T/state/resolve.now"
 # resolve.now has to beat the throttle, so it is checked against the same wide
 # window that just held the name back
 run_collector 30 TRAFFIC_RESOLVE=3600
-chk "19b resolveNow 让页面立刻拿到名称"    "app Meituan"       "$(nm 'newhost.meituan.com')"
-chk "19c 标记被消费后清除"                 "no"                "$( [ -f "$T/state/resolve.now" ] && echo yes || echo no )"
-chk "19d 解析完成后待解析归零"             "0"                 "$(sed -n '1p' "$T/state/pending")"
+chk "19b resolveNow сразу даёт странице имя"    "app Meituan"       "$(nm 'newhost.meituan.com')"
+chk "19c флаг очищается после использования"                 "no"                "$( [ -f "$T/state/resolve.now" ] && echo yes || echo no )"
+chk "19d после разрешения счётчик ожидающих равен нулю"             "0"                 "$(sed -n '1p' "$T/state/pending")"
 
 echo
-echo "=== 路由器自身地址不计入客户端 ==="
+echo "=== Собственные адреса роутера не считаются клиентом ==="
 # The box runs a proxy, so its own LAN address sources a pile of outbound
 # connections.  Counted as a client, "192.168.2.1" sat at the top of the list
 # with 39 MB against it, and the same for its v6 address.  A real v6 client is
@@ -399,18 +399,18 @@ run_collector_at 30 "$T/state2" "$T/data2" "$T/ct2" /nonexistent \
     TRAFFIC_SELF="192.168.2.1 fdc8:64ed:f962:0000:0000:0000:0000:0001" \
     TRAFFIC_LAN6=fdc8:64ed:f962:
 c2() { awk -F'\t' -v ip="$1" '$1==ip {print $2}' "$T/state2/clients.tsv"; }
-chk "20 路由器自身 v4 地址不计入客户端"     ""                  "$(c2 '192.168.2.1')"
-chk "20a 路由器自身 v6 地址不计入客户端"    ""                  "$(c2 'fdc8:64ed:f962:0000:0000:0000:0000:0001')"
-chk "20b v6 客户端仍被统计"                 "4400"              "$(c2 'fdc8:64ed:f962:0000:0000:0000:0000:0050')"
-chk "20c v4 客户端仍被统计"                 "1100"              "$(c2 '192.168.2.50')"
-chk "20d 客户端恰好两台"                    "2"                 "$(grep -c . "$T/state2/clients.tsv")"
-chk "20e 自身流量归入 router 而非客户端"    "5500"              "$(cat "$T/state2/router.tsv")"
-chk "20f 快照不把自身地址列为客户端"        "0"                 "$(grep -o '"ip":"192.168.2.1"' "$T/state2/summary.json" 2>/dev/null | wc -l | tr -d ' ')"
-chk "20g 快照报告自身地址（页面可见）"      "192.168.2.1 fdc8:64ed:f962:0000:0000:0000:0000:0001" \
+chk "20 собственный v4-адрес роутера не считается клиентом"     ""                  "$(c2 '192.168.2.1')"
+chk "20a собственный v6-адрес роутера не считается клиентом"    ""                  "$(c2 'fdc8:64ed:f962:0000:0000:0000:0000:0001')"
+chk "20b v6-клиент по-прежнему учитывается"                 "4400"              "$(c2 'fdc8:64ed:f962:0000:0000:0000:0000:0050')"
+chk "20c v4-клиент по-прежнему учитывается"                 "1100"              "$(c2 '192.168.2.50')"
+chk "20d клиентов ровно два"                    "2"                 "$(grep -c . "$T/state2/clients.tsv")"
+chk "20e собственный трафик относится к router, а не к клиентам"    "5500"              "$(cat "$T/state2/router.tsv")"
+chk "20f снимок не указывает собственный адрес как клиента"        "0"                 "$(grep -o '"ip":"192.168.2.1"' "$T/state2/summary.json" 2>/dev/null | wc -l | tr -d ' ')"
+chk "20g снимок сообщает собственные адреса (видны на странице)"      "192.168.2.1 fdc8:64ed:f962:0000:0000:0000:0000:0001" \
     "$(grep -o '"self":"[^"]*"' "$T/state2/summary.json" 2>/dev/null | cut -d'"' -f4)"
 
 echo
-echo "=== 状态版本变更后重建存量计数器 ==="
+echo "=== После смены версии состояния счётчики пересоздаются ==="
 # /tmp/traffic survives an upgrade, so the row that used to be the box's own
 # address is already in clients.tsv - and a running total is only ever added to,
 # so it would sit at the top of the client list forever.  An older schema forces
@@ -420,15 +420,15 @@ printf '192.168.2.1\t39587169\n' > "$T/state3/clients.tsv"
 printf '999\n' > "$T/state3/version"
 run_collector_at 30 "$T/state3" "$T/data3" "$T/ct" "$T/ql"
 c3() { awk -F'\t' -v ip="$1" '$1==ip {print $2}' "$T/state3/clients.tsv"; }
-chk "21 旧版本的存量客户端行被清除"         ""                  "$(c3 '192.168.2.1')"
-chk "21a 新版本号已写入"                    "$SCHEMA"                 "$(sed -n '1p' "$T/state3/version")"
-chk "21b 计数器是从新数据重建的"            "72600"             "$(c3 '192.168.2.138')"
+chk "21 старые строки клиентов удалены"         ""                  "$(c3 '192.168.2.1')"
+chk "21a новый номер версии записан"                    "$SCHEMA"                 "$(sed -n '1p' "$T/state3/version")"
+chk "21b счётчики пересозданы из новых данных"            "72600"             "$(c3 '192.168.2.138')"
 # second run: the schema now matches, so the totals must survive it untouched
 run_collector_at 30 "$T/state3" "$T/data3" "$T/ct" "$T/ql"
-chk "21c 版本未变时不会清空计数器"          "72600"             "$(c3 '192.168.2.138')"
+chk "21c при неизменной версии счётчики не очищаются"          "72600"             "$(c3 '192.168.2.138')"
 
 echo
-echo "=== 自动探测路由器自身地址（设备实走路径）==="
+echo "=== Автоопределение собственных адресов роутера (реальный путь устройства) ==="
 # Nobody sets 'self' by hand: on the router the collector finds the addresses
 # itself, which is the path the field report came from and the one that has to
 # keep working.  A stub 'ip' stands in for the LAN interface, link-local
@@ -448,16 +448,16 @@ chmod +x "$T/fakebin/ip"
 # no TRAFFIC_SELF and no TRAFFIC_LAN6: both are detected through the stub
 run_collector_at 30 "$T/state4" "$T/data4" "$T/ct2" /nonexistent "PATH=$T/fakebin:$PATH"
 c4() { awk -F'\t' -v ip="$1" '$1==ip {print $2}' "$T/state4/clients.tsv"; }
-chk "22 自动探测到 LAN 地址并排除"          ""                  "$(c4 '192.168.2.1')"
-chk "22a 自动探测到 v6 地址并排除"          ""                  "$(c4 'fdc8:64ed:f962:0000:0000:0000:0000:0001')"
-chk "22b v6 客户端不受影响"                 "4400"              "$(c4 'fdc8:64ed:f962:0000:0000:0000:0000:0050')"
-chk "22c 探到的地址写入快照（v4+v6，v6 已展开）" \
+chk "22 LAN-адрес определён автоматически и исключён"          ""                  "$(c4 '192.168.2.1')"
+chk "22a v6-адрес определён автоматически и исключён"          ""                  "$(c4 'fdc8:64ed:f962:0000:0000:0000:0000:0001')"
+chk "22b v6-клиент не затронут"                 "4400"              "$(c4 'fdc8:64ed:f962:0000:0000:0000:0000:0050')"
+chk "22c найденные адреса записаны в снимок (v4+v6, v6 развёрнут)" \
     "192.168.2.1 fdc8:64ed:f962:0000:0000:0000:0000:0001 fe80:0000:0000:0000:0000:0000:0000:0001" \
     "$(grep -o '"self":"[^"]*"' "$T/state4/summary.json" 2>/dev/null | cut -d'"' -f4)"
-chk "22d 自动探测时自身流量仍归 router"     "5500"              "$(cat "$T/state4/router.tsv")"
+chk "22d при автоопределении собственный трафик всё равно относится к router"     "5500"              "$(cat "$T/state4/router.tsv")"
 
 echo
-echo "=== 逐客户端字节计数（nft）==="
+echo "=== Побайтовый учёт по клиентам (nft) ==="
 # The counters are what makes the client totals independent of the conntrack
 # table.  A stub nft stands in for the kernel: it remembers which chains and
 # rules were added and prints the byte counters the test sets, so rule building,
@@ -531,21 +531,21 @@ printf '192.168.2.50 10000\n192.168.2.51 0\n' > "$T/nft5/counters.post"
 run_collector_at 30 "$T/state5" "$T/data5" "$T/ct2" /nonexistent \
     "PATH=$T/fakebin:$PATH" "NFTS=$T/nft5" "TRAFFIC_ARPFILE=$T/arp5" \
     TRAFFIC_SELF="192.168.2.1" TRAFFIC_LAN6=fdc8:64ed:f962:
-chk "23 只给真正的 LAN 邻居建计数规则"      "2"                 "$(grep -c 'saddr' "$T/nft5/rules.pre" 2>/dev/null)"
-chk "23a 陈旧的 arp 表项不建规则"           "0"                 "$(grep -c '192.168.2.99' "$T/nft5/rules.pre" 2>/dev/null)"
-chk "23b WAN 网段邻居不建规则"              "0"                 "$(grep -c '192.168.1.7' "$T/nft5/rules.pre" 2>/dev/null)"
+chk "23 правила счётчиков создаются только для реальных соседей LAN"      "2"                 "$(grep -c 'saddr' "$T/nft5/rules.pre" 2>/dev/null)"
+chk "23a для устаревших записей arp правила не создаются"           "0"                 "$(grep -c '192.168.2.99' "$T/nft5/rules.pre" 2>/dev/null)"
+chk "23b для соседей из сети WAN правила не создаются"              "0"                 "$(grep -c '192.168.1.7' "$T/nft5/rules.pre" 2>/dev/null)"
 # The cumulative per-client file is asserted rather than the per-round delta:
 # the collector primes its baseline at startup, so by the time the runner has
 # seen a completed round the delta of that first reading is already accounted
 # and the delta file shows the (zero) change of the round itself.
-chk "23c 下行按目的地址计（postrouting）"   "10000"             "$(awk -F'\t' '$1=="192.168.2.50"{print $2}' "$T/state5/acct.tsv")"
-chk "23d 上行按源地址计（prerouting）"      "1000"              "$(awk -F'\t' '$1=="192.168.2.50"{print $3}' "$T/state5/acct.tsv")"
-chk "23e 客户端总量来自计数器"              "11000"             "$(awk -F'\t' '$1=="192.168.2.50"{print $2}' "$T/state5/clients.tsv")"
-chk "23f 快照报告计数层已启用"              "1"                 "$(grep -o '"acct":[0-9]*' "$T/state5/summary.json" | cut -d: -f2)"
+chk "23c приём считается по адресу назначения (postrouting)"   "10000"             "$(awk -F'\t' '$1=="192.168.2.50"{print $2}' "$T/state5/acct.tsv")"
+chk "23d отдача считается по адресу источника (prerouting)"      "1000"              "$(awk -F'\t' '$1=="192.168.2.50"{print $3}' "$T/state5/acct.tsv")"
+chk "23e итог клиента берётся из счётчиков"              "11000"             "$(awk -F'\t' '$1=="192.168.2.50"{print $2}' "$T/state5/clients.tsv")"
+chk "23f снимок сообщает, что уровень счётчиков включён"              "1"                 "$(grep -o '"acct":[0-9]*' "$T/state5/summary.json" | cut -d: -f2)"
 # The Makefile substitutes the package version in at build time; here it is the
 # unsubstituted placeholder, and that it is present at all is what matters: the
 # page shows it so an installed fix can be told from one that is not running.
-chk "23f2 快照报告采集器版本"               "dev"               "$(grep -o '"version":"[^"]*"' "$T/state5/summary.json" | cut -d'"' -f4)"
+chk "23f2 снимок сообщает версию сборщика"               "dev"               "$(grep -o '"version":"[^"]*"' "$T/state5/summary.json" | cut -d'"' -f4)"
 # client_bytes is the page's per-client denominator.  It is produced by its
 # own awk over clients.tsv (column 2), separate from the top-clients array,
 # so it is asserted against a sum this test computes itself: a change of
@@ -554,16 +554,16 @@ chk "23f2 快照报告采集器版本"               "dev"               "$(grep
 # so asking acctf for client_bytes returns an empty string on every snapshot
 # and the mismatch would read as a product bug rather than a lookup mistake.
 totf() { grep -o '"totals":{[^}]*}' "$1" | sed -n "s/.*\"$2\":\([0-9]*\).*/\1/p"; }
-chk "23f3 client_bytes 等于客户端字节之和"  "$(awk -F'\t' '{s+=$2} END{print s+0}' "$T/state5/clients.tsv")" \
+chk "23f3 client_bytes равен сумме байтов клиентов"  "$(awk -F'\t' '{s+=$2} END{print s+0}' "$T/state5/clients.tsv")" \
                                             "$(totf "$T/state5/summary.json" client_bytes)"
 # 23f3 can only tell column 2 from column 3 if the fixture makes them
 # differ.  Without this guard, a fixture whose columns happen to be equal
 # would let a wrong-column awk pass - the vacuous case to avoid.
-chk "23f4 夹具可辨别列 2 与列 3"            "different" \
+chk "23f4 тестовые данные различают столбцы 2 и 3"            "different" \
     "$( [ "$(awk -F'\t' '{s+=$2} END{print s+0}' "$T/state5/clients.tsv")" != "$(awk -F'\t' '{s+=$3} END{print s+0}' "$T/state5/clients.tsv")" ] && echo different || echo same )"
 acctf() { grep -o '"accounted":{[^}]*}' "$1" | sed -n "s/.*\"$2\":\([0-9]*\).*/\1/p"; }
-chk "23g 快照报告计数器总量（下行）"        "10000"             "$(acctf "$T/state5/summary.json" down)"
-chk "23g2 快照报告计数器总量（上行）"       "1000"              "$(acctf "$T/state5/summary.json" up)"
+chk "23g снимок сообщает итог счётчиков (приём)"        "10000"             "$(acctf "$T/state5/summary.json" down)"
+chk "23g2 снимок сообщает итог счётчиков (отдача)"       "1000"              "$(acctf "$T/state5/summary.json" up)"
 # Large byte counters must survive every TSV and JSON serialization step.
 # A 32-bit awk printf %d clamps them to 2147483647 on the router.
 mkdir -p "$T/large"
@@ -585,19 +585,19 @@ sed '$d' "$COLLECTOR" > "$T/collector-functions.sh"
     TRAFFIC_LEASES=/nonexistent
     write_summary
 )
-chk "23g3 大流量应用下行不截断" "3000000000" "$(grep -o '"name":"Large App","down":[0-9]*' "$T/large/summary.json" | cut -d: -f3)"
-chk "23g4 大流量应用上行不截断" "1000000000" "$(grep -o '"name":"Large App"[^}]*"up":[0-9]*' "$T/large/summary.json" | sed -n 's/.*"up":\([0-9]*\).*/\1/p')"
-chk "23g5 大流量应用主客户端不截断" "3000000000" "$(grep -o '"name":"Large App"[^}]*"top_bytes":[0-9]*' "$T/large/summary.json" | sed -n 's/.*"top_bytes":\([0-9]*\).*/\1/p')"
-chk "23g6 大流量客户端不截断" "4000000000" "$(grep -o '"ip":"192.168.2.50"[^}]*"bytes":[0-9]*' "$T/large/summary.json" | sed -n 's/.*"bytes":\([0-9]*\).*/\1/p')"
-chk "23g7 汇总下行不截断" "3000000000" "$(totf "$T/large/summary.json" down)"
-chk "23g8 客户端总和不截断" "5000000000" "$(totf "$T/large/summary.json" client_bytes)"
+chk "23g3 приём крупного приложения не обрезается" "3000000000" "$(grep -o '"name":"Large App","down":[0-9]*' "$T/large/summary.json" | cut -d: -f3)"
+chk "23g4 отдача крупного приложения не обрезается" "1000000000" "$(grep -o '"name":"Large App"[^}]*"up":[0-9]*' "$T/large/summary.json" | sed -n 's/.*"up":\([0-9]*\).*/\1/p')"
+chk "23g5 основной клиент крупного приложения не обрезается" "3000000000" "$(grep -o '"name":"Large App"[^}]*"top_bytes":[0-9]*' "$T/large/summary.json" | sed -n 's/.*"top_bytes":\([0-9]*\).*/\1/p')"
+chk "23g6 крупный клиент не обрезается" "4000000000" "$(grep -o '"ip":"192.168.2.50"[^}]*"bytes":[0-9]*' "$T/large/summary.json" | sed -n 's/.*"bytes":\([0-9]*\).*/\1/p')"
+chk "23g7 итоговый приём не обрезается" "3000000000" "$(totf "$T/large/summary.json" down)"
+chk "23g8 сумма клиентов не обрезается" "5000000000" "$(totf "$T/large/summary.json" client_bytes)"
 # second round: only the increase is added, not the absolute counter again
 printf '192.168.2.50 3000\n192.168.2.51 0\n' > "$T/nft5/counters.pre"
 printf '192.168.2.50 25000\n192.168.2.51 0\n' > "$T/nft5/counters.post"
 run_collector_at 30 "$T/state5" "$T/data5" "$T/ct2" /nonexistent \
     "PATH=$T/fakebin:$PATH" "NFTS=$T/nft5" "TRAFFIC_ARPFILE=$T/arp5" \
     TRAFFIC_SELF="192.168.2.1" TRAFFIC_LAN6=fdc8:64ed:f962:
-chk "23h 增量累加而不是重复计入绝对值"      "3000"              "$(awk -F'\t' '$1=="192.168.2.50"{print $3}' "$T/state5/acct.tsv")"
+chk "23h прирост накапливается, а не абсолютное значение повторно"      "3000"              "$(awk -F'\t' '$1=="192.168.2.50"{print $3}' "$T/state5/acct.tsv")"
 # A new client must not reset the counters that are already running: flushing
 # and rebuilding the rule set on any neighbour change would throw away the
 # traffic of the interval the rebuild happened in, and neighbour entries expire
@@ -610,9 +610,9 @@ printf '192.168.2.50 35000\n192.168.2.51 0\n192.168.2.52 900\n' > "$T/nft5/count
 run_collector_at 30 "$T/state5" "$T/data5" "$T/ct2" /nonexistent \
     "PATH=$T/fakebin:$PATH" "NFTS=$T/nft5" "TRAFFIC_ARPFILE=$T/arp5" \
     TRAFFIC_SELF="192.168.2.1" TRAFFIC_LAN6=fdc8:64ed:f962:
-chk "23h2 新增客户端不重置已有计数器"       "13000"             "$(awk -F'\t' '$1=="192.168.2.50"{print $3}' "$T/state5/acct.tsv")"
-chk "23h3 新增客户端立刻开始计数"           "700"               "$(awk -F'\t' '$1=="192.168.2.52"{print $3}' "$T/state5/acct.tsv")"
-chk "23h4 新客户端也建了规则"               "3"                 "$(grep -c 'saddr' "$T/nft5/rules.pre" 2>/dev/null)"
+chk "23h2 новый клиент не сбрасывает существующие счётчики"       "13000"             "$(awk -F'\t' '$1=="192.168.2.50"{print $3}' "$T/state5/acct.tsv")"
+chk "23h3 новый клиент сразу начинает учитываться"           "700"               "$(awk -F'\t' '$1=="192.168.2.52"{print $3}' "$T/state5/acct.tsv")"
+chk "23h4 для нового клиента тоже создано правило"               "3"                 "$(grep -c 'saddr' "$T/nft5/rules.pre" 2>/dev/null)"
 # a firewall reload flushes the whole ruleset, ours included: the chains have to
 # come back, and the counters restart from a lower value
 rm -f "$T/nft5/rules.pre" "$T/nft5/rules.post"
@@ -621,17 +621,17 @@ printf '192.168.2.50 500\n192.168.2.51 0\n' > "$T/nft5/counters.post"
 run_collector_at 30 "$T/state5" "$T/data5" "$T/ct2" /nonexistent \
     "PATH=$T/fakebin:$PATH" "NFTS=$T/nft5" "TRAFFIC_ARPFILE=$T/arp5" \
     TRAFFIC_SELF="192.168.2.1" TRAFFIC_LAN6=fdc8:64ed:f962:
-chk "23i 防火墙重载后计数规则自愈"          "3"                 "$(grep -c 'saddr' "$T/nft5/rules.pre" 2>/dev/null)"
-chk "23j 计数器归零后按新绝对值计增量"      "35500"             "$(awk -F'\t' '$1=="192.168.2.50"{print $2}' "$T/state5/acct.tsv")"
-chk "23k 累计值在之前各轮基础上继续"        "13200"             "$(awk -F'\t' '$1=="192.168.2.50"{print $3}' "$T/state5/acct.tsv")"
+chk "23i после перезагрузки firewall правила счётчиков восстанавливаются"          "3"                 "$(grep -c 'saddr' "$T/nft5/rules.pre" 2>/dev/null)"
+chk "23j после обнуления счётчиков прирост считается от нового значения"      "35500"             "$(awk -F'\t' '$1=="192.168.2.50"{print $2}' "$T/state5/acct.tsv")"
+chk "23k накопленное значение продолжается от предыдущих циклов"        "13200"             "$(awk -F'\t' '$1=="192.168.2.50"{print $3}' "$T/state5/acct.tsv")"
 # without nft the client totals fall back to conntrack, and the snapshot says so
 run_collector_at 30 "$T/state6" "$T/data6" "$T/ct" "$T/ql" TRAFFIC_SELF="192.168.2.1"
-chk "23l 无 nft 时降级并如实上报"           "0"                 "$(grep -o '"acct":[0-9]*' "$T/state6/summary.json" | cut -d: -f2)"
-chk "23m 降级原因写入快照"                  "nft is not installed" "$(grep -o '"acct_error":"[^"]*"' "$T/state6/summary.json" | cut -d'"' -f4)"
-chk "23n 降级时客户端总量仍由 conntrack 给出" "72600"           "$(awk -F'\t' '$1=="192.168.2.138"{print $2}' "$T/state6/clients.tsv")"
+chk "23l без nft выполняется откат с честным сообщением"           "0"                 "$(grep -o '"acct":[0-9]*' "$T/state6/summary.json" | cut -d: -f2)"
+chk "23m причина отката записана в снимок"                  "nft is not installed" "$(grep -o '"acct_error":"[^"]*"' "$T/state6/summary.json" | cut -d'"' -f4)"
+chk "23n при откате итог клиентов всё равно берётся из conntrack" "72600"           "$(awk -F'\t' '$1=="192.168.2.138"{print $2}' "$T/state6/clients.tsv")"
 
 echo
-echo "=== 快照结构（页面读取的字段必须在这一层）==="
+echo "=== Структура снимка (поля, которые читает страница, должны быть здесь) ==="
 # A field written into the wrong nesting level is invisible: rpcd only checks
 # that the file starts with a brace, and the page simply reads undefined.  The
 # whole status strip lost its rows that way once, so the shape is asserted
@@ -641,20 +641,20 @@ shape() {
     sed -e 's/,"apps":\[.*$//' -e 's/^[^{]*{//' "$1" \
         | tr ',' '\n' | sed -n 's/^"\([a-z_]*\)":.*/\1/p'
 }
-chk "25 快照是合法 JSON（首字符）"          "{"                 "$(head -c 1 "$T/state5/summary.json")"
-chk "25a 元数据在顶层：version"             "version"           "$(shape "$T/state5/summary.json" | grep -x version)"
-chk "25b 元数据在顶层：acct"                "acct"              "$(shape "$T/state5/summary.json" | grep -x acct)"
-chk "25c 元数据在顶层：self"                "self"              "$(shape "$T/state5/summary.json" | grep -x self)"
-chk "25d 元数据在顶层：pending"             "pending"           "$(shape "$T/state5/summary.json" | grep -x pending)"
-chk "25e 总量仍在 totals 内"                "1"                 "$(grep -c '"totals":{"down"' "$T/state5/summary.json")"
-chk "25f 元数据没有混进 totals"             "0"                 "$(sed -n 's/.*"totals":{\([^}]*\)}.*/\1/p' "$T/state5/summary.json" | grep -c '"version"')"
+chk "25 снимок — корректный JSON (первый символ)"          "{"                 "$(head -c 1 "$T/state5/summary.json")"
+chk "25a метаданные на верхнем уровне: version"             "version"           "$(shape "$T/state5/summary.json" | grep -x version)"
+chk "25b метаданные на верхнем уровне: acct"                "acct"              "$(shape "$T/state5/summary.json" | grep -x acct)"
+chk "25c метаданные на верхнем уровне: self"                "self"              "$(shape "$T/state5/summary.json" | grep -x self)"
+chk "25d метаданные на верхнем уровне: pending"             "pending"           "$(shape "$T/state5/summary.json" | grep -x pending)"
+chk "25e итог по-прежнему внутри totals"                "1"                 "$(grep -c '"totals":{"down"' "$T/state5/summary.json")"
+chk "25f метаданные не попали в totals"             "0"                 "$(sed -n 's/.*"totals":{\([^}]*\)}.*/\1/p' "$T/state5/summary.json" | grep -c '"version"')"
 # a snapshot that does not parse is worse than one that is empty, and node is
 # not available on the target, so balance is checked the cheap way
-chk "25g 引号成对（偶数个双引号）"          "0"                 "$(( $(tr -cd '"' < "$T/state5/summary.json" | wc -c) % 2 ))"
+chk "25g кавычки парные (чётное число двойных кавычек)"          "0"                 "$(( $(tr -cd '"' < "$T/state5/summary.json" | wc -c) % 2 ))"
 # A snapshot written before the first round means "no snapshot" can only mean
 # the service is not running; without it, a collector stuck in round one looks
 # exactly like one that never started.
-chk "25h 轮次计数器在快照里"                "1"                 "$(grep -c '"rounds":[0-9]' "$T/state5/summary.json")"
+chk "25h счётчик циклов есть в снимке"                "1"                 "$(grep -c '"rounds":[0-9]' "$T/state5/summary.json")"
 mkdir -p "$T/state8" "$T/data8"
 ( UCI=/bin/true LUA="$T/bin/lua" CT="$T/ct" TRAFFIC_QUERYLOG="$T/ql" TRAFFIC_LAN4=192.168.2. \
   TRAFFIC_INTERVAL=30 TRAFFIC_DATADIR="$T/data8" TRAFFIC_APPMAP="$T/apps.tsv" \
@@ -667,12 +667,12 @@ while [ "$i" -lt 40 ]; do
   [ -s "$T/state8/summary.json" ] && break
   sleep 0.2; i=$((i + 1))
 done
-chk "25i 启动即写出快照（第一轮之前）"      "0"                 "$(rounds_at "$T/state8/summary.json")"
-chk "25j 启动快照已带版本与自身地址"        "yes"               "$(grep -q '"version":"' "$T/state8/summary.json" && grep -q '"self":"' "$T/state8/summary.json" && echo yes || echo no)"
+chk "25i снимок записывается при старте (до первого цикла)"      "0"                 "$(rounds_at "$T/state8/summary.json")"
+chk "25j стартовый снимок уже содержит версию и собственные адреса"        "yes"               "$(grep -q '"version":"' "$T/state8/summary.json" && grep -q '"self":"' "$T/state8/summary.json" && echo yes || echo no)"
 kill $stpid 2>/dev/null; wait $stpid 2>/dev/null
 
 echo
-echo "=== dnsmasq 查询日志作为第二域名来源 ==="
+echo "=== Журнал запросов dnsmasq как второй источник доменов ==="
 # On a router where passwall has taken dnsmasq over, the proxied domains are
 # answered by passwall and never reach AdGuard Home, and the queries AdGuard
 # does see arrive from dnsmasq instead of from the device.  dnsmasq's own log has
@@ -692,12 +692,12 @@ EOF
 run_collector_at 30 "$T/state7" "$T/data7" "$T/ct2" /nonexistent \
     "TRAFFIC_DNSLOG=$T/dnsmasq.log" TRAFFIC_SELF="192.168.2.1" TRAFFIC_LAN6=fdc8:64ed:f962:
 d7() { awk -F'\t' -v d="$1" '$2==d {print $1" "$3}' "$T/state7/dnsmap.tsv"; }
-chk "24 从 dnsmasq 日志取得客户端与域名"    "192.168.2.50 142.250.185.78" "$(d7 'www.youtube.com')"
-chk "24a cached 行同样算作应答"             "192.168.2.51 203.0.113.9"   "$(d7 'cdn.example.net')"
-chk "24b CNAME 行不算地址"                  "0"                 "$(grep -c 'CNAME' "$T/state7/dnsmap.tsv" 2>/dev/null)"
-chk "24c NODATA 行不算地址"                 "0"                 "$(grep -c 'NODATA' "$T/state7/dnsmap.tsv" 2>/dev/null)"
-chk "24d forwarded 行（上游地址）不算应答"  "0"                 "$(grep -c '	127.0.0.1$' "$T/state7/dnsmap.tsv" 2>/dev/null)"
-chk "24e 域名已归一化为小写"                "192.168.2.50 142.250.185.78" "$(d7 'www.youtube.com')"
+chk "24 из журнала dnsmasq получены клиент и домен"    "192.168.2.50 142.250.185.78" "$(d7 'www.youtube.com')"
+chk "24a строки cached тоже считаются ответом"             "192.168.2.51 203.0.113.9"   "$(d7 'cdn.example.net')"
+chk "24b строки CNAME не считаются адресом"                  "0"                 "$(grep -c 'CNAME' "$T/state7/dnsmap.tsv" 2>/dev/null)"
+chk "24c строки NODATA не считаются адресом"                 "0"                 "$(grep -c 'NODATA' "$T/state7/dnsmap.tsv" 2>/dev/null)"
+chk "24d строки forwarded (адрес upstream) не считаются ответом"  "0"                 "$(grep -c '	127.0.0.1$' "$T/state7/dnsmap.tsv" 2>/dev/null)"
+chk "24e домен нормализован в нижний регистр"                "192.168.2.50 142.250.185.78" "$(d7 'www.youtube.com')"
 # incremental: only what is new is read, so a repeated run must not duplicate
 before=$(grep -c . "$T/state7/dnsmap.tsv")
 cat >> "$T/dnsmasq.log" <<'EOF'
@@ -706,11 +706,11 @@ Aug 10 12:00:09 router daemon.info dnsmasq[1234]: reply news.example.com is 198.
 EOF
 run_collector_at 30 "$T/state7" "$T/data7" "$T/ct2" /nonexistent \
     "TRAFFIC_DNSLOG=$T/dnsmasq.log" TRAFFIC_SELF="192.168.2.1" TRAFFIC_LAN6=fdc8:64ed:f962:
-chk "24f 只读取新增部分"                    "$((before + 1))"  "$(grep -c . "$T/state7/dnsmap.tsv")"
-chk "24g 新增段的域名也拿到了"              "192.168.2.51 198.51.100.7" "$(d7 'news.example.com')"
+chk "24f читается только новая часть"                    "$((before + 1))"  "$(grep -c . "$T/state7/dnsmap.tsv")"
+chk "24g домены из нового фрагмента тоже получены"              "192.168.2.51 198.51.100.7" "$(d7 'news.example.com')"
 
 echo
-echo "=== 整点滚动：hourly.tsv 与 series1h.tsv ==="
+echo "=== Почасовой пересчёт: hourly.tsv и series1h.tsv ==="
 # roll_hour is the only writer of both files, and it runs when the hour string
 # changes - which a test cannot wait for.  A date stub that serves the hour from
 # a file makes the rollover happen on demand while every other date call (the
@@ -789,58 +789,58 @@ h9="$T/data9/hourly.tsv"
 # The archived row is <hour>\t<kind>\t<name>\t<down>\t<up>, which is the layout the
 # backend reads.  Seeded asymmetrically on purpose: equal numbers would hide a
 # swap, and a swap is exactly what this asserts against.
-chk "26 整点应用行下/上未错位"              "5000/1000" "$(awk -F'\t' '$2=="app"    && $3=="YouTube" { printf "%s/%s", $4, $5 }' "$h9")"
-chk "26a 整点客户端行记字节数"              "6000/0"    "$(awk -F'\t' '$2=="client" { printf "%s/%s", $4, $5 }' "$h9")"
-chk "26b 整点隧道行记路由器自身流量"        "777"       "$(awk -F'\t' '$2=="router" { printf "%s", $4 }' "$h9")"
-chk "26c 整点只归档一次"                    "1"         "$(awk -F'\t' '$2=="router"' "$h9" | wc -l | tr -d ' ')"
-chk "26d 归档行数 = 四类各一行"             "4"         "$(grep -c . "$h9")"
+chk "26 в почасовой строке приложения приём/отдача не перепутаны"              "5000/1000" "$(awk -F'\t' '$2=="app"    && $3=="YouTube" { printf "%s/%s", $4, $5 }' "$h9")"
+chk "26a почасовая строка клиента записывает байты"              "6000/0"    "$(awk -F'\t' '$2=="client" { printf "%s/%s", $4, $5 }' "$h9")"
+chk "26b почасовая строка туннеля записывает трафик самого роутера"        "777"       "$(awk -F'\t' '$2=="router" { printf "%s", $4 }' "$h9")"
+chk "26c почасовой архив выполняется один раз"                    "1"         "$(awk -F'\t' '$2=="router"' "$h9" | wc -l | tr -d ' ')"
+chk "26d число строк архива = по одной на четыре типа"             "4"         "$(grep -c . "$h9")"
 # The device counters of the hour, as a fourth kind of row.  The archive's app
 # rows are the attribution, which under flow offloading is a small fraction of
 # what the box carried - so a range view totals from this row instead, and it has
 # to be the seed and not the attribution.  Seeded asymmetrically again, and the
 # app row above is 5000/1000, so a row that had been filled from the attribution
 # would fail this even if the columns were right.
-chk "26d1 整点网卡行记设备字节"             "4000/900"  "$(awk -F'\t' '$2=="wan" { printf "%s/%s", $4, $5 }' "$h9")"
-chk "26d2 网卡行带 wan 类型与占位名"        "wan/-"     "$(awk -F'\t' '$2=="wan" { printf "%s/%s", $2, $3 }' "$h9")"
-chk "26d3 网卡行归到被滚动的小时"           "1"         "$(awk -F'\t' '$1=="h1" && $2=="wan"' "$h9" | wc -l | tr -d ' ')"
+chk "26d1 почасовая строка интерфейса записывает байты устройства"             "4000/900"  "$(awk -F'\t' '$2=="wan" { printf "%s/%s", $4, $5 }' "$h9")"
+chk "26d2 строка интерфейса имеет тип wan и имя-заглушку"        "wan/-"     "$(awk -F'\t' '$2=="wan" { printf "%s/%s", $2, $3 }' "$h9")"
+chk "26d3 строка интерфейса относится к пересчитанному часу"           "1"         "$(awk -F'\t' '$1=="h1" && $2=="wan"' "$h9" | wc -l | tr -d ' ')"
 # The row is a total and not an application.  A writer that emitted it as an app
 # row instead would put a "-" entry in the application table of every range view.
-chk "26d4 网卡行不冒充应用行"               "0"         "$(awk -F'\t' '$2=="app" && $3=="-"' "$h9" | wc -l | tr -d ' ')"
-chk "26d5 网卡会话累计未被归档清空"         "4000/900"  "$(sed -n '1p' "$T/state9/wan.tsv")/$(sed -n '2p' "$T/state9/wan.tsv")"
+chk "26d4 строка интерфейса не выдаёт себя за приложение"               "0"         "$(awk -F'\t' '$2=="app" && $3=="-"' "$h9" | wc -l | tr -d ' ')"
+chk "26d5 накопленное за сессию по интерфейсу не очищено архивом"         "4000/900"  "$(sed -n '1p' "$T/state9/wan.tsv")/$(sed -n '2p' "$T/state9/wan.tsv")"
 # The device baseline the next delta is measured against.  It is advanced by the
 # roll, and it is what makes the second roll below archiving nothing rather than
 # the same bytes twice.
-chk "26d6 整点推进了网卡快照"               "4000/900"  "$(sed -n '1p' "$T/state9/arch/wan.snap")/$(sed -n '2p' "$T/state9/arch/wan.snap")"
+chk "26d6 почасовой пересчёт продвинул снимок интерфейса"               "4000/900"  "$(sed -n '1p' "$T/state9/arch/wan.snap")/$(sed -n '2p' "$T/state9/arch/wan.snap")"
 # The week tier is one point per hour, and its down column carries the router
 # total as well, because the box's own traffic belongs to the hour too.
-chk "26e series1h 下行含路由器流量"         "5777"      "$(cut -f2 "$T/data9/series1h.tsv" | head -n 1)"
-chk "26f series1h 上行"                     "1000"      "$(cut -f3 "$T/data9/series1h.tsv" | head -n 1)"
-chk "26g series1h 每次滚动一个点"           "2"         "$(grep -c . "$T/data9/series1h.tsv")"
-chk "26h series1h 无流量的小时为 0"         "0/0"       "$(sed -n '2p' "$T/data9/series1h.tsv" | cut -f2,3 | tr '\t' '/')"
+chk "26e series1h: приём включает трафик роутера"         "5777"      "$(cut -f2 "$T/data9/series1h.tsv" | head -n 1)"
+chk "26f series1h: отдача"                     "1000"      "$(cut -f3 "$T/data9/series1h.tsv" | head -n 1)"
+chk "26g series1h: одна точка за каждый пересчёт"           "2"         "$(grep -c . "$T/data9/series1h.tsv")"
+chk "26h series1h: час без трафика равен 0"         "0/0"       "$(sed -n '2p' "$T/data9/series1h.tsv" | cut -f2,3 | tr '\t' '/')"
 # The second roll had nothing new to archive, and the live counters it measured
 # against are still there: zeroing them here is what used to make the page lose
 # the session's traffic at the top of every hour.
-chk "26i 第二次滚动不重复归档"              "4"         "$(grep -c . "$h9")"
+chk "26i второй пересчёт не дублирует архив"              "4"         "$(grep -c . "$h9")"
 # The device row has to obey the same rule as the router row: the second roll
 # archived nothing, so the hour it ran in must not gain a copy of the bytes the
 # first roll already recorded.  This is the assertion the snapshot exists for.
-chk "26i1 第二次滚动不重复归档网卡行"       "1"         "$(awk -F'\t' '$2=="wan"' "$h9" | wc -l | tr -d ' ')"
-chk "26i2 第二次滚动的小时没有网卡行"       "0"         "$(awk -F'\t' '$1=="h2" && $2=="wan"' "$h9" | wc -l | tr -d ' ')"
-chk "26i3 第二次滚动后快照仍是原值"         "4000/900"  "$(sed -n '1p' "$T/state9/arch/wan.snap")/$(sed -n '2p' "$T/state9/arch/wan.snap")"
-chk "26j 整点不再清空应用累计"              "5000"      "$(awk -F'\t' '$1=="YouTube"{print $3}' "$T/state9/totals.tsv")"
-chk "26k 整点不再清空路由器累计"            "777"       "$(sed -n '1p' "$T/state9/router.tsv")"
+chk "26i1 второй пересчёт не дублирует строку интерфейса"       "1"         "$(awk -F'\t' '$2=="wan"' "$h9" | wc -l | tr -d ' ')"
+chk "26i2 в часе второго пересчёта нет строки интерфейса"       "0"         "$(awk -F'\t' '$1=="h2" && $2=="wan"' "$h9" | wc -l | tr -d ' ')"
+chk "26i3 после второго пересчёта снимок сохраняет прежнее значение"         "4000/900"  "$(sed -n '1p' "$T/state9/arch/wan.snap")/$(sed -n '2p' "$T/state9/arch/wan.snap")"
+chk "26j почасовой пересчёт больше не очищает накопленное по приложениям"              "5000"      "$(awk -F'\t' '$1=="YouTube"{print $3}' "$T/state9/totals.tsv")"
+chk "26k почасовой пересчёт больше не очищает накопленное по роутеру"            "777"       "$(sed -n '1p' "$T/state9/router.tsv")"
 # The hour in progress, in device counters, for the backend to publish on the
 # bucket it appends.  After the roll the session total and the snapshot are the
 # same, so the current hour starts at zero rather than repeating the archived
 # hour; a collector that published the session cumulative here instead would
 # double every hour of every range once the hour turned over.
-chk "26l 进行中的小时发布网卡增量"          "0/0"       "$(sed -n '1p' "$T/state9/cur.iface")/$(sed -n '2p' "$T/state9/cur.iface")"
-chk "26m 网卡增量取自快照之差而非会话累计"  "no" \
+chk "26l текущий час публикует прирост интерфейса"          "0/0"       "$(sed -n '1p' "$T/state9/cur.iface")/$(sed -n '2p' "$T/state9/cur.iface")"
+chk "26m прирост интерфейса берётся из разницы снимков, а не из накопленного за сессию"  "no" \
     "$([ "$(sed -n '1p' "$T/state9/cur.iface")" = "4000" ] && echo yes || echo no)"
 
 
 echo
-echo "=== WAN 接口计数器：权威总量与曲线 ==="
+echo "=== Счётчики интерфейса WAN: авторитетный итог и кривая ==="
 # Under flow offloading the attribution layer only sees a fraction of what the
 # box carried - measured on the router, conntrack recorded 147 MiB while the WAN
 # device carried 2579 MiB, 5.7% - so the totals, the series and the peak are
@@ -870,14 +870,14 @@ NO6="TRAFFIC_PROC_NET_ROUTE6=/nonexistent"
 # No explicit device setting: the default route is what names it, so this covers
 # the /proc/net/route parse as well.
 run_collector_at 30 "$T/state10" "$T/data10" "$T/ct2" /nonexistent "$NETW" "$RTW" "$NO6"
-chk "27  默认路由识别出 WAN 设备"            "eth2" \
+chk "27  устройство WAN определено по маршруту по умолчанию"            "eth2" \
     "$(sed -n 's/.*"iface":{"dev":"\([^"]*\)".*/\1/p' "$T/state10/summary.json")"
 # The device has counted 5000000 bytes since it came up.  None of that is this
 # session's traffic, and a first round that added it would publish a total the
 # box never carried in the session being shown.
-chk "27a 首次读取只做基线不累加"             "0/0" \
+chk "27a первое чтение задаёт только базовую линию"             "0/0" \
     "$(sed -n 's/.*"iface":{[^}]*"down":\([0-9]*\),"up":\([0-9]*\).*/\1\/\2/p' "$T/state10/summary.json")"
-chk "27b 首次读取不写负值"                   "0" "$(grep -c -- '-' "$T/state10/wan.tsv")"
+chk "27b первое чтение не пишет отрицательных значений"                   "0" "$(grep -c -- '-' "$T/state10/wan.tsv")"
 
 # The curve is the whole point of this fix: it has to be the traffic the box
 # carried, because that is what a speed test looks like on the chart.  Its own
@@ -913,11 +913,11 @@ wait_rounds "$T/state11" 2
 kill "$i11" 2>/dev/null
 wait "$i11" 2>/dev/null
 sleep 0.3
-chk "27c 会话总量取自接口计数器的增量"       "5000/1000" \
+chk "27c итог сессии берётся из прироста счётчиков интерфейса"       "5000/1000" \
     "$(sed -n '1p' "$T/state11/wan.tsv")/$(sed -n '2p' "$T/state11/wan.tsv")"
-chk "27d 快照总量取自接口计数器"             "5000/1000" \
+chk "27d итог снимка берётся из счётчиков интерфейса"             "5000/1000" \
     "$(sed -n 's/.*"iface":{[^}]*"down":\([0-9]*\),"up":\([0-9]*\).*/\1\/\2/p' "$T/state11/summary.json")"
-chk "27e 曲线点取自接口增量而非归属值"       "5000/1000" \
+chk "27e точка кривой берётся из прироста интерфейса, а не из атрибуции"       "5000/1000" \
     "$(sed -n '2p' "$T/state11/series10.tsv" | cut -f2,3 | tr '\t' '/')"
 
 # A counter that went backwards means the device was re-created.  Its new reading
@@ -928,22 +928,22 @@ chk "27e 曲线点取自接口增量而非归属值"       "5000/1000" \
 printf '%s\n' "$SCHEMA" > "$T/state12/version"
 printf '9999999\n9999999\n' > "$T/state12/wan.abs"
 run_collector_at 30 "$T/state12" "$T/data12" "$T/ct2" /nonexistent "$NETW" "$RTW" "$NO6"
-chk "27f 计数回退后按新读数计"               "$(printf '5000000/800000')" \
+chk "27f после сброса счётчиков учёт идёт от нового значения"               "$(printf '5000000/800000')" \
     "$(sed -n '1p' "$T/state12/wan.tsv")/$(sed -n '2p' "$T/state12/wan.tsv")"
-chk "27g 计数回退后没有负值"                 "0" "$(grep -c -- '-' "$T/state12/wan.tsv")"
+chk "27g после сброса счётчиков нет отрицательных значений"                 "0" "$(grep -c -- '-' "$T/state12/wan.tsv")"
 
 # No device to measure: the key is not published at all, which is what the page
 # reads as "fall back to the attributed numbers" rather than "the total is zero".
 run_collector_at 30 "$T/state13" "$T/data13" "$T/ct2" /nonexistent \
     "TRAFFIC_PROC_NET_DEV=$T/netdev-noif" "TRAFFIC_WAN_IF=eth2" \
     "TRAFFIC_PROC_NET_ROUTE=/nonexistent" "$NO6"
-chk "27h 设备不存在时不发布 iface"           "0" "$(grep -c '"iface"' "$T/state13/summary.json")"
-chk "27i 设备不存在时不写接口累计"           "no" \
+chk "27h при отсутствии устройства iface не публикуется"           "0" "$(grep -c '"iface"' "$T/state13/summary.json")"
+chk "27i при отсутствии устройства накопленное по интерфейсу не пишется"           "no" \
     "$([ -f "$T/state13/wan.tsv" ] && echo yes || echo no)"
 
 # Whether the firewall offloads is always published, because it is what decides
 # whether the attribution beside the total is a large share or a small one.
-chk "27j 快照发布卸载状态"                   "0" \
+chk "27j снимок публикует состояние разгрузки"                   "0" \
     "$(sed -n 's/.*"offload":\([0-9]*\).*/\1/p' "$T/state10/summary.json")"
 
 # The protocol buckets are the attribution's last resort, not applications: at
@@ -955,8 +955,8 @@ protoflag() {
             print (index($0, "\"proto\":1") > 0) ? 1 : 0; exit
         }' "$2"
 }
-chk "27k 协议桶被打上 proto 标记"            "1" "$(protoflag 'SSL/TLS' "$T/state/summary.json")"
-chk "27l 真实应用没有 proto 标记"            "0" "$(protoflag 'NetEase Music' "$T/state/summary.json")"
+chk "27k протокольная корзина помечена proto"            "1" "$(protoflag 'SSL/TLS' "$T/state/summary.json")"
+chk "27l реальное приложение не имеет метки proto"            "0" "$(protoflag 'NetEase Music' "$T/state/summary.json")"
 
 # A device that disappears mid-session.  The delta of the round it vanished in
 # must not sit on disk and be drawn again by every later round - with an empty
@@ -989,11 +989,11 @@ wait_rounds "$T/state14" 3
 kill "$i14" 2>/dev/null
 wait "$i14" 2>/dev/null
 sleep 0.3
-chk "27m 设备消失后不再复用上一轮增量"       "0/0" \
+chk "27m после исчезновения устройства прирост прошлого цикла не переиспользуется"       "0/0" \
     "$(sed -n '3p' "$T/state14/series10.tsv" | cut -f2,3 | tr '\t' '/')"
-chk "27n 设备消失后会话总量不再增长"         "5000/1000" \
+chk "27n после исчезновения устройства итог сессии не растёт"         "5000/1000" \
     "$(sed -n '1p' "$T/state14/wan.tsv")/$(sed -n '2p' "$T/state14/wan.tsv")"
 
 echo
-if [ "$fail" = 0 ]; then echo "=== 全部通过 ==="; else echo "=== 有失败 ==="; fi
+if [ "$fail" = 0 ]; then echo "=== Все проверки пройдены ==="; else echo "=== Есть ошибки ==="; fi
 exit "$fail"

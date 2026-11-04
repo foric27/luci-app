@@ -68,3 +68,8 @@ msgstr "名称"
 #: htdocs/luci-static/resources/view/status/include/15_sfp.js
 msgid "Value"
 msgstr "数值"
+msgid "RX Power"
+msgstr "接收功率"
+
+msgid "TX Power"
+msgstr "发送功率"

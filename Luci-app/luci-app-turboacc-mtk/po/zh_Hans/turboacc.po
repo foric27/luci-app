@@ -292,3 +292,30 @@ msgstr "OpenWrt 24.10 下 mt798x 首选的 HNAT 通路。"
 
 msgid "Keep wired IPv6 sessions on the HNAT path when supported by the current driver."
 msgstr "当前驱动支持时，让有线 IPv6 会话也走 HNAT 通路。"
+
+msgid "FullCone"
+msgstr "FullCone"
+
+msgid "HNAT"
+msgstr "HNAT"
+
+msgid "IPv6"
+msgstr "IPv6"
+
+msgid "NAT"
+msgstr "NAT"
+
+msgid "NAT / TCP"
+msgstr "NAT / TCP"
+
+msgid "PPE"
+msgstr "PPE"
+
+msgid "SFE"
+msgstr "SFE"
+
+msgid "TCP"
+msgstr "TCP"
+
+msgid "。"
+msgstr "。"

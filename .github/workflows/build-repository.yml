@@ -1,0 +1,632 @@
+name: Build OpenWrt package repository
+
+on:
+  workflow_dispatch:
+    inputs:
+      sdk_distribution:
+        description: SDK distribution
+        required: false
+        default: immortalwrt
+        type: choice
+        options:
+          - immortalwrt
+          - openwrt
+      openwrt_version:
+        description: OpenWrt/ImmortalWrt 25.12 version (apk)
+        required: false
+        default: '25.12-SNAPSHOT'
+      openwrt_target:
+        description: OpenWrt target
+        required: false
+        default: mediatek
+      openwrt_subtarget:
+        description: OpenWrt subtarget
+        required: false
+        default: filogic
+      publish_release:
+        description: Publish/update the unified GitHub Release
+        required: false
+        default: false
+        type: boolean
+      release_tag:
+        description: Release tag (empty = packages-latest)
+        required: false
+        default: ''
+  push:
+    branches:
+      - main
+    tags:
+      - 'repo-v*'
+    paths:
+      - '.github/workflows/build-repository.yml'
+      - 'Luci-app/**'
+      - 'tools/**'
+  pull_request:
+    paths:
+      - '.github/workflows/build-repository.yml'
+      - 'Luci-app/**'
+      - 'tools/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-repository-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Run repository checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.2
+
+      - name: Install test dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y lua5.1 busybox curl gettext
+
+      - name: Check translations and syntax
+        run: |
+          set -euxo pipefail
+          node tools/check-translations.js
+
+          find . -path ./.git -prune -o \( -name '*.js' -o -name '*.cjs' \) -print | while IFS= read -r file; do
+            node --check "$file"
+          done
+
+          find . -path ./.git -prune -o -name '*.sh' -print | while IFS= read -r file; do
+            sh -n "$file"
+          done
+
+          find Luci-app -path '*/po/*/*.po' -print | while IFS= read -r file; do
+            msgfmt -c -o /dev/null "$file"
+          done
+
+      - name: Run fan self-test
+        run: node Luci-app/luci-app-fan/tools/ui-selftest.cjs
+
+      - name: Run traffic tests
+        working-directory: Luci-app/luci-app-traffic
+        env:
+          LC_ALL: C.UTF-8
+          LANG: C.UTF-8
+        run: |
+          set -euxo pipefail
+          node tools/check-icons.js
+          node tools/guard-mutation-test.js
+          sh tools/package-lifecycle-selftest.sh
+          sh tools/live-selftest.sh
+          sh tools/rpcd-selftest.sh
+          node ../../tools/router-status-boundary-test.js
+          sh tools/peak-selftest.sh
+          sh tools/fetch-icons-selftest.sh
+          lua5.1 tools/website-icons-selftest.lua root/usr/share/traffic/website-icons-core.lua
+          lua5.1 tools/website-icons-formats-selftest.lua root/usr/share/traffic/website-icons-core.lua
+          lua5.1 tools/website-icons-fetch-selftest.lua root/usr/share/traffic/website-icons-core.lua root/usr/share/traffic/website-icons-fetch.lua
+          lua5.1 tools/website-icons-runner-selftest.lua root/usr/share/traffic/website-icons-core.lua root/usr/share/traffic/website-icons.lua
+          node tools/history-transfer-selftest.js
+          node tools/rpcd-chunk-selftest.js
+          node tools/page-render-selftest.js
+          node tools/catalog-selftest.js
+          node tools/icon-resolution-selftest.js
+          node tools/icon-expansion-selftest.js
+          node tools/website-icons-index-selftest.js
+
+      - name: Run router-status tests
+        run: |
+          set -euxo pipefail
+          node tools/router-status-boundary-test.js
+          sh Luci-app/rpcd-mod-router-status/tools/status-selftest.sh
+          sh Luci-app/rpcd-mod-router-status/tools/wifi-history-selftest.sh
+          curl --fail --silent --show-error --location \
+            https://raw.githubusercontent.com/openwrt/libubox/8c7b489daa029b3841584f6ac76e2a0b68d74ef3/sh/jshn.sh \
+            -o "$RUNNER_TEMP/router-status-jshn.sh"
+          WIFI_TEST_JSHN_LIBRARY="$RUNNER_TEMP/router-status-jshn.sh" WIFI_TEST_SHELL=bash \
+            sh Luci-app/rpcd-mod-router-status/tools/wifi-history-selftest.sh
+          compat_bin="$RUNNER_TEMP/router-status-busybox"
+          mkdir -p "$compat_bin"
+          printf '#!/bin/sh\nexec busybox awk "$@"\n' > "$compat_bin/awk"
+          printf '#!/bin/sh\nexec busybox ash "$@"\n' > "$compat_bin/ash"
+          chmod +x "$compat_bin/awk" "$compat_bin/ash"
+          PATH="$compat_bin:$PATH" WIFI_TEST_SHELL="$compat_bin/ash" \
+            WIFI_TEST_JSHN_LIBRARY="$RUNNER_TEMP/router-status-jshn.sh" \
+            sh Luci-app/rpcd-mod-router-status/tools/wifi-history-selftest.sh
+
+  build:
+    name: Build ${{ matrix.build_profile }}
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - build_profile: 25.12-apk
+            openwrt_version: ${{ inputs.openwrt_version || '25.12-SNAPSHOT' }}
+            pkg_format: apk
+            repo_subdir: apk
+
+    env:
+      BUILD_PROFILE: ${{ matrix.build_profile }}
+      SDK_DISTRIBUTION: ${{ inputs.sdk_distribution || 'immortalwrt' }}
+      OPENWRT_VERSION: ${{ matrix.openwrt_version }}
+      OPENWRT_TARGET: ${{ inputs.openwrt_target || 'mediatek' }}
+      OPENWRT_SUBTARGET: ${{ inputs.openwrt_subtarget || 'filogic' }}
+      PKG_FORMAT: ${{ matrix.pkg_format }}
+      REPO_SUBDIR: ${{ matrix.repo_subdir }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.2
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            clang \
+            curl \
+            file \
+            flex \
+            bison \
+            g++ \
+            gawk \
+            gcc-multilib \
+            gettext \
+            git \
+            libncurses5-dev \
+            libssl-dev \
+            python3 \
+            python3-pyelftools \
+            python3-setuptools \
+            rsync \
+            subversion \
+            swig \
+            unzip \
+            wget \
+            zlib1g-dev \
+            zstd
+
+      - name: Download SDK
+        run: |
+          set -euxo pipefail
+          case "$SDK_DISTRIBUTION" in
+            openwrt)
+              if echo "$OPENWRT_VERSION" | grep -q 'SNAPSHOT'; then
+                sdk_base_url="https://downloads.openwrt.org/snapshots/targets/${OPENWRT_TARGET}/${OPENWRT_SUBTARGET}"
+              else
+                sdk_base_url="https://downloads.openwrt.org/releases/${OPENWRT_VERSION}/targets/${OPENWRT_TARGET}/${OPENWRT_SUBTARGET}"
+              fi
+              sdk_prefix='openwrt-sdk'
+              sdk_ext='.tar.zst'
+              ;;
+            immortalwrt)
+              if echo "$OPENWRT_VERSION" | grep -q 'SNAPSHOT'; then
+                sdk_base_url="https://downloads.immortalwrt.org/snapshots/targets/${OPENWRT_TARGET}/${OPENWRT_SUBTARGET}"
+              else
+                sdk_base_url="https://downloads.immortalwrt.org/releases/${OPENWRT_VERSION}/targets/${OPENWRT_TARGET}/${OPENWRT_SUBTARGET}"
+              fi
+              sdk_prefix='immortalwrt-sdk'
+              sdk_ext='.tar.zst'
+              ;;
+            *)
+              echo "Unsupported SDK distribution: $SDK_DISTRIBUTION" >&2
+              exit 1
+              ;;
+          esac
+
+          sdk_target_id="${OPENWRT_TARGET}-${OPENWRT_SUBTARGET}"
+
+          _find_sdk() {
+            local base_url="$1" prefix="$2" ver="$3" tid="$4" ext="$5"
+            local page sdk_fname gcc_ver
+
+            page="$(curl -sSL --retry 2 --retry-delay 5 --max-time 30 "$base_url/" 2>/dev/null || true)"
+            if [ -n "$page" ]; then
+              sdk_fname="$(printf '%s\n' "$page" | grep -oE "${prefix}-${ver}-${tid}_[^\"]+${ext}" | head -n1)"
+              [ -z "$sdk_fname" ] && sdk_fname="$(printf '%s\n' "$page" | grep -oE "${prefix}-${tid}_[^\"]+${ext}" | head -n1)"
+              [ -n "$sdk_fname" ] && printf '%s\n' "$sdk_fname" && return 0
+            fi
+
+            for gcc_ver in 14.3.0 14.2.0 14.1.0 13.3.0 13.2.0 12.3.0 12.2.0 11.4.0 11.3.0; do
+              sdk_fname="${prefix}-${ver}-${tid}_gcc-${gcc_ver}_musl.Linux-x86_64${ext}"
+              if wget --spider -q --timeout=10 "$base_url/$sdk_fname" 2>/dev/null; then
+                printf '%s\n' "$sdk_fname" && return 0
+              fi
+              sdk_fname="${prefix}-${tid}_gcc-${gcc_ver}_musl.Linux-x86_64${ext}"
+              if wget --spider -q --timeout=10 "$base_url/$sdk_fname" 2>/dev/null; then
+                printf '%s\n' "$sdk_fname" && return 0
+              fi
+            done
+
+            return 1
+          }
+
+          sdk_file="$(_find_sdk "$sdk_base_url" "$sdk_prefix" "$OPENWRT_VERSION" "$sdk_target_id" "$sdk_ext")"
+          test -n "$sdk_file"
+          echo "Found SDK: $sdk_file"
+          wget -q --timeout=30 --tries=5 "$sdk_base_url/$sdk_file" -O sdk.tar.zst
+          tar --zstd -xf sdk.tar.zst
+          sdk_dir="$(find . -maxdepth 1 -type d -name "${sdk_prefix}-*" | head -n1)"
+          test -n "$sdk_dir"
+          echo "SDK_DIR=$sdk_dir" >> "$GITHUB_ENV"
+
+      - name: Update feeds
+        working-directory: ${{ env.SDK_DIR }}
+        run: |
+          set -euxo pipefail
+          ./scripts/feeds update -a
+
+      - name: Inject all packages into the LuCI feed
+        run: |
+          set -euxo pipefail
+          declare -A packages=(
+            [luci-app-fan]="Luci-app/luci-app-fan"
+            [luci-app-modemband]="Luci-app/luci-app-modemband"
+            [luci-app-sfp-status]="Luci-app/luci-app-sfp-status"
+            [luci-app-traffic]="Luci-app/luci-app-traffic"
+            [luci-app-turboacc-mtk]="Luci-app/luci-app-turboacc-mtk"
+            [rpcd-mod-router-status]="Luci-app/rpcd-mod-router-status"
+          )
+
+          mkdir -p "$SDK_DIR/feeds/luci/applications" "$SDK_DIR/package/feeds/luci"
+
+          for pkg in "${!packages[@]}"; do
+            src="${packages[$pkg]}"
+            sdk_feed_dir="$SDK_DIR/feeds/luci/applications/$pkg"
+            sdk_pkg_dir="$SDK_DIR/package/feeds/luci/$pkg"
+
+            test -f "$GITHUB_WORKSPACE/$src/Makefile"
+            rm -rf "$sdk_feed_dir" "$sdk_pkg_dir"
+            rsync -a \
+              --exclude '.git/' \
+              --exclude '.github/' \
+              --exclude 'openwrt-sdk-*' \
+              --exclude 'immortalwrt-sdk-*' \
+              "$GITHUB_WORKSPACE/$src/" "$sdk_feed_dir/"
+
+            find "$sdk_feed_dir" -type f \( \
+              -name Makefile -o \
+              -name '*.sh' -o \
+              -path '*/root/etc/init.d/*' -o \
+              -path '*/root/etc/uci-defaults/*' -o \
+              -path '*/root/usr/libexec/*' \
+            \) -exec sed -i 's/\r$//' {} +
+
+            ln -sfn "../../../feeds/luci/applications/$pkg" "$sdk_pkg_dir"
+            test -f "$sdk_feed_dir/Makefile"
+            test -f "$sdk_pkg_dir/Makefile"
+            sed 's/\r$//' "$sdk_feed_dir/Makefile" | grep -q "^PKG_NAME:=$pkg$"
+          done
+
+      - name: Install package definitions
+        working-directory: ${{ env.SDK_DIR }}
+        run: |
+          set -euxo pipefail
+          ./scripts/feeds install -a
+
+      - name: Configure all packages
+        working-directory: ${{ env.SDK_DIR }}
+        run: |
+          set -euxo pipefail
+          packages=(
+            luci-app-fan
+            luci-app-modemband
+            luci-app-sfp-status
+            luci-app-traffic
+            luci-app-turboacc-mtk
+            rpcd-mod-router-status
+          )
+          i18n_packages=()
+
+          for pkg in "${packages[@]}"; do
+            echo "CONFIG_PACKAGE_${pkg}=y" >> .config
+
+            po_dir="feeds/luci/applications/$pkg/po"
+            [ -d "$po_dir" ] || continue
+
+            base="${pkg#luci-app-}"
+            while IFS= read -r lang; do
+              [ -n "$lang" ] || continue
+
+              case "$lang" in
+                zh_Hans) pkg_lang=zh-cn ;;
+                zh_Hant) pkg_lang=zh-tw ;;
+                nb_NO) pkg_lang=no ;;
+                pt_BR) pkg_lang=pt-br ;;
+                bn_BD) pkg_lang=bn ;;
+                *) pkg_lang="$lang" ;;
+              esac
+
+              i18n_pkg="luci-i18n-${base}-${pkg_lang}"
+              echo "CONFIG_PACKAGE_${i18n_pkg}=y" >> .config
+              i18n_packages+=("$i18n_pkg")
+            done < <(find "$po_dir" -mindepth 1 -maxdepth 1 -type d ! -name templates -printf '%f\n' | sort -u)
+          done
+
+          printf '%s\n' "${i18n_packages[@]}" > "$RUNNER_TEMP/i18n-packages.txt"
+
+          make defconfig
+
+          for pkg in "${packages[@]}"; do
+            grep -q "^CONFIG_PACKAGE_${pkg}=y$" .config || {
+              echo "Package ${pkg} was not enabled by defconfig" >&2
+              exit 1
+            }
+          done
+
+          while IFS= read -r pkg; do
+            [ -n "$pkg" ] || continue
+            grep -q "^CONFIG_PACKAGE_${pkg}=y$" .config || {
+              echo "Translation package ${pkg} was not enabled by defconfig" >&2
+              exit 1
+            }
+          done < "$RUNNER_TEMP/i18n-packages.txt"
+
+          echo '--- enabled packages ---'
+          grep '^CONFIG_PACKAGE_luci-app-\|^CONFIG_PACKAGE_luci-i18n-\|^CONFIG_PACKAGE_rpcd-mod-router-status=' .config
+
+      - name: Compile all packages
+        working-directory: ${{ env.SDK_DIR }}
+        run: |
+          set -euxo pipefail
+          packages=(
+            luci-app-fan
+            luci-app-modemband
+            luci-app-sfp-status
+            luci-app-traffic
+            luci-app-turboacc-mtk
+            rpcd-mod-router-status
+          )
+
+          for pkg in "${packages[@]}"; do
+            make "package/feeds/luci/$pkg/compile" -j"$(nproc)" V=s
+          done
+
+          # luci.mk defines the i18n packages in the same source directory as
+          # the application. Build them explicitly as a fallback in case the
+          # directory target only builds the application package.
+          while IFS= read -r pkg; do
+            [ -n "$pkg" ] || continue
+            if [ -d "package/feeds/luci/$pkg" ]; then
+              make "package/feeds/luci/$pkg/compile" -j"$(nproc)" V=s
+            fi
+          done < "$RUNNER_TEMP/i18n-packages.txt"
+
+      - name: Build repository directory and index
+        run: |
+          set -euxo pipefail
+          ext="$PKG_FORMAT"
+          repo_dir="$RUNNER_TEMP/repo/$REPO_SUBDIR"
+
+          rm -rf "$RUNNER_TEMP/repo"
+          mkdir -p "$repo_dir"
+
+          find "$SDK_DIR/bin/packages" -type f -name "*.$ext" | while IFS= read -r pkg; do
+            base="$(basename "$pkg")"
+            case "$base" in
+              luci-app-fan[-_]*|luci-app-modemband[-_]*|luci-app-sfp-status[-_]*|luci-app-traffic[-_]*|luci-app-turboacc-mtk[-_]*|rpcd-mod-router-status[-_]*|luci-i18n-fan-*|luci-i18n-modemband-*|luci-i18n-sfp-status-*|luci-i18n-traffic-*|luci-i18n-turboacc-mtk-*)
+                cp -f "$pkg" "$repo_dir/"
+                ;;
+            esac
+          done
+
+          packages=(
+            luci-app-fan
+            luci-app-modemband
+            luci-app-sfp-status
+            luci-app-traffic
+            luci-app-turboacc-mtk
+            rpcd-mod-router-status
+          )
+
+          for pkg in "${packages[@]}"; do
+            find "$repo_dir" -maxdepth 1 -type f -name "${pkg}[-_]*.${ext}" | grep -q . || {
+              echo "Missing package ${pkg}.${ext}" >&2
+              exit 1
+            }
+          done
+
+          while IFS= read -r pkg; do
+            [ -n "$pkg" ] || continue
+            find "$repo_dir" -maxdepth 1 -type f -name "${pkg}[-_]*.${ext}" | grep -q . || {
+              echo "Missing translation package ${pkg}.${ext}" >&2
+              exit 1
+            }
+          done < "$RUNNER_TEMP/i18n-packages.txt"
+
+          apk_bin="$SDK_DIR/staging_dir/host/bin/apk"
+          if [ ! -x "$apk_bin" ]; then
+            apk_bin="$(command -v apk || true)"
+          fi
+          test -n "$apk_bin"
+
+          (cd "$repo_dir" && "$apk_bin" mkndx \
+            --root "$SDK_DIR" \
+            --keys-dir "$SDK_DIR" \
+            --allow-untrusted \
+            --output packages.adb \
+            ./*.apk)
+
+          test -s "$repo_dir/packages.adb"
+          "$apk_bin" adbdump "$repo_dir/packages.adb" >/dev/null
+
+          echo "Repository contents for ${REPO_SUBDIR}:"
+          find "$repo_dir" -maxdepth 1 -type f -printf '%f\n' | sort
+
+      - name: Upload repository artifact
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: openwrt-repo-${{ matrix.build_profile }}
+          path: ${{ runner.temp }}/repo
+          if-no-files-found: error
+
+  publish:
+    name: Publish repository and release
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Download repository artifacts
+        uses: actions/download-artifact@v8.0.1
+        with:
+          pattern: openwrt-repo-*
+          path: repo
+          merge-multiple: true
+
+      - name: Prepare GitHub Pages site
+        run: |
+          set -euxo pipefail
+          repo_name="${GITHUB_REPOSITORY#*/}"
+          repo_lc="${repo_name,,}"
+          owner_lc="${GITHUB_REPOSITORY_OWNER,,}"
+          pages_url="https://${owner_lc}.github.io/${repo_lc}/"
+
+          touch repo/.nojekyll
+
+          cat > repo/index.html <<EOF
+          <!doctype html>
+          <html lang="ru">
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>Репозиторий пакетов LuCI (apk)</title>
+            <style>
+              body { font-family: system-ui, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
+              code, pre { background: #f4f4f4; padding: .2rem .4rem; border-radius: 4px; }
+              pre { padding: 1rem; overflow: auto; }
+              table { border-collapse: collapse; width: 100%; }
+              td, th { border: 1px solid #ddd; padding: .4rem; text-align: left; }
+            </style>
+          </head>
+          <body>
+            <h1>Репозиторий пакетов LuCI (apk)</h1>
+            <p>Пакеты для OpenWrt / ImmortalWrt 25.12. Репозиторий обновляется автоматически.</p>
+
+            <h2>apk (OpenWrt / ImmortalWrt 25.12)</h2>
+            <pre>${pages_url}apk</pre>
+            <p>Короткая ссылка: <code>${pages_url}apk</code>; версионная: <code>${pages_url}25.12</code>.</p>
+            <p>Добавьте URL в <code>/etc/apk/repositories</code> и выполните <code>apk update</code>.</p>
+
+            <p><strong>Пакеты не подписаны.</strong> При установке может потребоваться <code>--allow-untrusted</code>.</p>
+
+            <h2>Пакеты</h2>
+            <table>
+              <thead><tr><th>Файл</th><th>Формат</th></tr></thead>
+              <tbody>
+          EOF
+
+          find repo -maxdepth 2 -type f -name '*.apk' -printf '%P\n' | sort | while IFS= read -r file; do
+            printf '        <tr><td><a href="%s">%s</a></td><td>apk</td></tr>\n' "$file" "$(basename "$file")"
+          done >> repo/index.html
+
+          cat >> repo/index.html <<EOF
+              </tbody>
+            </table>
+            <p><a href="https://github.com/${GITHUB_REPOSITORY}">Исходный код</a></p>
+          </body>
+          </html>
+          EOF
+
+          cat > repo/apk/index.html <<EOF
+          <!doctype html>
+          <html lang="ru"><head><meta charset="utf-8"><title>apk repository</title></head>
+          <body><h1>apk repository (25.12)</h1>
+          <pre>${pages_url}apk</pre>
+          <p><a href="../">Назад</a></p></body></html>
+          EOF
+
+          # Versioned alias for the same apk repository.
+          cp -a repo/apk repo/25.12
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: repo
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Determine release tag
+        id: release
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/repo-v') || (github.event_name == 'workflow_dispatch' && inputs.publish_release)
+        env:
+          INPUT_RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          set -eu
+          if [ "$GITHUB_EVENT_NAME" = 'workflow_dispatch' ]; then
+            tag="${INPUT_RELEASE_TAG:-packages-latest}"
+          elif [ "$GITHUB_REF_TYPE" = 'tag' ]; then
+            tag="$GITHUB_REF_NAME"
+          else
+            tag='packages-latest'
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "name=LuCI packages $tag" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare apk release assets
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/repo-v') || (github.event_name == 'workflow_dispatch' && inputs.publish_release)
+        run: |
+          set -euxo pipefail
+          repo_name="${GITHUB_REPOSITORY#*/}"
+          repo_lc="${repo_name,,}"
+          owner_lc="${GITHUB_REPOSITORY_OWNER,,}"
+          pages_url="https://${owner_lc}.github.io/${repo_lc}/"
+
+          rm -rf release-assets
+          mkdir -p release-assets
+          find repo/apk -maxdepth 1 -type f \( \
+            -name '*.apk' -o \
+            -name 'packages.adb' \
+          \) -exec cp -f {} release-assets/ \;
+
+          {
+            echo "## Пакеты apk"
+            echo
+            echo "| Файл |"
+            echo "|---|"
+            find release-assets -maxdepth 1 -type f -name '*.apk' -printf '%f\n' | sort | while IFS= read -r file; do
+              echo "| \`$file\` |"
+            done
+            echo
+            echo "## Репозиторий"
+            echo
+            echo "- apk (25.12): ${pages_url}apk"
+            echo "- версионный псевдоним: ${pages_url}25.12"
+            echo
+            echo "Пакеты не подписаны. При установке может потребоваться \`--allow-untrusted\`."
+          } > release-notes.md
+
+          echo 'Release assets:'
+          find release-assets -maxdepth 1 -type f -printf '%f\n' | sort
+
+      - name: Publish unified GitHub Release
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/repo-v') || (github.event_name == 'workflow_dispatch' && inputs.publish_release)
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ steps.release.outputs.tag }}
+          name: ${{ steps.release.outputs.name }}
+          body_path: release-notes.md
+          files: release-assets/**/*
+          fail_on_unmatched_files: true
+          target_commitish: ${{ github.sha }}
+          make_latest: true
