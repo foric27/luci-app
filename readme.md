@@ -42,7 +42,7 @@ apk update
 Пример установки после обновления списка:
 
 ```sh
-apk add luci-app-fan luci-i18n-fan-ru
+apk add --allow-untrusted luci-app-fan luci-i18n-fan-ru
 ```
 
 Репозиторий обновляется автоматически при сборке. Все пакеты также прикладываются к одному GitHub Release: по тегу `repo-v*`, при ручном запуске с `publish_release=true` или в автоматически обновляемый релиз `packages-latest` при сборке из ветки `main`. Пакеты не подписаны: при установке может потребоваться `--allow-untrusted`.
