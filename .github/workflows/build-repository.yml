@@ -350,6 +350,12 @@ jobs:
 
           printf '%s\n' "${i18n_packages[@]}" > "$RUNNER_TEMP/i18n-packages.txt"
 
+          # Break a Kconfig cycle in the 25.12 feeds: kmod-bonding (pulled by
+          # luci-app-turboacc-mtk) conditionally depends on kmod-tls, which is
+          # selected by OPENSSL_KTLS. kTLS is not required by this repository.
+          echo '# CONFIG_OPENSSL_KTLS is not set' >> .config
+          echo '# CONFIG_PACKAGE_kmod-tls is not set' >> .config
+
           make defconfig
 
           for pkg in "${packages[@]}"; do
