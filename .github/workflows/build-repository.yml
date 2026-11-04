@@ -253,6 +253,7 @@ jobs:
           tar --zstd -xf sdk.tar.zst
           sdk_dir="$(find . -maxdepth 1 -type d -name "${sdk_prefix}-*" | head -n1)"
           test -n "$sdk_dir"
+          sdk_dir="$(cd "$sdk_dir" && pwd)"
           echo "SDK_DIR=$sdk_dir" >> "$GITHUB_ENV"
 
       - name: Update feeds
