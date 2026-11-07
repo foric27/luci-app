@@ -871,6 +871,7 @@ function updateRow(row, a, total, topScope) {
 				? ' (' + (100 * tb / a.bytes).toFixed(1) + '%)' : ''));
 	}
 	setText(row.cells.top, topText);
+	row.cells.top.setAttribute('title', topText);
 	setText(row.cells.clients, a.clients === undefined ? '—' : String(a.clients));
 }
 
@@ -883,7 +884,7 @@ function makeLegendRow(name, proto, color) {
 	var row = el('div', { 'class': 'tf-legend-row' + (proto ? ' tf-isbucket' : '') }, [
 		el('span', { 'class': 'tf-legend-dot', 'style': 'background:' + (color || colorFor(name)) }),
 		makeIcon(name, color),
-		el('span', { 'class': 'tf-legend-name' }, [ name ]),
+		el('span', { 'class': 'tf-legend-name', 'title': name }, [ name ]),
 		pctEl
 	]);
 	return { row: row, pct: pctEl };
@@ -2434,7 +2435,7 @@ function CHEVRON(color) {
 		/* the theme can be switched while the page is open */
 		try {
 			var obs = new MutationObserver(apply);
-			var opts = { attributes: true, attributeFilter: [ 'class', 'data-darkmode', 'data-theme' ] };
+			var opts = { attributes: true, attributeFilter: [ 'class', 'data-darkmode', 'data-theme', 'data-argon-mode' ] };
 			obs.observe(document.documentElement, opts);
 			if (document.body) obs.observe(document.body, opts);
 		} catch (e) { /* no MutationObserver: the first answer stands */ }
@@ -2776,11 +2777,11 @@ function injectCss() {
 		'.tf-page .tf-col-total{width:16%;}',
 		'.tf-page .tf-col-down{width:13%;}',
 		'.tf-page .tf-col-up{width:13%;}',
-		'.tf-page .tf-col-top{width:26%;}',
-		'.tf-page .tf-col-clients{width:10%;}',
+		'.tf-page .tf-col-top{width:24%;}',
+		'.tf-page .tf-col-clients{width:12%;}',
 		'.tf-page .tf-table>thead>tr>th{border-bottom:1px solid var(--tf-line);',
 		'font-size:.78rem;font-weight:600;color:var(--tf-dim);letter-spacing:.04em;padding:.5rem .6rem;',
-		'white-space:nowrap;background:transparent;}',
+		'white-space:normal;overflow-wrap:break-word;vertical-align:bottom;background:transparent;}',
 		/* Alignment is per kind of column, and the header follows its own data:
 		 * the theme centres every .table cell, which is what left the caption
 		 * "«Итог»" sitting in the middle of its column while the figure under it

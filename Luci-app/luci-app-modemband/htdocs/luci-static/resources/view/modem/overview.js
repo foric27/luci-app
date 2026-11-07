@@ -1011,7 +1011,7 @@ function renderOverview(state) {
 				renderInfoTable([
 					[ _('Manufacturer'), mmInfo.manufacturer || normalizeValue(bands.modem) || '--' ],
 					[ _('Model'), mmInfo.model || normalizeValue(bands.modem) || '--' ],
-					[ _('Revision'), mmInfo.revision || '--' ],
+					[ _('Revision', 'modem'), mmInfo.revision || '--' ],
 					[ _('IMEI'), mmInfo.imei || '--' ],
 					[ _('Device Status'), mmInfo.state || '--' ],
 					[ _('Failure Reason'), mmInfo.failReason || '--' ],
@@ -1086,7 +1086,7 @@ function renderStyle() {
 		'.mb-detail-label{color:var(--mb-text-muted);font-size:.85rem}',
 		'.mb-detail-value{color:var(--mb-text-strong);font-size:.9rem;text-align:right;word-break:break-word}',
 		'.mb-overview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;align-items:stretch}',
-		'.mb-overview-grid.two-column{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}',
+		'.mb-overview-grid.two-column{grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr))}',
 		'.mb-overview-card,.mb-section-card{position:relative;display:flex;flex-direction:column;height:100%;border:1px solid var(--mb-card-border);border-radius:16px;background:var(--mb-card-bg);padding:16px;box-shadow:0 6px 18px rgba(15,23,42,.05)}',
 		'.mb-overview-card:before{content:"";position:absolute;inset:0 auto 0 0;width:4px;border-radius:16px 0 0 16px;background:linear-gradient(180deg,#cbd5e1,#94a3b8)}',
 		'.mb-overview-card.is-signal:before{background:linear-gradient(180deg,#22c55e,#14b8a6)}',

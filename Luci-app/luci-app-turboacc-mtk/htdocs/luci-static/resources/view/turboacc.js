@@ -197,7 +197,7 @@ function getRuntimeLabel(token) {
 	case 'xt_FULLCONENAT':
 		return _('XT_FULLCONE_NAT');
 	case 'Boardcom Fullcone':
-		return _('Boardcom_FULLCONE_NAT');
+		return _('Broadcom_FULLCONE_NAT');
 	case 'Ethernet HNAT Disabled':
 		return _('以太网 HNAT 未启用');
 	case 'HNAT Partially Enabled':
@@ -244,7 +244,7 @@ function getFullconeConfigLabel(value) {
 	case '1':
 		return _('XT_FULLCONE_NAT(更佳的兼容性)');
 	case '2':
-		return _('Boardcom_FULLCONE_NAT(旧实现兼容)');
+		return _('Broadcom_FULLCONE_NAT(旧实现兼容)');
 	default:
 		return _('已禁用');
 	}
@@ -391,10 +391,10 @@ function applyThemeClass(node, darkClass) {
 
 		if (typeof MutationObserver !== 'undefined' && document.documentElement) {
 			themeObserver = new MutationObserver(syncThemeClass);
-			themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: [ 'class', 'style', 'data-theme' ] });
+			themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: [ 'class', 'style', 'data-theme', 'data-argon-mode' ] });
 
 			if (document.body && document.body !== document.documentElement)
-				themeObserver.observe(document.body, { attributes: true, attributeFilter: [ 'class', 'style', 'data-theme' ] });
+				themeObserver.observe(document.body, { attributes: true, attributeFilter: [ 'class', 'style', 'data-theme', 'data-argon-mode' ] });
 		}
 
 		if (window.matchMedia) {
@@ -928,7 +928,7 @@ function renderCompactOverview(state, health) {
 			health.summary,
 			statusTone,
 			[
-				renderChip(_('配置') + ' 路 ' + getEngineLabel(config.fastpath), 'is-info')
+				renderChip(_('配置') + ': ' + getEngineLabel(config.fastpath), 'is-info')
 			]
 		),
 		renderStatCard(
@@ -941,10 +941,10 @@ function renderCompactOverview(state, health) {
 		renderStatCard(
 			_('NAT / TCP'),
 			getFullconeConfigLabel(config.fullcone),
-			_('TCP CCA') + ' 路 ' + health.tcpccaLabel,
+			_('TCP CCA') + ': ' + health.tcpccaLabel,
 			'is-warning',
 			[
-				renderChip(_('IPv6') + ' 路 ' + ipv6Text, ipv6Text === _('已启用') ? 'is-ok' : 'is-muted')
+				renderChip(_('IPv6') + ': ' + ipv6Text, ipv6Text === _('已启用') ? 'is-ok' : 'is-muted')
 			]
 		)
 	];
@@ -961,7 +961,7 @@ function renderCompactOverview(state, health) {
 		metricCards.push(renderStatCard(
 			_('PPE 连接'),
 			formatSessions(ppe.totalBound, ppe.totalAll),
-			_('通道') + ' 路 ' + displayValue(ppe.count) + ' 路 ' + _('阈值') + ' 路 ' +
+			_('通道') + ': ' + displayValue(ppe.count) + ' · ' + _('阈值') + ': ' +
 				(config.fastpath_mh_eth_hnat ? (config.fastpath_mh_eth_hnat_bind_rate + ' pps') : '--'),
 			'is-accent',
 			[
@@ -1096,7 +1096,7 @@ function buildForm(features, config) {
 
 		if (!wrap) {
 			wrap = E('span', { 'class': 'ta-engine-popup-wrap' });
-			chip = E('span', { 'class': 'ta-engine-status ta-chip' });
+			chip = E('span', { 'class': 'ta-engine-status ta-chip', 'tabindex': '0' });
 			hint = E('div', { 'class': 'ta-engine-hint' });
 			wrap.appendChild(chip);
 			wrap.appendChild(hint);
@@ -1173,7 +1173,7 @@ function buildForm(features, config) {
 	o.value('0', _('禁用'));
 	if (features.hasXTFULLCONENAT || config.fullcone === '1')
 		o.value('1', _('XT_FULLCONE_NAT'));
-	o.value('2', _('Boardcom_FULLCONE_NAT'));
+	o.value('2', _('Broadcom_FULLCONE_NAT'));
 	o.default = config.fullcone || getDefaultFullcone(features);
 	o.widget = 'select';
 	o.rmempty = false;
@@ -1351,11 +1351,11 @@ function renderStyle() {
 
 		'.ta-engine-status{margin-left:0;vertical-align:middle;white-space:nowrap;cursor:help}',
 
-		'.ta-engine-hint{position:absolute;left:50%;bottom:calc(100% + 10px);z-index:999;width:clamp(280px,36vw,560px);max-width:calc(100vw - 32px);padding:13px 15px;border-radius:14px;background:transparent;border:1px solid var(--ta-panel-border);box-shadow:0 14px 30px rgba(15,23,42,.18);color:var(--ta-info);font-size:.82rem;font-weight:600;line-height:1.55;white-space:normal;text-align:left;text-shadow:0 1px 2px var(--ta-panel-bg);opacity:0;visibility:hidden;transform:translate(-50%,4px);transition:opacity .18s ease,transform .18s ease,visibility .18s ease;pointer-events:none}',
+		'.ta-engine-hint{position:absolute;left:50%;bottom:calc(100% + 10px);z-index:999;width:clamp(280px,36vw,560px);max-width:calc(100vw - 32px);padding:13px 15px;border-radius:14px;background:var(--ta-panel-bg);border:1px solid var(--ta-panel-border);box-shadow:0 14px 30px rgba(15,23,42,.18);color:var(--ta-info);font-size:.82rem;font-weight:600;line-height:1.55;white-space:normal;text-align:left;text-shadow:0 1px 2px var(--ta-panel-bg);opacity:0;visibility:hidden;transform:translate(-50%,4px);transition:opacity .18s ease,transform .18s ease,visibility .18s ease;pointer-events:none}',
 
-		'.ta-dark .ta-engine-hint{background:transparent;box-shadow:0 14px 30px rgba(0,0,0,.42)}',
+		'.ta-dark .ta-engine-hint{background:var(--ta-panel-bg);box-shadow:0 14px 30px rgba(0,0,0,.42)}',
 
-		'.ta-engine-popup-wrap:hover .ta-engine-hint{opacity:1;visibility:visible;transform:translate(-50%,0)}',
+		'.ta-engine-popup-wrap:hover .ta-engine-hint,.ta-engine-popup-wrap:focus-within .ta-engine-hint{opacity:1;visibility:visible;transform:translate(-50%,0)}',
 
 		'.ta-status-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}',
 
@@ -1508,7 +1508,7 @@ function renderStyle() {
 
 		'.ta-config-shell .cbi-tabmenu{margin:0;padding:0 8px 12px;gap:12px;display:flex;flex-wrap:wrap;border-bottom:none;list-style:none;white-space:normal;overflow:visible}',
 
-		'.ta-config-shell .cbi-tabmenu li{display:inline-flex;align-items:stretch;justify-content:center;flex:1 1 140px;min-width:140px;max-width:280px;margin:0;float:none;border:1px solid #dfe7f2;border-radius:16px!important;min-height:44px;background:#fff!important;box-shadow:none!important;overflow:hidden;transition:background-color .18s ease,color .18s ease,border-color .18s ease}',
+		'.ta-config-shell .cbi-tabmenu li{display:inline-flex;align-items:stretch;justify-content:center;flex:1 1 140px;min-width:140px;max-width:280px;margin:0;float:none;border:1px solid #dfe7f2;border-radius:16px!important;min-height:44px;background:#fff!important;box-shadow:none!important;transition:background-color .18s ease,color .18s ease,border-color .18s ease}',
 
 		'.ta-dark .ta-config-shell .cbi-tabmenu li{background:rgba(255,255,255,.04)!important;border-color:var(--ta-panel-border)!important}',
 
@@ -1580,7 +1580,7 @@ function renderStyle() {
 		'.ta-compact-detail-panel .ta-info-grid{height:100%}',
 
 		/* ===== Screenshot-matched Argon compact skin ===== */
-		'.ta-page{gap:14px;padding:12px 0 0;--ta-shadow:0 6px 16px rgba(73,99,135,.08);--ta-panel-border:#dfe7f1;--ta-panel-border-soft:#edf2f7;--ta-panel-bg:linear-gradient(180deg,rgba(255,255,255,.98),rgba(249,252,255,.99));--ta-text:#263b58;--ta-text-strong:#0b1830;--ta-text-muted:#6b809c;--ta-button-bg:linear-gradient(180deg,#fbfdff,#f5f8fc)}',
+		'.ta-page{position:relative;gap:14px;padding:12px 0 0;--ta-shadow:0 6px 16px rgba(73,99,135,.08);--ta-panel-border:#dfe7f1;--ta-panel-border-soft:#edf2f7;--ta-panel-bg:linear-gradient(180deg,rgba(255,255,255,.98),rgba(249,252,255,.99));--ta-text:#263b58;--ta-text-strong:#0b1830;--ta-text-muted:#6b809c;--ta-button-bg:linear-gradient(180deg,#fbfdff,#f5f8fc)}',
 
 		'.ta-page:before{top:-10px;height:8px;background:#5b6fee;border-radius:0 0 999px 999px}',
 
@@ -1642,7 +1642,7 @@ function renderStyle() {
 
 		'.ta-progress-fill.is-active:before{width:9px;height:9px;box-shadow:0 0 0 2px rgba(68,193,91,.18)}',
 
-		'.ta-config-shell{padding:14px}',
+		'.ta-config-shell{padding:14px;overflow:visible}',
 
 		'.ta-config-shell h2{margin:0 0 16px;padding:15px 16px;border-radius:4px;border:none;background:#fff;font-size:1.12rem;color:#0b1830}',
 
@@ -1661,6 +1661,8 @@ function renderStyle() {
 		'.ta-config-shell .cbi-tabmenu li.cbi-tab,.ta-config-shell .cbi-tabmenu li.active{background:linear-gradient(90deg,#168f8f,#3d70f0)!important}',
 
 		'.ta-config-shell .cbi-tab-descr,.ta-config-shell .cbi-section-descr,.ta-config-shell .cbi-value-description{font-size:.78rem;line-height:1.45;color:#7187a3!important;-webkit-text-fill-color:#7187a3}',
+
+		'.ta-dark .ta-config-shell .cbi-tab-descr,.ta-dark .ta-config-shell .cbi-section-descr,.ta-dark .ta-config-shell .cbi-value-description{color:var(--ta-text-muted)!important;-webkit-text-fill-color:var(--ta-text-muted)}',
 
 		'.ta-config-shell .cbi-value{padding:18px 20px;border-top:1px solid #f0f4f8}',
 
@@ -1702,7 +1704,7 @@ function renderStyle() {
 		/* ===== Responsive ===== */
 		'@media (max-width:1040px){.ta-hero{grid-template-columns:1fr}.ta-telemetry-grid{grid-template-columns:1fr}.ta-status-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.ta-compact-grid{grid-template-columns:1fr}}',
 
-		'@media (max-width:760px){.ta-page{padding-top:10px}.ta-page:before{top:-4px;height:4px}.ta-hero{padding:20px}.ta-hero-main{flex-direction:column}.ta-hero-badge{width:84px;height:84px;border-radius:24px}.ta-hero-title{padding:12px 24px}.ta-section-pill,.ta-status-item,.ta-panel{padding:18px 20px}.ta-status-strip{grid-template-columns:1fr}.ta-status-item strong{text-align:left}.ta-kv-row,.ta-info-row{grid-template-columns:1fr}.ta-kv-value,.ta-info-value,.ta-info-value .ta-chip-list{text-align:left;justify-content:flex-start}.ta-progress-head{flex-direction:column;align-items:flex-start}.ta-progress-value{white-space:normal}.ta-compact-hero-top{flex-direction:column;align-items:flex-start}.ta-compact-state{width:100%;justify-content:flex-start}.ta-compact-summary-grid{grid-template-columns:1fr}.ta-config-shell{padding:14px}.ta-config-shell h2{padding:16px 18px}.ta-config-shell select,.ta-config-shell select.ta-engine-select{width:100%;min-width:0}.ta-config-shell .cbi-tabmenu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0 0 12px}.ta-config-shell .cbi-tabmenu li{width:100%;min-width:0;max-width:none}.ta-config-shell .cbi-tabmenu li a{padding:10px 8px}.ta-config-shell .cbi-page-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.ta-config-shell .cbi-page-actions .cbi-button{width:100%;min-width:0;min-height:42px;padding:0 12px;justify-content:center}.ta-config-shell .cbi-page-actions .cbi-button-apply{grid-column:1/-1;order:-1}}',
+		'@media (max-width:760px){.ta-page{padding-top:10px}.ta-page:before{top:-4px;height:4px}.ta-hero{padding:20px}.ta-hero-main{flex-direction:column}.ta-hero-badge{width:84px;height:84px;border-radius:24px}.ta-hero-title{padding:12px 24px}.ta-section-pill,.ta-status-item,.ta-panel{padding:18px 20px}.ta-status-strip{grid-template-columns:1fr}.ta-status-item strong{text-align:left}.ta-kv-row,.ta-info-row{grid-template-columns:1fr}.ta-kv-value,.ta-info-value,.ta-info-value .ta-chip-list{text-align:left;justify-content:flex-start}.ta-progress-head{flex-direction:column;align-items:flex-start}.ta-progress-value{white-space:normal}.ta-compact-hero-top{flex-direction:column;align-items:flex-start}.ta-compact-state{width:100%;justify-content:flex-start}.ta-compact-summary-grid{grid-template-columns:1fr}.ta-config-shell{padding:14px}.ta-config-shell h2{padding:16px 18px}.ta-config-shell select,.ta-config-shell select.ta-engine-select{width:100%;min-width:0}.ta-config-shell .cbi-tabmenu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0 0 12px}.ta-config-shell .cbi-tabmenu li{width:100%;min-width:0;max-width:none}.ta-config-shell .cbi-tabmenu li a{padding:10px 8px}.ta-config-shell .cbi-page-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.ta-config-shell .cbi-page-actions .cbi-button{width:100%;min-width:0;min-height:42px;padding:0 12px;justify-content:center;white-space:normal}.ta-config-shell .cbi-page-actions .cbi-button-apply{grid-column:1/-1;order:-1}}',
 
 		'@media (max-width:380px){.ta-config-shell .cbi-tabmenu,.ta-config-shell .cbi-page-actions{grid-template-columns:1fr}.ta-config-shell .cbi-page-actions .cbi-button{min-height:40px}.ta-config-shell .cbi-page-actions .cbi-button-apply{grid-column:auto}}'
 	].join('\n'));
