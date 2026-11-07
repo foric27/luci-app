@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: sfp-status\n"
-"PO-Revision-Date: 2026-11-04 00:00+0000\n"
+"PO-Revision-Date: 2026-11-08 00:00+0000\n"
 "Last-Translator: OpenCode\n"
 "Language-Team: Russian\n"
 "Language: ru\n"
@@ -31,7 +31,7 @@ msgstr "Модуль"
 #: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:123
 #: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:195
 msgid "RX Power"
-msgstr "Мощность RX"
+msgstr "Мощность приёма"
 
 #: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:206
 #: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:276
@@ -59,7 +59,7 @@ msgstr "Статус"
 #: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:124
 #: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:196
 msgid "TX Power"
-msgstr "Мощность TX"
+msgstr "Мощность передачи"
 
 #: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:119
 #: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:191
