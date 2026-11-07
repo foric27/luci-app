@@ -16,7 +16,7 @@ msgid "Bias Current"
 msgstr "Ток смещения"
 
 msgid "Grant UCI read and RPC access to LuCI app SFP status"
-msgstr "Предоставляет доступ UCI на чтение и RPC к статусу SFP в LuCI"
+msgstr "Предоставить доступ на чтение UCI и доступ по RPC к статусу SFP в LuCI"
 
 #: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:170
 #: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:187
@@ -45,7 +45,7 @@ msgstr "Интерфейсы SFP"
 #: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:118
 #: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:190
 msgid "SFP Name"
-msgstr "Имя SFP"
+msgstr "Название SFP"
 
 #: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:120
 #: Luci-app/luci-app-sfp-status/htdocs/luci-static/resources/view/status/include/15_sfp.js:192

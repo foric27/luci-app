@@ -50,17 +50,17 @@ msgstr "随温度自动调速"
 msgid "Full-speed temperature (°C)"
 msgstr "满速温度（°C）"
 
-msgid "Manual"
+msgid "Manual mode"
 msgstr "手动"
 
 msgid "Manual PWM (%)"
 msgstr "手动 PWM（%）"
 
 msgid "Manual and Turbo modes require a writable PWM fan interface."
-msgstr "此设备不支持手动和狂暴模式，请使用智能模式。"
+msgstr "手动和狂暴模式需要可写的 PWM 风扇接口。"
 
 msgid "Maximum PWM output"
-msgstr "持续满速散热"
+msgstr "最大 PWM 输出"
 
 msgid "Maximum speed (RPM)"
 msgstr "最大转速（RPM）"
@@ -93,7 +93,7 @@ msgid "Smart"
 msgstr "智能"
 
 msgid "Speed display and estimation ceiling."
-msgstr "用于匹配风扇的显示与估算上限。"
+msgstr "转速显示与估算上限。"
 
 msgid "Speed unavailable"
 msgstr "转速未获取"
@@ -131,7 +131,7 @@ msgstr "达到此温度时输出最高 PWM。"
 msgid "Smart curve"
 msgstr "智能曲线"
 
-msgid "Stop"
+msgid "Stop point"
 msgstr "停转"
 
 msgid "Current"

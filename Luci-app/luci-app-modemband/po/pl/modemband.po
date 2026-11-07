@@ -101,7 +101,7 @@ msgid "Unknown"
 msgstr "Nieznane"
 
 msgid "No Service"
-msgstr "Brak usługi"
+msgstr "Brak zasięgu"
 
 msgid "Manufacturer"
 msgstr "Producent"
@@ -109,6 +109,7 @@ msgstr "Producent"
 msgid "Model"
 msgstr "Model"
 
+msgctxt "modem"
 msgid "Revision"
 msgstr "Wersja"
 
@@ -149,10 +150,10 @@ msgid "Supported 5G NSA bands"
 msgstr "Obsługiwane pasma 5G NSA"
 
 msgid "5G bands cannot be read. Check if your modem supports this technology and if it is in the list of supported modems."
-msgstr "Nie można odczytać pasm 5G. Sprawdź czy twój modem wspiera tą technologię i czy jest na liście obsługiwanych modemów."
+msgstr "Nie można odczytać pasm 5G. Sprawdź, czy twój modem wspiera tę technologię i czy jest na liście obsługiwanych modemów."
 
 msgid "LTE bands cannot be read. Check if your modem supports this technology and if it is in the list of supported modems."
-msgstr "Nie można odczytać pasm LTE. Sprawdź czy twój modem wspiera tą technologię i czy jest na liście obsługiwanych modemów."
+msgstr "Nie można odczytać pasm LTE. Sprawdź, czy twój modem wspiera tę technologię i czy jest na liście obsługiwanych modemów."
 
 msgid ""
 "Configuration modem frequency bands. More "
@@ -186,10 +187,10 @@ msgid "Apply changes"
 msgstr "Zastosuj zmiany"
 
 msgid "Restore"
-msgstr "Przywróc"
+msgstr "Przywróć"
 
 msgid "Please select a band(s)"
-msgstr "Proszę wybrać pasmo(-a)"
+msgstr "Wybierz pasma"
 
 msgid "Bands configuration"
 msgstr "Konfiguracja pasm"
@@ -240,7 +241,7 @@ msgid "Configuration panel for modemband and gui application."
 msgstr "Panel ustawień dla aplikacji modemband oraz dla interfejsu użytkownika."
 
 msgid "Manage modem communication, restart behavior and template customization from one page."
-msgstr "Zarządzaj komunikacją modemu, zachowaniem restartu i dostosowaniem szablonu z jednej strony."
+msgstr "Zarządzaj komunikacją modemu, zachowaniem przy restarcie i dostosowaniem szablonu z jednego miejsca."
 
 msgid "Device communication"
 msgstr "Komunikacja z urządzeniem"
@@ -342,7 +343,7 @@ msgid "Edit script"
 msgstr "Edycja skryptu"
 
 msgid "Supported bands depend on the region in which the modem operates. By modifying the DEFAULT_LTE_BANDS variable, you can easily adapt the package to your modem."
-msgstr "Obsługiwane pasma zależą od regionu w którym pracuje modem. Modyfikując zmienną DEFAULT_LTE_BANDS można łatwo dostosować pakiet do modemu."
+msgstr "Obsługiwane pasma zależą od regionu, w którym pracuje modem. Modyfikując zmienną DEFAULT_LTE_BANDS, można łatwo dostosować pakiet do modemu."
 
 msgid "Waiting to read data from the modem..."
 msgstr "Oczekiwanie na odczyt danych z modemu..."
@@ -351,7 +352,7 @@ msgid "Edit"
 msgstr "Edycja"
 
 msgid "Template loaded"
-msgstr "Wczytany szablon"
+msgstr "Szablon wczytany"
 
 msgid "Refresh the view"
 msgstr "Odśwież widok"
@@ -381,7 +382,7 @@ msgid "Check if you have selected the bands correctly."
 msgstr "Sprawdź, czy prawidłowo wybrałeś pasma."
 
 msgid "No band changes to apply."
-msgstr "Brak zmian pasm do zastosowania."
+msgstr "Brak zmian w pasmach do zastosowania."
 
 msgid "The modemband error."
 msgstr "Błąd modemband."

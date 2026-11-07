@@ -13,8 +13,8 @@ msgid "Acceleration Status"
 msgstr "加速状态"
 
 #: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:191
-msgid "Boardcom_FULLCONE_NAT"
-msgstr "Boardcom_FULLCONE_NAT(更低的CPU占用)"
+msgid "Broadcom_FULLCONE_NAT"
+msgstr "Broadcom_FULLCONE_NAT(更低的CPU占用)"
 
 #: applications/luci-app-turboacc/htdocs/luci-static/resources/view/turboacc.js:151
 msgid "Bridge Acceleration"

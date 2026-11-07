@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: luci-app-sfp-status\n"
-"PO-Revision-Date: 2026-04-29 00:00+0000\n"
+"PO-Revision-Date: 2026-11-08 00:00+0000\n"
 "Last-Translator: GitHub Copilot\n"
 "Language-Team: zh_Hans\n"
 "Language: zh_Hans\n"
@@ -23,7 +23,7 @@ msgstr "模块"
 
 #: htdocs/luci-static/resources/view/status/include/15_sfp.js
 msgid "SFP Name"
-msgstr "SFP型号"
+msgstr "SFP 名称"
 
 #: htdocs/luci-static/resources/view/status/include/15_sfp.js
 msgid "Temperature"
@@ -72,4 +72,4 @@ msgid "RX Power"
 msgstr "接收功率"
 
 msgid "TX Power"
-msgstr "发送功率"
+msgstr "发射功率"

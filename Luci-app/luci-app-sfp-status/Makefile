@@ -8,7 +8,7 @@ PKG_RELEASE:=31
 PKG_LICENSE:=Apache-2.0
 LUCI_PKGARCH:=all
 
-LUCI_TITLE:=Монитор состояния SFP в LuCI
+LUCI_TITLE:=Мониторинг состояния SFP в LuCI
 LUCI_DESCRIPTION:=Обзор и подробное состояние DOM для модулей SFP
 LUCI_DEPENDS:=+luci-base +ethtool-full
 

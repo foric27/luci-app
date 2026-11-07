@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: modemband\n"
-"PO-Revision-Date: 2026-11-04 00:00+0000\n"
+"PO-Revision-Date: 2026-11-08 00:00+0000\n"
 "Last-Translator: OpenCode\n"
 "Language-Team: Russian\n"
 "Language: ru\n"
@@ -56,7 +56,7 @@ msgstr "Проверьте правильность выбранных диап�
 
 #: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:334
 msgid "Checking this option disables the notification that appears every time the bands are changed."
-msgstr "При включении уведомление при каждом изменении диапазонов не показывается."
+msgstr "При включении этого параметра уведомление при каждом изменении диапазонов не показывается."
 
 msgid "China Broadnet"
 msgstr "China Broadnet"
@@ -75,7 +75,7 @@ msgstr "China Unicom"
 
 #: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:287
 msgid "Configuration"
-msgstr "Настройка"
+msgstr "Конфигурация"
 
 #: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:458
 msgid "Configuration modem frequency bands. More information about the modemband application on the %seko.one.pl forum%s."
@@ -83,7 +83,7 @@ msgstr "Настройка частотных диапазонов модема.
 
 #: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:521
 msgid "Connection / router restart"
-msgstr "Перезапуск соединения / роутера"
+msgstr "Перезапуск соединения / маршрутизатора"
 
 #: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:991
 msgid "Current Cell"
@@ -103,7 +103,7 @@ msgstr "Текущие диапазоны LTE"
 
 #: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:66
 msgid "Deselect all"
-msgstr "Снять все"
+msgstr "Снять выделение"
 
 #: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1016
 msgid "Device Status"
@@ -139,7 +139,7 @@ msgid "Failure Reason"
 msgstr "Причина сбоя"
 
 msgid "Grant access to LuCI app modemband"
-msgstr "Предоставляет доступ к приложению modemband в LuCI"
+msgstr "Предоставить доступ к приложению modemband в LuCI"
 
 #: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:525
 msgid "Hint: The name of the WAN section can be changed in the package settings panel."
@@ -259,7 +259,7 @@ msgstr "Выполнить перезагрузку"
 
 #: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:504
 msgid "Please select a band(s)"
-msgstr "Выберите диапазон(ы)"
+msgstr "Выберите диапазоны"
 
 #: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:313
 msgid "Please select a port"
@@ -335,6 +335,7 @@ msgid "Restore default bands"
 msgstr "Восстановить диапазоны по умолчанию"
 
 #: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1014
+msgctxt "modem"
 msgid "Revision"
 msgstr "Ревизия"
 
@@ -368,7 +369,7 @@ msgstr "Выберите предпочитаемые диапазоны для 
 
 #: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:344
 msgid "Select the template assigned to the Vendor and ProdID of the modem."
-msgstr "Выберите шаблон, назначенный Vendor и ProdID модема."
+msgstr "Выберите шаблон для Vendor и ProdID модема."
 
 #: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:1039
 msgid "Serving Band"
@@ -425,7 +426,7 @@ msgstr "Ошибка modemband."
 #: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:396
 #: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blte.js:582
 msgid "The new bands settings have been sent to the modem. If the changes are not visible, a restart of the connection, modem or router may be required."
-msgstr "Новые настройки диапазонов отправлены в модем. Если изменения не видны, может потребоваться перезапуск соединения, модема или роутера."
+msgstr "Новые настройки диапазонов отправлены в модем. Если изменения не видны, может потребоваться перезапуск соединения, модема или маршрутизатора."
 
 #: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/blteconfig.js:333
 msgid "Turn off notifications"
@@ -437,7 +438,7 @@ msgstr "Отключить уведомления"
 #: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:970
 #: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:974
 msgid "Unavailable from current backend"
-msgstr "Недоступно через текущий бэкенд"
+msgstr "Недоступно в текущей реализации"
 
 #: Luci-app/luci-app-modemband/htdocs/luci-static/resources/view/modem/overview.js:819
 msgid "Unknown"

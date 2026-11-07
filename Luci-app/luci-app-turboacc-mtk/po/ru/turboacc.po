@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: turboacc\n"
-"PO-Revision-Date: 2026-11-04 00:00+0000\n"
+"PO-Revision-Date: 2026-11-08 00:00+0000\n"
 "Last-Translator: OpenCode\n"
 "Language-Team: Russian\n"
 "Language: ru\n"
@@ -12,35 +12,35 @@ msgstr ""
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:200
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1167
-msgid "Boardcom_FULLCONE_NAT"
-msgstr "Boardcom_FULLCONE_NAT"
+msgid "Broadcom_FULLCONE_NAT"
+msgstr "Broadcom_FULLCONE_NAT"
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:247
-msgid "Boardcom_FULLCONE_NAT(旧实现兼容)"
-msgstr "Boardcom_FULLCONE_NAT (совместимость со старой реализацией)"
+msgid "Broadcom_FULLCONE_NAT(旧实现兼容)"
+msgstr "Broadcom_FULLCONE_NAT (совместимость со старой реализацией)"
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1066
 msgid "Fast Classifier 是兼容旧配置的保留选项。"
-msgstr "Fast Classifier — устаревший вариант для совместимости со старыми конфигурациями."
+msgstr "Быстрый классификатор — вариант для совместимости со старыми конфигурациями."
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:279
 msgid "Fast classifier 可单独启用 IPv6 加速。"
-msgstr "Fast classifier может отдельно включать ускорение IPv6."
+msgstr "Быстрый классификатор может отдельно включать ускорение IPv6."
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:279
 msgid "Fast classifier 已打开 IPv6 加速。"
-msgstr "В Fast classifier включено ускорение IPv6."
+msgstr "В быстром классификаторе включено ускорение IPv6."
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1060
 msgid "Flow Offloading 是兼容旧配置的保留选项。"
-msgstr "Flow Offloading — устаревший вариант для совместимости со старыми конфигурациями."
+msgstr "Разгрузка потоков — вариант для совместимости со старыми конфигурациями."
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:837
 msgid "FullCone"
 msgstr "FullCone"
 
 msgid "Grant UCI access for luci-app-turboacc"
-msgstr "Предоставляет доступ UCI для luci-app-turboacc"
+msgstr "Предоставить доступ к UCI для luci-app-turboacc"
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:836
 msgid "HNAT"
@@ -89,7 +89,7 @@ msgstr "MediaTek HNAT"
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1035
 msgid "MediaTek HNAT 专用设置。"
-msgstr "Специальные настройки MediaTek HNAT."
+msgstr "Отдельные настройки MediaTek HNAT."
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1078
 msgid "MediaTek HNAT 已可用，适合 MT7988 硬件加速。"
@@ -152,7 +152,7 @@ msgstr "Соединения PPE"
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:892
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:976
 msgid "PPE 连接数"
-msgstr "Соединения PPE"
+msgstr "Число соединений PPE"
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:719
 msgid "PPE 通道"
@@ -186,7 +186,7 @@ msgstr "Менеджер соединений SFE"
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1072
 msgid "SFE 连接管理器是兼容旧配置的保留选项。"
-msgstr "Менеджер соединений SFE — устаревший вариант для совместимости со старыми конфигурациями."
+msgstr "Менеджер соединений SFE — вариант для совместимости со старыми конфигурациями."
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:702
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:860
@@ -250,7 +250,7 @@ msgstr "Без дополнительного ускорения сеть и Wi-
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1154
 msgid "为 Fast classifier 打开 IPv6"
-msgstr "Включить IPv6 для Fast classifier"
+msgstr "Включить IPv6 для быстрого классификатора"
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:817
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:882
@@ -282,7 +282,7 @@ msgstr "Оптимизация работы"
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:769
 msgid "体验侧"
-msgstr "Со стороны опыта"
+msgstr "Пользовательский опыт"
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1003
 msgid "保留最常用的实时明细，避免页面信息过多又不易定位。"
@@ -296,7 +296,7 @@ msgstr "Оставлен для старых конфигураций; теку�
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1064
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1070
 msgid "保留选项"
-msgstr "Устаревший вариант"
+msgstr "Совместимый вариант"
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:821
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:884
@@ -372,7 +372,7 @@ msgstr "Включить аппаратную разгрузку трафика"
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:614
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:859
 msgid "实时"
-msgstr "Сейчас"
+msgstr "Активно"
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:765
 msgid "实时反馈"
@@ -463,7 +463,7 @@ msgstr "Доступные движки"
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:634
 msgid "当前 PPE 总容量："
-msgstr "Текущая ёмкость PPE: "
+msgstr "Общая ёмкость PPE: "
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:748
 msgid "当前主通路决定了大部分路由/NAT 转发行为。"
@@ -487,7 +487,7 @@ msgstr "Число доступных основных движков"
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1067
 msgid "当前固件未提供 Fast Classifier 模块；保存后若无法加载，会自动跳过，不影响网络。"
-msgstr "В текущей прошивке нет модуля Fast Classifier; если он не загрузится, он будет пропущен без влияния на сеть."
+msgstr "В текущей прошивке нет модуля быстрого классификатора; если он не загрузится, он будет пропущен без влияния на сеть."
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1073
 msgid "当前固件未提供 SFE 连接管理器模块；保存后若无法加载，会自动跳过，不影响网络。"
@@ -673,7 +673,7 @@ msgstr "Предупреждения"
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:622
 msgid "运行告警："
-msgstr "Предупреждение: "
+msgstr "Предупреждения: "
 
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1002
 msgid "运行明细"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: traffic\n"
-"PO-Revision-Date: 2026-11-04 00:00+0000\n"
+"PO-Revision-Date: 2026-11-08 00:00+0000\n"
 "Last-Translator: OpenCode\n"
 "Language-Team: Russian\n"
 "Language: ru\n"
@@ -12,7 +12,7 @@ msgstr ""
 
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:529
 msgid "ALG or offload policy excluded"
-msgstr "Исключено ALG или политикой разгрузки"
+msgstr "Исключено по ALG или политике разгрузки"
 
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1961
 msgid "Accounted share"
@@ -83,7 +83,7 @@ msgstr "Трафик клиентов"
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1924
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2103
 msgid "Bucket"
-msgstr "Период"
+msgstr "Часов"
 
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1423
 msgid "Candidate"
@@ -95,7 +95,7 @@ msgstr "Расположение кандидата; владелец не пр�
 
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1955
 msgid "Categorised"
-msgstr "Категоризировано"
+msgstr "Классифицировано"
 
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1366
 msgid "Classifier setup"
@@ -205,7 +205,7 @@ msgstr "Заголовок Ethernet недоступен"
 
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:531
 msgid "Excluded by VLAN policy"
-msgstr "Исключено политикой VLAN"
+msgstr "Исключено по политике VLAN"
 
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:528
 msgid "Excluded by packet mark"
@@ -290,7 +290,7 @@ msgstr "Последний ответ"
 
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1354
 msgid "Local endpoint"
-msgstr "Локальная точка"
+msgstr "Локальная конечная точка"
 
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:533
 msgid "MTU exceeds offload limit"
@@ -351,7 +351,7 @@ msgstr "Трафик пока не записан."
 
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:530
 msgid "No valid PPE flow slot"
-msgstr "Нет свободного слота потока PPE"
+msgstr "Нет корректного слота потока PPE"
 
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1325
 msgid "Not loaded"
@@ -392,7 +392,7 @@ msgstr "Другое"
 
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:531
 msgid "Output device cannot be offloaded"
-msgstr "Выходное устройство нельзя разгрузить"
+msgstr "Выходное устройство не поддерживает разгрузку"
 
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:605
 msgid "PPE counters observed"
@@ -438,7 +438,7 @@ msgstr "Пик (среднее за интервал)"
 
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2117
 msgid "Peak clients/hour"
-msgstr "Пик клиентов/час"
+msgstr "Пик клиентов в час"
 
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1361
 msgid "Pending"
@@ -478,7 +478,7 @@ msgstr "Зарегистрированные типы туннелей"
 
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1354
 msgid "Remote endpoint"
-msgstr "Удалённая точка"
+msgstr "Удалённая конечная точка"
 
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1422
 msgid "Reply"
@@ -495,7 +495,7 @@ msgstr "Адреса роутера"
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1927
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:2105
 msgid "Router and tunnel"
-msgstr "Роутер и туннель"
+msgstr "Маршрутизатор и туннель"
 
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1741
 msgid "Running"
@@ -568,7 +568,7 @@ msgstr "Топ-клиент"
 
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1258
 msgid "Top client (this session)"
-msgstr "Топ-клиент (эта сессия)"
+msgstr "Топ-клиент (текущая сессия)"
 
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1246
 msgid "Total traffic"
@@ -705,7 +705,7 @@ msgstr "пакетов"
 
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1947
 msgid "share of the traffic the router carried that the app and client accounting could name"
-msgstr "доля трафика, прошедшего через роутер, которую удалось распознать по приложениям и клиентам"
+msgstr "доля трафика, прошедшего через маршрутизатор, которую удалось распознать по приложениям и клиентам"
 
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:833
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1257

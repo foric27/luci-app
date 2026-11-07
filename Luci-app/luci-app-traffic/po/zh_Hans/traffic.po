@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: luci-app-traffic\n"
-"PO-Revision-Date: 2026-09-16 00:00+0000\n"
+"PO-Revision-Date: 2026-11-08 00:00+0000\n"
 "Last-Translator: MedyMa\n"
 "Language-Team: zh_Hans\n"
 "Language: zh_Hans\n"
@@ -42,7 +42,7 @@ msgstr "确定清空已统计的流量数据？"
 
 #: htdocs/luci-static/resources/view/traffic/overview.js
 msgid "Router and tunnel"
-msgstr "隧道"
+msgstr "路由器与隧道"
 
 #: htdocs/luci-static/resources/view/traffic/overview.js
 msgid "Browser clients"
@@ -212,7 +212,7 @@ msgstr "快照已过期"
 
 #: htdocs/luci-static/resources/view/traffic/overview.js
 msgid "Flows"
-msgstr "连接跟踪"
+msgstr "连接流"
 
 #: htdocs/luci-static/resources/view/traffic/overview.js
 msgid "DNS mappings"
@@ -236,7 +236,7 @@ msgstr "计数器总量"
 
 #: htdocs/luci-static/resources/view/traffic/overview.js
 msgid "Accounted share"
-msgstr "已分类占比"
+msgstr "已计入占比"
 
 #: htdocs/luci-static/resources/view/traffic/overview.js
 msgid "every packet counted at the LAN interface, proxied traffic included"
@@ -434,7 +434,7 @@ msgid "Firmware"
 msgstr "固件状态"
 
 msgid "Registered tunnel types"
-msgstr "已注册协议数"
+msgstr "已注册隧道类型"
 
 msgid "Synchronized tunnels"
 msgstr "已同步隧道"
@@ -578,7 +578,7 @@ msgid "NPU to CPU"
 msgstr "NPU 回送 CPU"
 
 msgid "IPsec context"
-msgstr "IPsec 加密上下文"
+msgstr "IPsec 上下文"
 
 msgid "NPU to CPU counts validated tunnel returns only. Traffic kept in hardware is outside this counter."
 msgstr "仅统计经硬件标识核验的 NPU 隧道回送包，不涵盖始终在硬件中转发的流量。"
@@ -620,7 +620,7 @@ msgid "Tunnel or output device unavailable"
 msgstr "隧道或出口设备不可用"
 
 msgid "Offload resources exhausted"
-msgstr "卸载资源不足"
+msgstr "卸载资源已耗尽"
 
 msgid "Excluded by packet mark"
 msgstr "报文标记排除"

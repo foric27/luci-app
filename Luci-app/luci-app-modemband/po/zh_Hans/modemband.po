@@ -29,7 +29,7 @@ msgid "Modem Configuration"
 msgstr "模组配置"
 
 msgid "Modem"
-msgstr "移动蜂窝"
+msgstr "调制解调器"
 
 msgid "Supported LTE bands"
 msgstr "支持的LTE频段"
@@ -41,10 +41,10 @@ msgid "Supported 5G NSA bands"
 msgstr "支持的5G NSA频段"
 
 msgid "5G bands cannot be read. Check if your modem supports this technology and if it is in the list of supported modems."
-msgstr "无法获取5G频段，请检查您的调制解调器是否在支持的列表中。"
+msgstr "无法获取 5G 频段，请检查您的调制解调器是否支持该技术并位于支持的列表中。"
 
 msgid "LTE bands cannot be read. Check if your modem supports this technology and if it is in the list of supported modems."
-msgstr "无法获取5G频段，请检查您的调制解调器是否在支持的列表中。"
+msgstr "无法获取 LTE 频段，请检查您的调制解调器是否支持该技术并位于支持的列表中。"
 
 msgid ""
 "Configuration modem frequency bands. More "
@@ -132,7 +132,7 @@ msgid "Configuration panel for modemband and gui application."
 msgstr "调制解调器应用程序和用户界面设置"
 
 msgid "Manage modem communication, restart behavior and template customization from one page."
-msgstr "集中管理接口、重启策略与模板。"
+msgstr "在一页中管理调制解调器通信、重启行为和模板自定义。"
 
 msgid "Device communication"
 msgstr "设备通信"
@@ -165,7 +165,7 @@ msgid "Restart with AT command"
 msgstr "AT 重启指令"
 
 msgid "AT command to restart the modem."
-msgstr "启用自动重启后执行的 AT 指令。"
+msgstr "用于重启调制解调器的 AT 指令。"
 
 msgid "Port for communication with the modem"
 msgstr "控制端口"
@@ -186,7 +186,7 @@ msgid "Additional options useful for modem configuration."
 msgstr "配置调制解调器可用的其他选项"
 
 msgid "Connection / router restart"
-msgstr "连接/重启路由器"
+msgstr "连接 / 路由器重启"
 
 msgid "Restart WAN"
 msgstr "自动重连WAN"
@@ -231,13 +231,13 @@ msgid "Modem template configuration"
 msgstr "调制解调器模板配置"
 
 msgid "Settings panel for the modemband application that allows you to customize the package for your modem."
-msgstr "调制解调器带应用程序的设置面板允许您自定义调制解调器的程序包"
+msgstr "modemband 应用的设置面板，可针对您的调制解调器自定义软件包。"
 
 msgid "Edit script"
 msgstr "编辑脚本"
 
 msgid "Supported bands depend on the region in which the modem operates. By modifying the DEFAULT_LTE_BANDS variable, you can easily adapt the package to your modem."
-msgstr "按需修改 DEFAULT_LTE_BANDS 等变量，以适配当前模组。"
+msgstr "支持的频段取决于调制解调器工作的区域；修改 DEFAULT_LTE_BANDS 即可适配。"
 
 msgid "Waiting to read data from the modem..."
 msgstr "等待从调制解调器读取数据..."
@@ -255,7 +255,7 @@ msgid "Reload"
 msgstr "重载"
 
 msgid "Select the modem settings file"
-msgstr "模板文件映射"
+msgstr "选择调制解调器设置文件"
 
 msgid "Select the template assigned to the Vendor and ProdID of the modem."
 msgstr "按当前模组的 Vendor / Product ID 选择模板。"
@@ -386,6 +386,7 @@ msgstr "制造商"
 msgid "Model"
 msgstr "型号"
 
+msgctxt "modem"
 msgid "Revision"
 msgstr "修订版本"
 
