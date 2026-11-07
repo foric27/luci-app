@@ -194,3 +194,7 @@ msgstr "Устройство не поддерживается"
 #: Luci-app/luci-app-fan/htdocs/luci-static/resources/view/fan.js:176
 msgid "Use maximum PWM at this temperature."
 msgstr "Использовать максимальный PWM при этой температуре."
+
+#: root/usr/share/luci/menu.d
+msgid "MTK"
+msgstr "MTK"

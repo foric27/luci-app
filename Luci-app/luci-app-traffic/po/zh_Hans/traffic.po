@@ -765,3 +765,7 @@ msgstr "候选流项，归属尚未验证"
 
 msgid "Traffic Analysis"
 msgstr "流量分析"
+
+#: root/usr/share/luci/menu.d
+msgid "MTK"
+msgstr "MTK"

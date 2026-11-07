@@ -319,3 +319,7 @@ msgstr "TCP"
 
 msgid "。"
 msgstr "。"
+
+#: root/usr/share/luci/menu.d
+msgid "MTK"
+msgstr "MTK"

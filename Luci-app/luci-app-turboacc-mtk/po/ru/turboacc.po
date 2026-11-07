@@ -746,3 +746,20 @@ msgstr "По умолчанию 30."
 #: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:619
 msgid "，但实时内核仍显示 "
 msgstr ", но ядро всё ещё сообщает "
+
+#: root/usr/share/luci/menu.d
+msgid "MTK"
+msgstr "MTK"
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1212
+msgid "EQoS 正在使用 HNAT，请先关闭 EQoS 限速服务。"
+msgstr "EQoS использует HNAT — сначала отключите службу ограничения скорости EQoS."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1053
+msgid "当前固件未提供这个加速引擎，请选择可用的引擎。"
+msgstr "В текущей прошивке нет этого движка ускорения — выберите доступный."
+
+#: Luci-app/luci-app-turboacc-mtk/htdocs/luci-static/resources/view/turboacc.js:1049
+msgid "请先在 EQoS 页面关闭限速服务，再切换加速引擎。"
+msgstr "Сначала отключите службу ограничения скорости на странице EQoS, затем переключите движок ускорения."
+

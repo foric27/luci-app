@@ -729,3 +729,7 @@ msgstr "всего"
 #: Luci-app/luci-app-traffic/htdocs/luci-static/resources/view/traffic/overview.js:1540
 msgid "up"
 msgstr "отдача"
+
+#: root/usr/share/luci/menu.d
+msgid "MTK"
+msgstr "MTK"
