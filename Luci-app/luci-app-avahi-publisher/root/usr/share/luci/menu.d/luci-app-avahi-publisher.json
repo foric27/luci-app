@@ -1,0 +1,14 @@
+{
+	"admin/services/avahi-publisher": {
+		"title": "Avahi Service Publisher",
+		"order": 82,
+		"action": {
+			"type": "view",
+			"path": "avahi-publisher"
+		},
+		"depends": {
+			"acl": [ "luci-app-avahi-publisher" ],
+			"uci": { "avahi-publisher": true }
+		}
+	}
+}

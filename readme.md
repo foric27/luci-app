@@ -279,9 +279,12 @@ ubus call luci.sfp-status getStatuses '{}'
 
 | Пакет | Назначение | Документация |
 | --- | --- | --- |
+| luci-app-avahi-publisher | Публикация записей Bonjour/DNS-SD (Avahi) для сервисов на других устройствах LAN; автор оригинала — finerain6 (Apache-2.0) | [README](Luci-app/luci-app-avahi-publisher/README.md) |
 | luci-app-traffic | Статистика трафика по приложениям и клиентам, диагностика NPU/TOPS | [README](Luci-app/luci-app-traffic/README.md) |
 | luci-app-turboacc-mtk | Управление аппаратным ускорением MediaTek HNAT, PPE и TCP CCA | Makefile и страница `turboacc.js` |
 | rpcd-mod-router-status | Телеметрия роутера только для чтения для мобильного приложения ImmortalWrt | [README](Luci-app/rpcd-mod-router-status/README.md) |
+
+Пакет `luci-app-avahi-publisher` взят из проекта [finerain6/luci-app-avahi-publisher](https://github.com/finerain6/luci-app-avahi-publisher) (автор — finerain6, лицензия Apache-2.0) и адаптирован для этого репозитория: сборка в apk-репозитории 25.12, отдельные пакеты переводов вместо встроенного `zh-cn` `.lmo`, зависимость `jshn`, полный русский перевод интерфейса.
 
 ## Сборка и проверка
 
@@ -298,6 +301,7 @@ ubus call luci.sfp-status getStatuses '{}'
 Поместите соответствующее приложение в LuCI feed или в `feeds/luci/applications/`, затем собирайте отдельно по имени пакета:
 
 ```sh
+make package/feeds/luci/luci-app-avahi-publisher/compile V=s
 make package/feeds/luci/luci-app-fan/compile V=s
 make package/feeds/luci/luci-app-modemband/compile V=s
 make package/feeds/luci/luci-app-sfp-status/compile V=s
@@ -308,7 +312,7 @@ make package/feeds/luci/rpcd-mod-router-status/compile V=s
 
 ### Русские переводы
 
-- Для `luci-app-fan`, `luci-app-modemband`, `luci-app-sfp-status`, `luci-app-traffic` и `luci-app-turboacc-mtk` русские каталоги лежат в `po/ru/` и собираются в отдельные пакеты `luci-i18n-<app>-ru`.
+- Для `luci-app-avahi-publisher`, `luci-app-fan`, `luci-app-modemband`, `luci-app-sfp-status`, `luci-app-traffic` и `luci-app-turboacc-mtk` русские каталоги лежат в `po/ru/` и собираются в отдельные пакеты `luci-i18n-<app>-ru`.
 - Основной пакет приложения не содержит `.lmo`; перевод устанавливается отдельным пакетом.
 - После установки выберите русский язык в LuCI: **Система → Язык и стиль**. Если нужного языка нет в списке, установите соответствующий пакет `luci-i18n-*-ru`.
 
@@ -351,6 +355,7 @@ sms_tool -d /dev/ttyUSB2 at AT+CPIN?
 
 | Приложение | Страница |
 | --- | --- |
+| luci-app-avahi-publisher | Службы > Публикация сервисов Avahi |
 | luci-app-fan | MTK > Управление вентилятором |
 | luci-app-modemband | Модем > Настройка модема > Обзор / Настройки диапазонов / Настройка |
 | luci-app-sfp-status | Блок SFP на странице «Статус > Обзор» |

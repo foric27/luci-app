@@ -1,0 +1,549 @@
+#!/bin/sh
+
+. /lib/functions.sh
+
+CONFIG_NAME="avahi-publisher"
+SERVICE_DIR="/etc/avahi/services"
+FILE_PREFIX="avahi-publisher-"
+HOSTS_FILE="/etc/avahi/hosts"
+HOSTS_BEGIN="# BEGIN avahi-publisher"
+HOSTS_END="# END avahi-publisher"
+RUNTIME_FILE="/var/run/avahi-publisher.generated"
+LOCK_DIR="/var/run/avahi-publisher.lock"
+
+stage_dir=""
+stage_hosts=""
+host_entries=""
+backup_dir=""
+backup_hosts_existed=0
+render_count=0
+address_count=0
+error_count=0
+
+log_error() {
+	logger -p daemon.err -t avahi-publisher "$*"
+	printf '%s\n' "$*" >&2
+}
+
+acquire_lock() {
+	if ! mkdir "$LOCK_DIR" 2>/dev/null; then
+		log_error "Another configuration operation is already running"
+		return 1
+	fi
+}
+
+release_lock() {
+	rmdir "$LOCK_DIR" 2>/dev/null
+}
+
+xml_escape() {
+	printf '%s' "$1" |
+		sed \
+			-e 's/&/\&amp;/g' \
+			-e 's/</\&lt;/g' \
+			-e 's/>/\&gt;/g' \
+			-e 's/"/\&quot;/g' \
+			-e "s/'/\&apos;/g"
+}
+
+valid_display_name() {
+	[ -n "$1" ] || return 1
+	! printf '%s' "$1" | grep -q '[[:cntrl:]]'
+}
+
+valid_host_name() {
+	[ -n "$1" ] || return 1
+	printf '%s\n' "$1" |
+		grep -Eq '^([A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?\.?$'
+}
+
+valid_service_type() {
+	printf '%s\n' "$1" |
+		grep -Eq '^_[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?\._(tcp|udp)$'
+}
+
+valid_port() {
+	case "$1" in
+		""|*[!0-9]*)
+			return 1
+			;;
+	esac
+
+	[ "$1" -ge 1 ] && [ "$1" -le 65535 ]
+}
+
+valid_protocol() {
+	case "$1" in
+		any|ipv4|ipv6)
+			return 0
+			;;
+	esac
+
+	return 1
+}
+
+valid_ipv4() {
+	local old_ifs octet
+
+	case "$1" in
+		""|*[!0-9.]*)
+			return 1
+			;;
+	esac
+	old_ifs="$IFS"
+	IFS=.
+	set -- $1
+	IFS="$old_ifs"
+	[ "$#" -eq 4 ] || return 1
+
+	for octet in "$@"; do
+		case "$octet" in
+			""|*[!0-9]*)
+				return 1
+				;;
+		esac
+		[ "$octet" -le 255 ] || return 1
+	done
+}
+
+cleanup_stage() {
+	local staged_file
+
+	[ -n "$stage_dir" ] || return 0
+	[ -d "$stage_dir" ] || return 0
+
+	for staged_file in "$stage_dir"/*.service; do
+		[ -f "$staged_file" ] || break
+		rm -f "$staged_file"
+	done
+
+	rm -f \
+		"$stage_dir/hosts" \
+		"$stage_dir/managed-hosts" \
+		"$stage_dir/managed-hosts.sorted"
+	rmdir "$stage_dir" 2>/dev/null
+	stage_dir=""
+	stage_hosts=""
+	host_entries=""
+}
+
+cleanup_backup() {
+	local saved_file
+
+	[ -n "$backup_dir" ] || return 0
+	[ -d "$backup_dir" ] || return 0
+
+	for saved_file in "$backup_dir"/*.service; do
+		[ -f "$saved_file" ] || break
+		rm -f "$saved_file"
+	done
+
+	rm -f "$backup_dir/hosts"
+	rmdir "$backup_dir" 2>/dev/null
+	backup_dir=""
+	backup_hosts_existed=0
+}
+
+remove_managed_files() {
+	local managed_file
+
+	[ -d "$SERVICE_DIR" ] || return 0
+
+	for managed_file in "$SERVICE_DIR"/${FILE_PREFIX}*.service; do
+		[ -f "$managed_file" ] || break
+		rm -f "$managed_file" || return 1
+	done
+}
+
+strip_managed_hosts() {
+	awk -v begin="$HOSTS_BEGIN" -v end="$HOSTS_END" '
+		$0 == begin {
+			if (inside)
+				exit 2
+			inside = 1
+			begin_count++
+			next
+		}
+		$0 == end {
+			if (!inside)
+				exit 3
+			inside = 0
+			end_count++
+			next
+		}
+		!inside {
+			print
+		}
+		END {
+			if (inside || begin_count != end_count)
+				exit 4
+		}
+	' "$HOSTS_FILE"
+}
+
+create_stage() {
+	mkdir -p "$SERVICE_DIR" || return 1
+
+	stage_dir="$(mktemp -d "$SERVICE_DIR/.avahi-publisher-stage.XXXXXX")" || {
+		log_error "Unable to create staging directory"
+		return 1
+	}
+	stage_hosts="$stage_dir/hosts"
+	host_entries="$stage_dir/managed-hosts"
+	: > "$host_entries"
+}
+
+stage_hosts_file() {
+	local sorted_entries
+
+	if [ -e "$HOSTS_FILE" ] && [ ! -f "$HOSTS_FILE" ]; then
+		log_error "$HOSTS_FILE exists but is not a regular file"
+		return 1
+	fi
+
+	if [ -f "$HOSTS_FILE" ]; then
+		if ! strip_managed_hosts > "$stage_hosts"; then
+			log_error "Managed marker block in $HOSTS_FILE is malformed"
+			return 1
+		fi
+	else
+		: > "$stage_hosts"
+	fi
+
+	address_count=0
+	if [ -s "$host_entries" ]; then
+		sorted_entries="$stage_dir/managed-hosts.sorted"
+		sort -u "$host_entries" > "$sorted_entries" || return 1
+		address_count="$(wc -l < "$sorted_entries")"
+
+		printf '%s\n' "$HOSTS_BEGIN" >> "$stage_hosts"
+		cat "$sorted_entries" >> "$stage_hosts"
+		printf '%s\n' "$HOSTS_END" >> "$stage_hosts"
+	fi
+
+	chmod 0644 "$stage_hosts"
+}
+
+backup_hosts_file() {
+	backup_hosts_existed=0
+
+	if [ -f "$HOSTS_FILE" ]; then
+		cp -p "$HOSTS_FILE" "$backup_dir/hosts" || return 1
+		backup_hosts_existed=1
+	fi
+}
+
+restore_hosts_backup() {
+	if [ "$backup_hosts_existed" -eq 1 ]; then
+		cp -p "$backup_dir/hosts" "$HOSTS_FILE"
+	else
+		rm -f "$HOSTS_FILE"
+	fi
+}
+
+restore_partially_saved_files() {
+	local saved_file
+
+	for saved_file in "$backup_dir"/*.service; do
+		[ -f "$saved_file" ] || break
+		mv "$saved_file" "$SERVICE_DIR/$(basename "$saved_file")" || return 1
+	done
+
+	cleanup_backup
+}
+
+rollback_replacement() {
+	local saved_file
+
+	remove_managed_files || return 1
+	restore_hosts_backup || return 1
+
+	for saved_file in "$backup_dir"/*.service; do
+		[ -f "$saved_file" ] || break
+		mv "$saved_file" "$SERVICE_DIR/$(basename "$saved_file")" || return 1
+	done
+
+	cleanup_backup
+}
+
+render_service() {
+	local section="$1"
+	local enabled name host address service_type port protocol
+	local escaped_name escaped_host escaped_type output_file
+
+	config_get_bool enabled "$section" enabled 1
+	[ "$enabled" -eq 1 ] || return 0
+
+	config_get name "$section" name
+	config_get host "$section" host
+	config_get address "$section" address
+	config_get service_type "$section" type
+	config_get port "$section" port
+	config_get protocol "$section" protocol "any"
+
+	if ! valid_display_name "$name"; then
+		log_error "Section '$section': display name is empty or contains control characters"
+		error_count=$((error_count + 1))
+		return 0
+	fi
+
+	if ! valid_host_name "$host"; then
+		log_error "Section '$section': invalid fully-qualified host name '$host'"
+		error_count=$((error_count + 1))
+		return 0
+	fi
+
+	if [ -n "$address" ] && ! valid_ipv4 "$address"; then
+		log_error "Section '$section': invalid IPv4 address '$address'"
+		error_count=$((error_count + 1))
+		return 0
+	fi
+
+	if ! valid_service_type "$service_type"; then
+		log_error "Section '$section': invalid DNS-SD service type '$service_type'"
+		error_count=$((error_count + 1))
+		return 0
+	fi
+
+	if ! valid_port "$port"; then
+		log_error "Section '$section': invalid port '$port'"
+		error_count=$((error_count + 1))
+		return 0
+	fi
+
+	if ! valid_protocol "$protocol"; then
+		log_error "Section '$section': invalid protocol '$protocol'"
+		error_count=$((error_count + 1))
+		return 0
+	fi
+
+	if [ -n "$address" ]; then
+		printf '%s %s\n' "$address" "$host" >> "$host_entries"
+	fi
+
+	render_count=$((render_count + 1))
+	output_file="$stage_dir/$(printf '%03d' "$render_count").service"
+	escaped_name="$(xml_escape "$name")"
+	escaped_host="$(xml_escape "$host")"
+	escaped_type="$(xml_escape "$service_type")"
+
+	{
+		printf '%s\n' "<?xml version=\"1.0\" standalone='no'?>"
+		printf '%s\n' '<!DOCTYPE service-group SYSTEM "avahi-service.dtd">'
+		printf '%s\n' '<service-group>'
+		printf '  <name replace-wildcards="no">%s</name>\n' "$escaped_name"
+		printf '  <service protocol="%s">\n' "$protocol"
+		printf '    <type>%s</type>\n' "$escaped_type"
+		printf '    <host-name>%s</host-name>\n' "$escaped_host"
+		printf '    <port>%s</port>\n' "$port"
+		printf '%s\n' '  </service>'
+		printf '%s\n' '</service-group>'
+	} > "$output_file"
+
+	chmod 0644 "$output_file"
+}
+
+load_and_stage() {
+	create_stage || return 1
+
+	render_count=0
+	address_count=0
+	error_count=0
+
+	config_load "$CONFIG_NAME" || {
+		log_error "Unable to load /etc/config/$CONFIG_NAME"
+		cleanup_stage
+		return 1
+	}
+
+	config_foreach render_service service
+
+	if [ "$error_count" -ne 0 ]; then
+		log_error "Validation failed; keeping the previous generated service files"
+		cleanup_stage
+		return 1
+	fi
+
+	if ! stage_hosts_file; then
+		log_error "Unable to stage managed host address records"
+		cleanup_stage
+		return 1
+	fi
+
+	return 0
+}
+
+stage_empty() {
+	create_stage || return 1
+	render_count=0
+	address_count=0
+	error_count=0
+
+	if ! stage_hosts_file; then
+		log_error "Unable to stage removal of managed host address records"
+		cleanup_stage
+		return 1
+	fi
+}
+
+replace_managed_files() {
+	local existing_file source_file target_file
+
+	backup_dir="$(mktemp -d "$SERVICE_DIR/.avahi-publisher-backup.XXXXXX")" || {
+		log_error "Unable to create rollback directory"
+		return 1
+	}
+
+	if ! backup_hosts_file; then
+		log_error "Unable to back up $HOSTS_FILE"
+		cleanup_backup
+		return 1
+	fi
+
+	for existing_file in "$SERVICE_DIR"/${FILE_PREFIX}*.service; do
+		[ -f "$existing_file" ] || break
+		if ! mv "$existing_file" "$backup_dir/$(basename "$existing_file")"; then
+			restore_partially_saved_files
+			return 1
+		fi
+	done
+
+	for source_file in "$stage_dir"/*.service; do
+		[ -f "$source_file" ] || break
+		target_file="$SERVICE_DIR/${FILE_PREFIX}$(basename "$source_file")"
+		if ! mv "$source_file" "$target_file"; then
+			rollback_replacement
+			return 1
+		fi
+	done
+
+	if ! mv "$stage_hosts" "$HOSTS_FILE"; then
+		rollback_replacement
+		return 1
+	fi
+	stage_hosts=""
+
+	cleanup_stage
+	cleanup_backup
+	printf '%s\n' "$render_count" > "$RUNTIME_FILE"
+}
+
+apply_config() {
+	local master_enabled
+
+	config_load "$CONFIG_NAME" || {
+		log_error "Unable to load /etc/config/$CONFIG_NAME"
+		return 1
+	}
+	config_get_bool master_enabled main enabled 1
+
+	if [ "$master_enabled" -ne 1 ]; then
+		stage_empty || return 1
+		replace_managed_files || {
+			log_error "Unable to remove managed Avahi records"
+			return 1
+		}
+		printf '%s\n' "0" > "$RUNTIME_FILE"
+		logger -p daemon.info -t avahi-publisher "Managed service publishing is disabled"
+		return 0
+	fi
+
+	load_and_stage || return 1
+	replace_managed_files || {
+		log_error "Unable to replace managed Avahi service files"
+		return 1
+	}
+
+	logger -p daemon.info -t avahi-publisher \
+		"Generated $render_count service file(s) and $address_count host address record(s)"
+}
+
+count_service() {
+	local section="$1"
+	local enabled
+
+	configured_count=$((configured_count + 1))
+	config_get_bool enabled "$section" enabled 1
+	[ "$enabled" -eq 1 ] && enabled_count=$((enabled_count + 1))
+}
+
+print_status() {
+	local master_enabled avahi_running generated_count address_record_count
+	local status_file
+
+	master_enabled=0
+	configured_count=0
+	enabled_count=0
+	generated_count=0
+	address_record_count=0
+	avahi_running=0
+
+	if config_load "$CONFIG_NAME" 2>/dev/null; then
+		config_get_bool master_enabled main enabled 1
+		config_foreach count_service service
+	fi
+
+	if /etc/init.d/avahi-daemon running; then
+		avahi_running=1
+	fi
+
+	if [ -d "$SERVICE_DIR" ]; then
+		for status_file in "$SERVICE_DIR"/${FILE_PREFIX}*.service; do
+			[ -f "$status_file" ] || break
+			generated_count=$((generated_count + 1))
+		done
+	fi
+
+	if [ -f "$HOSTS_FILE" ]; then
+		address_record_count="$(
+			awk -v begin="$HOSTS_BEGIN" -v end="$HOSTS_END" '
+				$0 == begin {
+					inside = 1
+					next
+				}
+				$0 == end {
+					inside = 0
+					next
+				}
+				inside && $0 !~ /^[[:space:]]*($|#)/ {
+					count++
+				}
+				END {
+					print count + 0
+				}
+			' "$HOSTS_FILE"
+		)"
+	fi
+
+	. /usr/share/libubox/jshn.sh
+	json_init
+	json_add_boolean "master_enabled" "$master_enabled"
+	json_add_boolean "avahi_running" "$avahi_running"
+	json_add_int "configured" "$configured_count"
+	json_add_int "enabled" "$enabled_count"
+	json_add_int "generated" "$generated_count"
+	json_add_int "addresses" "$address_record_count"
+	json_dump
+}
+
+case "$1" in
+	apply)
+		acquire_lock || exit 1
+		trap 'cleanup_stage; release_lock' EXIT INT TERM
+		apply_config
+		;;
+	clean)
+		acquire_lock || exit 1
+		trap 'cleanup_stage; release_lock' EXIT INT TERM
+		stage_empty || exit 1
+		replace_managed_files || exit 1
+		printf '%s\n' "0" > "$RUNTIME_FILE"
+		;;
+	status)
+		print_status
+		;;
+	*)
+		printf 'Usage: %s {apply|clean|status}\n' "$0" >&2
+		exit 2
+		;;
+esac

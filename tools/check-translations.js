@@ -22,6 +22,10 @@ const ROOT = path.resolve(__dirname, '..');
 
 const APPS = [
 	{
+		dir: 'Luci-app/luci-app-avahi-publisher',
+		extras: []
+	},
+	{
 		dir: 'Luci-app/luci-app-fan',
 		extras: []
 	},

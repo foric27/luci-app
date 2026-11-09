@@ -1,0 +1,14 @@
+{
+	"luci-app-avahi-publisher": {
+		"description": "Grant access to the LuCI Avahi service publisher",
+		"read": {
+			"file": {
+				"/usr/libexec/avahi-publisher": [ "exec" ]
+			},
+			"uci": [ "avahi-publisher" ]
+		},
+		"write": {
+			"uci": [ "avahi-publisher" ]
+		}
+	}
+}

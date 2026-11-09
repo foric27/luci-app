@@ -1,0 +1,32 @@
+#!/bin/sh /etc/rc.common
+
+START=60
+STOP=20
+USE_PROCD=1
+
+PROG=/usr/libexec/avahi-publisher
+
+reload_avahi_if_running() {
+	if /etc/init.d/avahi-daemon running; then
+		/etc/init.d/avahi-daemon reload
+	fi
+}
+
+start_service() {
+	"$PROG" apply || return 1
+	reload_avahi_if_running
+}
+
+reload_service() {
+	"$PROG" apply || return 1
+	reload_avahi_if_running
+}
+
+stop_service() {
+	"$PROG" clean
+	reload_avahi_if_running
+}
+
+service_triggers() {
+	procd_add_reload_trigger "avahi-publisher"
+}

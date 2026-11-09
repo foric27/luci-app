@@ -1,0 +1,4 @@
+{
+	"config": "avahi-publisher",
+	"init": "avahi-publisher"
+}
