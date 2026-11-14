@@ -53,9 +53,9 @@ define Build/Compile
 		GOARCH=$(GO_ARCH) \
 		GOTOOLCHAIN=local \
 		GOFLAGS=-mod=mod \
-		GOCACHE=$(PKG_BUILD_DIR)/.gocache \
-		GOPATH=$(PKG_BUILD_DIR)/.gopath \
-		GOMODCACHE=$(PKG_BUILD_DIR)/.gopath/pkg/mod \
+		GOCACHE=$(BUILD_DIR)/.netpulse-go/.gocache \
+		GOPATH=$(BUILD_DIR)/.netpulse-go/.gopath \
+		GOMODCACHE=$(BUILD_DIR)/.netpulse-go/.gopath/pkg/mod \
 		go build -trimpath -buildvcs=false \
 			-ldflags "-s -w -X main.Version=$(shell cat $(PKG_BUILD_DIR)/agent/VERSION 2>/dev/null)" \
 			-o $(PKG_BUILD_DIR)/netpulse-agent ./cmd/netpulse-agent

@@ -64,9 +64,13 @@ export CGO_ENABLED=0
 export GOOS=linux
 export GOTOOLCHAIN=local
 export GOFLAGS=-mod=mod
-export GOCACHE="$BUILD_DIR/.gocache"
-export GOPATH="$BUILD_DIR/.gopath"
-export GOMODCACHE="$BUILD_DIR/.gopath/pkg/mod"
+# Кэши модулей/сборки держим рядом с PKG_BUILD_DIR: сам каталог сборки
+# OpenWrt/SDK очищает после установки пакета (find ... | xargs rm -rf), а
+# каталоги модулей Go — read-only, и rm -rf на них падает с Permission denied.
+NETPULSE_CACHE_ROOT="$(dirname "$BUILD_DIR")/.netpulse-go"
+export GOCACHE="$NETPULSE_CACHE_ROOT/.gocache"
+export GOPATH="$NETPULSE_CACHE_ROOT/.gopath"
+export GOMODCACHE="$NETPULSE_CACHE_ROOT/.gopath/pkg/mod"
 # proxy.golang.org иногда отвечает 403 на большие модули (redirect на
 # storage.googleapis.com); разделитель "|" разрешает откат на прямой fetch.
 export GOPROXY="${GOPROXY:-https://proxy.golang.org|direct}"
