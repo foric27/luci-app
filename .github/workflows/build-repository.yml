@@ -273,6 +273,9 @@ jobs:
             [luci-app-traffic]="Luci-app/luci-app-traffic"
             [luci-app-turboacc-mtk]="Luci-app/luci-app-turboacc-mtk"
             [rpcd-mod-router-status]="Luci-app/rpcd-mod-router-status"
+            [netpulse-agent]="Luci-app/netpulse-agent"
+            [luci-app-netpulse]="Luci-app/luci-app-netpulse"
+            [netpulse]="Luci-app/netpulse"
           )
 
           mkdir -p "$SDK_DIR/feeds/luci/applications" "$SDK_DIR/package/feeds/luci"
@@ -323,6 +326,9 @@ jobs:
             luci-app-traffic
             luci-app-turboacc-mtk
             rpcd-mod-router-status
+            netpulse-agent
+            luci-app-netpulse
+            netpulse
           )
           i18n_packages=()
 
@@ -385,6 +391,9 @@ jobs:
             luci-app-traffic
             luci-app-turboacc-mtk
             rpcd-mod-router-status
+            netpulse-agent
+            luci-app-netpulse
+            netpulse
           )
 
           for pkg in "${packages[@]}"; do
@@ -413,7 +422,7 @@ jobs:
           find "$SDK_DIR/bin/packages" -type f -name "*.$ext" | while IFS= read -r pkg; do
             base="$(basename "$pkg")"
             case "$base" in
-              luci-app-avahi-publisher[-_]*|luci-app-fan[-_]*|luci-app-modemband[-_]*|luci-app-sfp-status[-_]*|luci-app-traffic[-_]*|luci-app-turboacc-mtk[-_]*|rpcd-mod-router-status[-_]*|luci-i18n-avahi-publisher-*|luci-i18n-fan-*|luci-i18n-modemband-*|luci-i18n-sfp-status-*|luci-i18n-traffic-*|luci-i18n-turboacc-mtk-*)
+              luci-app-avahi-publisher[-_]*|luci-app-fan[-_]*|luci-app-modemband[-_]*|luci-app-sfp-status[-_]*|luci-app-traffic[-_]*|luci-app-turboacc-mtk[-_]*|rpcd-mod-router-status[-_]*|netpulse-agent[-_]*|luci-app-netpulse[-_]*|netpulse[-_]*|luci-i18n-avahi-publisher-*|luci-i18n-fan-*|luci-i18n-modemband-*|luci-i18n-sfp-status-*|luci-i18n-traffic-*|luci-i18n-turboacc-mtk-*|luci-i18n-netpulse-*)
                 cp -f "$pkg" "$repo_dir/"
                 ;;
             esac
@@ -427,6 +436,9 @@ jobs:
             luci-app-traffic
             luci-app-turboacc-mtk
             rpcd-mod-router-status
+            netpulse-agent
+            luci-app-netpulse
+            netpulse
           )
 
           for pkg in "${packages[@]}"; do

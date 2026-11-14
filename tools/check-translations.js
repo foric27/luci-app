@@ -49,6 +49,10 @@ const APPS = [
 	{
 		dir: 'Luci-app/luci-app-turboacc-mtk',
 		extras: []
+	},
+	{
+		dir: 'Luci-app/luci-app-netpulse',
+		extras: []
 	}
 ];
 

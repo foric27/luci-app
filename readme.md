@@ -21,6 +21,7 @@
 | luci-app-fan | 0.1.2-r5 | Управление вентилятором pwm-fan на BPI-R4 и других устройствах, панель температуры/PWM/оборотов | MTK > Управление вентилятором (псевдоним: Статус > Управление вентилятором) | luci-base, coreutils-stat |
 | luci-app-modemband | 2.0-r24 | Настройка диапазонов модемов 4G/5G, состояние модема, сигнал, сота, информация SIM | Модем > Настройка модема | modemband |
 | luci-app-sfp-status | 0.1.0-r31 | Чтение телеметрии DOM SFP/SFP+ и вывод на странице обзора | Статус > Обзор (include) | luci-base, ethtool |
+| luci-app-netpulse | 2.7.2-r1 | Локальное состояние агента NetPulse: procd, версия, журнал, перезапуск, настройки UCI, тест связи с сервером | Службы > NetPulse | luci-base, netpulse-agent |
 
 ## Репозиторий пакетов
 
@@ -283,8 +284,26 @@ ubus call luci.sfp-status getStatuses '{}'
 | luci-app-traffic | Статистика трафика по приложениям и клиентам, диагностика NPU/TOPS | [README](Luci-app/luci-app-traffic/README.md) |
 | luci-app-turboacc-mtk | Управление аппаратным ускорением MediaTek HNAT, PPE и TCP CCA | Makefile и страница `turboacc.js` |
 | rpcd-mod-router-status | Телеметрия роутера только для чтения для мобильного приложения ImmortalWrt | [README](Luci-app/rpcd-mod-router-status/README.md) |
+| netpulse-agent | Агент NetPulse: опрос роутера (система, Wi-Fi, DHCP, FDB) и отправка на сервер NetPulse | `Luci-app/netpulse-agent/Makefile` |
+| netpulse | Сервер NetPulse on-box: веб-интерфейс HTTPS :3100, SQLite, установка агентов из UI | `Luci-app/netpulse/Makefile` |
+| luci-app-netpulse | Страница LuCI для локального агента NetPulse | `Luci-app/luci-app-netpulse` |
 
 Пакет `luci-app-avahi-publisher` взят из проекта [finerain6/luci-app-avahi-publisher](https://github.com/finerain6/luci-app-avahi-publisher) (автор — finerain6, лицензия Apache-2.0) и адаптирован для этого репозитория: сборка в apk-репозитории 25.12, отдельные пакеты переводов вместо встроенного `zh-cn` `.lmo`, зависимость `jshn`, полный русский перевод интерфейса.
+
+Пакеты NetPulse (`luci-app-netpulse`, `netpulse-agent`, `netpulse`) взяты из проекта [gnacho/netpulse](https://github.com/gnacho/netpulse) (лицензия AGPL-3.0-only) и адаптированы для этого репозитория: LuCI-страница собрана по правилам `luci.mk` с отдельными пакетами переводов `luci-i18n-netpulse-ru` и `luci-i18n-netpulse-zh-cn`, агент и сервер собираются из исходников upstream Go-тулчейном фида, а SPA сервера берётся официальным артефактом релиза `app-dist-v2.52.0.tar.gz` (sha256 проверяется в `Luci-app/netpulse/build.sh`).
+
+### NetPulse
+
+Три пакета работают вместе:
+
+- `netpulse-agent` — агент на роутере: статический Go-бинарник, procd-сервис `netpulse-agent`, UCI `/etc/config/netpulse-agent`; пока не заполнены `server`, `token` и `slug`, сервис не стартует.
+- `luci-app-netpulse` — страница «Службы > NetPulse»: состояние агента, журнал, перезапуск и те же настройки UCI.
+- `netpulse` — сервер on-box: HTTPS на порту 3100, данные SQLite в `/usr/local/netpulse-data` (лучше вынести на USB через `netpulse.server.data_dir`), при первом запуске печатает пароль администратора в `logread`.
+
+Установка: `apk add --allow-untrusted netpulse-agent luci-app-netpulse netpulse` (плюс `luci-i18n-netpulse-ru` для русского интерфейса).
+
+Порядок настройки: открыть `https://192.168.1.1:3100`, войти как `admin` с паролем из `logread`; в веб-интерфейсе сервера создать агента и перенести его `server`, `token`, `slug` и SPKI-отпечаток (для https) на страницу LuCI «Службы > NetPulse > Настройки».
+
 
 ## Сборка и проверка
 
@@ -308,11 +327,14 @@ make package/feeds/luci/luci-app-sfp-status/compile V=s
 make package/feeds/luci/luci-app-traffic/compile V=s
 make package/feeds/luci/luci-app-turboacc-mtk/compile V=s
 make package/feeds/luci/rpcd-mod-router-status/compile V=s
+make package/feeds/luci/netpulse-agent/compile V=s
+make package/feeds/luci/luci-app-netpulse/compile V=s
+make package/feeds/luci/netpulse/compile V=s
 ```
 
 ### Русские переводы
 
-- Для `luci-app-avahi-publisher`, `luci-app-fan`, `luci-app-modemband`, `luci-app-sfp-status`, `luci-app-traffic` и `luci-app-turboacc-mtk` русские каталоги лежат в `po/ru/` и собираются в отдельные пакеты `luci-i18n-<app>-ru`.
+- Для `luci-app-avahi-publisher`, `luci-app-fan`, `luci-app-modemband`, `luci-app-sfp-status`, `luci-app-traffic`, `luci-app-turboacc-mtk` и `luci-app-netpulse` русские каталоги лежат в `po/ru/` и собираются в отдельные пакеты `luci-i18n-<app>-ru`.
 - Основной пакет приложения не содержит `.lmo`; перевод устанавливается отдельным пакетом.
 - После установки выберите русский язык в LuCI: **Система → Язык и стиль**. Если нужного языка нет в списке, установите соответствующий пакет `luci-i18n-*-ru`.
 
@@ -361,6 +383,7 @@ sms_tool -d /dev/ttyUSB2 at AT+CPIN?
 | luci-app-sfp-status | Блок SFP на странице «Статус > Обзор» |
 | luci-app-traffic | MTK > Анализ трафика |
 | luci-app-turboacc-mtk | MTK > TurboACC |
+| luci-app-netpulse | Службы > NetPulse > Состояние / Настройки |
 
 ## Замечания по сопровождению
 

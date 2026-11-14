@@ -1,0 +1,159 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "(no log lines matched)"
+msgstr ""
+
+msgid "Access points only: LAN IP of the gateway for the short latency probe. Leave empty on the gateway."
+msgstr ""
+
+msgid "Agent version"
+msgstr ""
+
+msgid "Base URL of the NetPulse server, e.g. http://192.168.1.226:3000."
+msgstr ""
+
+msgid "Connection"
+msgstr ""
+
+msgid "Connection OK (HTTP 200)."
+msgstr ""
+
+msgid "Connection failed (%s)."
+msgstr ""
+
+msgid "Connection of the local agent to the NetPulse server. "
+msgstr ""
+
+msgid "Full probe cycle. Plain seconds or a Go duration (\"30\", \"15s\", \"1m\")."
+msgstr ""
+
+msgid "Gateway only: public IP probed for WAN loss/latency (e.g. 1.1.1.1). Leave empty on access points."
+msgstr ""
+
+msgid "Gateway ping target"
+msgstr ""
+
+msgid "Grant access to the NetPulse agent pages"
+msgstr ""
+
+msgid "Heartbeat"
+msgstr ""
+
+msgid "Identifier of this router in NetPulse (as created in Settings → Agents)."
+msgstr ""
+
+msgid "Local state of the NetPulse agent on this router (slug “%s”). The network-wide view lives in the NetPulse web app."
+msgstr ""
+
+msgid "Local state of the NetPulse agent on this router. The network-wide view lives in the NetPulse web app."
+msgstr ""
+
+msgid "Memory (RSS)"
+msgstr ""
+
+msgid "NetPulse"
+msgstr ""
+
+msgid "NetPulse agent"
+msgstr ""
+
+msgid "NetPulse agent restarted."
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "No heartbeat yet"
+msgstr ""
+
+msgid "Not installed"
+msgstr ""
+
+msgid "Open NetPulse ↗"
+msgstr ""
+
+msgid "Per-device token (64 hex). Shown once when the agent is created on the server."
+msgstr ""
+
+msgid "Process uptime"
+msgstr ""
+
+msgid "Push interval"
+msgstr ""
+
+msgid "Pushing (%s ago)"
+msgstr ""
+
+msgid "Recent log"
+msgstr ""
+
+msgid "Restart agent"
+msgstr ""
+
+msgid "Restart failed (exit code %s)."
+msgstr ""
+
+msgid "Restart failed: %s"
+msgstr ""
+
+msgid "Restarting"
+msgstr ""
+
+msgid "Restarting the NetPulse agent…"
+msgstr ""
+
+msgid "Running (PID %d)"
+msgstr ""
+
+msgid "SHA-256 of the server SubjectPublicKeyInfo in hex. Required when the server URL is https. Get it with: curl http://server/fingerprint"
+msgstr ""
+
+msgid "Server URL"
+msgstr ""
+
+msgid "Server fingerprint (SPKI)"
+msgstr ""
+
+msgid "Service"
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Slug"
+msgstr ""
+
+msgid "Stalled (%s ago)"
+msgstr ""
+
+msgid "Start on boot"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Stopped"
+msgstr ""
+
+msgid "Test connection"
+msgstr ""
+
+msgid "Test failed: %s"
+msgstr ""
+
+msgid "Testing"
+msgstr ""
+
+msgid "Testing connection to the server…"
+msgstr ""
+
+msgid "Token"
+msgstr ""
+
+msgid "WAN ping target"
+msgstr ""
+
+msgid "Yes"
+msgstr ""
